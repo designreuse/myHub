@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultDir="/resources/decorators">
+
+    <!-- exclude url pattern defined -->
+    <excludes>
+        <pattern>/*/exclude/*</pattern>
+        <pattern>/*.json</pattern>
+    </excludes>
+   
+</decorators>
