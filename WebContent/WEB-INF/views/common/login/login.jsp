@@ -36,6 +36,11 @@
                 <label class="checkbox">
                     <input type="checkbox" value="remember-me" id="rememberMe"> Remember me
                 </label>
+                <label>
+                    <a href="#">Forgot your password?</a>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="<c:url value='/user/userCreate' />">Sign in</a>
+                </label>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
             </form>
         </div>

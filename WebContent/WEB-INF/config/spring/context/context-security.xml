@@ -54,8 +54,8 @@
     <security:http use-expressions="true" auto-config="true"
         access-denied-page="/accessDenied"
         disable-url-rewriting="true">
-        <security:intercept-url pattern="/login"        access="permitAll" />
-
+        <security:intercept-url pattern="/login" access="permitAll" />
+        
         <security:form-login
             login-processing-url="/j_spring_security_check"
             login-page="/login"
