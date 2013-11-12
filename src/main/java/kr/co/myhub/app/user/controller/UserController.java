@@ -1,7 +1,5 @@
 package kr.co.myhub.app.user.controller;
 
-import java.util.Locale;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
