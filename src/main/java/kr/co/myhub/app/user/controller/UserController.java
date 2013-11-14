@@ -48,6 +48,21 @@ public class UserController {
         return "/user/userCreate";         
     }
     
+    /**
+     * 사용자 정보찾기 화면
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userSearch", method = RequestMethod.GET)
+    public String userSearch(Model model) throws Exception {
+        if (logger.isInfoEnabled()) {
+            logger.debug("UserController  userSearch Call -----------------------------");
+        }
+        
+        return "/user/userSearch";         
+    }
+    
     
 
 }

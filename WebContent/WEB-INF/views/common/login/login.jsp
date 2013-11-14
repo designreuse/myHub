@@ -30,19 +30,19 @@
         <!-- js lib -->
         <!--  =========================================================== -->
         <!-- jquery -->
-        <script src="<c:url value='/js/bower_components/jquery/jquery.js'/>"></script>
+        <script src="<c:url value='/js/jquery/jquery.js'/>"></script>
         <!-- angularJS -->
-        <script src="<c:url value='/js/bower_components/angular/angular.js'/>"></script>
+        <script src="<c:url value='/js/angular/angular.js'/>"></script>
         <!-- underscore -->
-        <script src="<c:url value='/js/bower_components/underscore/underscore.js'/>"></script>
+        <script src="<c:url value='/js/underscore/underscore.js'/>"></script>
         <!-- bootstrap -->
-        <script src="<c:url value='/js/bower_components/bootstrap/dist/js/bootstrap.js'/>"></script>
+        <script src="<c:url value='/js/bootstrap/bootstrap.js'/>"></script>
         <!-- jquery cookie -->
-        <script src="<c:url value='/js/common/jquery/jquery.cookie.js'/>"></script>
+        <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
         <!--  =========================================================== -->
         
         <!-- application -->
-        <script src="<c:url value='/js/common/common.js'/>"></script>
+        <script src="<c:url value='/js/common.js'/>"></script>
         
         <script type="text/javascript">
         
@@ -114,7 +114,7 @@
                     <input type="checkbox" value="remember-me" id="rememberMe"> <spring:message code="myhub.label.remember.id"/>
                 </label>
                 <label>
-                    <a href="#"><spring:message code="myhub.label.forgot.password"/></a>
+                    <a href="<c:url value='/user/userSearch' />"><spring:message code="myhub.label.forgot.password"/></a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="<c:url value='/user/userCreate' />"><spring:message code="myhub.label.signup"/></a>
                 </label>

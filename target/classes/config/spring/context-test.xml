@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    
+    <!-- ============================================= -->
+    <!-- configuration import -->
+    <!-- ============================================= -->
+    
+    <!-- context-common -->
+    <import resource="context/context-common.xml" />
+    
+    <!-- messagebundle -->
+    <import resource="context/context-message.xml" />
+     
+    <!-- Spring Data JPA -->
+    <import resource="context/context-jpa.xml" />
+     
+</beans>
