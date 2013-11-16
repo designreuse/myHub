@@ -38,9 +38,6 @@ public class UserController {
      */
     @RequestMapping(value = "/userCreate", method = RequestMethod.GET)
     public String userCreate(Model model) throws Exception {
-        if (logger.isInfoEnabled()) {
-            logger.debug("UserController  userCreate Call -----------------------------");
-        }
         
         return "/user/userCreate";         
     }
@@ -53,9 +50,6 @@ public class UserController {
      */
     @RequestMapping(value = "/userSearch", method = RequestMethod.GET)
     public String userSearch(Model model) throws Exception {
-        if (logger.isInfoEnabled()) {
-            logger.debug("UserController  userSearch Call -----------------------------");
-        }
         
         return "/user/userSearch";         
     }
@@ -81,7 +75,9 @@ public class UserController {
         User result = null;
         
         try {
-            result = userService.create(user);    
+            result = userService.create(user);
+            
+            // TODO: API result 타입으로 변경
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -119,7 +119,7 @@ var commonObj = {
  * str : 출력할 문자열
  */
 function log(str) {
-	if(typeof console == "undefined") {
+	if(typeof console === "undefined") {
         return false;
     };
     

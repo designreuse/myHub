@@ -3,10 +3,13 @@ package kr.co.myhub.app.user.repasitory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import kr.co.myhub.app.common.TestConfig;
 import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.appframework.util.EncryptionUtil;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -68,7 +71,7 @@ public class TestUserRepasitory extends TestConfig {
     public void save() {
         user.setUserId("kbtapjm");
         user.setEmail("kbtapjm@gmail.com");
-        user.setPassword("111222");
+        user.setPassword(EncryptionUtil.getEncryptStr("jmpark7100"));
         user.setUserName("검은몽스");
         user.setBirthday("19820509");
         user.setGender("0");
@@ -100,7 +103,7 @@ public class TestUserRepasitory extends TestConfig {
     public void findOne() {
         user.setUserId("tapjm");
         user.setEmail("tapjm@naver.com");
-        user.setPassword("111222");
+        user.setPassword(EncryptionUtil.getEncryptStr("111222"));
         user.setUserName("박재명");
         user.setBirthday("19000000");
         user.setGender("2");
@@ -122,8 +125,8 @@ public class TestUserRepasitory extends TestConfig {
     public void update() {
         user.setUserId("tapjm5603");
         user.setEmail("tapjm@hanmail.com");
-        user.setPassword("111222");
-        user.setUserName("나나나");
+        user.setPassword(EncryptionUtil.getEncryptStr("qwer1234"));
+        user.setUserName("홍길동");
         user.setBirthday("19000000");
         user.setGender("2");
         user.setPriv(2);
@@ -131,7 +134,7 @@ public class TestUserRepasitory extends TestConfig {
         // 등록
         User crtUser = userRepository.saveAndFlush(user);
         
-        user.setUserName("바바바바바바바바바");
+        user.setUserName("코비");
       
         // 수정
         User retuser = userRepository.saveAndFlush(crtUser) ;
@@ -150,4 +153,5 @@ public class TestUserRepasitory extends TestConfig {
         logger.debug(" Test End ");
         logger.debug(" =============================================== ");
     }
+    
 }
