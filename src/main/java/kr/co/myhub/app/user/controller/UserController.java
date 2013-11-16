@@ -1,27 +1,18 @@
 package kr.co.myhub.app.user.controller;
 
+import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.app.user.service.UserService;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * 
- * <pre>
- * pacakage: kr.co.myhub.app.admin.controller 
- * file         : UserController.java , 2013. 11. 8.
- * author    : jmpark
- * email      : kbtapjm@gmail.com
- * 수정내용
- * ----------------------------------------------
- * 수정일      수정자  수정내용
- * ----------------------------------------------
- * 2013. 11. 8.     kbtapjm  최초생성
- *</pre>
- */
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
@@ -32,6 +23,12 @@ public class UserController {
      */
     @Autowired 
     MessageSourceAccessor messageSourceAccessor;
+    
+    /**
+     *  Service DI
+     */
+    @Autowired
+    UserService userService;
     
     /**
      * 사용자 등록 화면(회원가입 화면)
@@ -61,6 +58,35 @@ public class UserController {
         }
         
         return "/user/userSearch";         
+    }
+    
+    /**
+     * 유저 등록처리
+     * @param model
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/userSave", method = RequestMethod.POST)
+    @ResponseBody
+    public User userSave(Model model, @ModelAttribute User user) {
+        if (logger.isInfoEnabled()) {
+            logger.debug("UserController  userSave Call -----------------------------");
+        }
+        
+        // TODO: Spring Validator
+        
+        // TODO: JSON, XML data return 
+        
+        
+        User result = null;
+        
+        try {
+            result = userService.create(user);    
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return result;
     }
     
     

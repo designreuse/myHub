@@ -4,7 +4,9 @@
     xmlns:beans="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
     
-    <!-- 다국어 설정 (WAS를 재기동 없이 자동으로 읽어온다. 현재는 1분마다 체크 )-->
+    <!-- ============================================================================================ -->
+    <!-- message config(다국어 설정 (WAS를 재기동 없이 자동으로 읽어온다. 현재는 1분마다 체크 )) -->
+    <!-- ============================================================================================ -->
     <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <beans:property name="basenames">
             <beans:list>
@@ -14,6 +16,9 @@
         <beans:property name="cacheSeconds" value="60"/>
     </beans:bean>
     
+    <!-- ============================================================================================ -->
+    <!-- messageSourceAccessor impl -->
+    <!-- ============================================================================================ -->
     <beans:bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
         <beans:constructor-arg>
             <beans:ref local="messageSource"/>

@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+        http://www.springframework.org/schema/data/jpa  http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
    
    <!-- ============================================================================================ -->
    <!-- properties load -->
    <!-- ============================================================================================ -->
    <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <beans:property name="locations">
-            <beans:value>classpath:db/jdbc.properties</beans:value>
+            <beans:value>classpath:application.properties</beans:value>
         </beans:property>
     </beans:bean>
     
@@ -29,14 +31,42 @@
     <!-- entityManagerFactory -->
     <!-- ============================================================================================ -->
     <beans:bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <!-- Database Configuration -->
         <beans:property name="dataSource" ref="dataSource" />
+        
+        <!-- Declares the base package of the entity classes (@Entity가 붙은 객체를 스캔하고 엔티티로 사용하도록 등록) -->
         <beans:property name="packagesToScan" value="kr.co.myhub" />
+        
+        <!-- jpaVendorAdapter(JPA에서 사용하는 orm 엔진, 구현체) -->
         <beans:property name="jpaVendorAdapter">
             <beans:bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
                 <beans:property name="generateDdl" value="true" />
                 <beans:property name="showSql" value="true" />
                 <beans:property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect"/>
             </beans:bean>
+        </beans:property>
+        
+        <!-- jpaProperties (hibernate가 구동하는데 필요한 정보 제공) -->
+        <beans:property name="jpaProperties">
+            <beans:props>
+                <!-- Defines the SQL dialect used in Hibernate application -->
+                <beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</beans:prop>
+                
+                <!-- maximum number of pooled connections -->  
+                <beans:prop key="hibernate.connection.pool_size">10</beans:prop>
+              
+                <!-- Supply a custom strategy for the scoping of the "current" Session. -->
+                <beans:prop key="hibernate.current_session_context_class">thread</beans:prop>
+              
+                <!-- database schema will be dropped when the SessionFactory is closed explicitly.
+                e.g. validate | update | create | create-drop--> 
+                <beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
+              
+                <!-- Display and format all executed SQL to stdout -->
+                <beans:prop key="hibernate.show_sql">true</beans:prop>
+                <beans:prop key="format_sql">true</beans:prop>
+            </beans:props>
+        
         </beans:property>
     </beans:bean>
     
@@ -51,5 +81,11 @@
     <!-- annotation -->
     <!-- ============================================================================================ -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+    <!-- ============================================================================================ -->
+    <!-- Configures Spring Data JPA and sets the base package of my DAOs 
+        (Repository 인터페이스를 확장한 인터페이스를 찾아 컨벤션 규칙, 선언된 쿼리 기반으로 Data-Access 객체를 생성)-->
+    <!-- ============================================================================================ -->
+    <jpa:repositories base-package="kr.co.myhub.*"/>
      
 </beans:beans>

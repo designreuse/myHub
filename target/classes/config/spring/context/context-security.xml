@@ -55,6 +55,7 @@
         access-denied-page="/accessDenied"
         disable-url-rewriting="true">
         <security:intercept-url pattern="/login" access="permitAll" />
+        <security:intercept-url pattern="/user/**" access="permitAll" />
         
         <security:form-login
             login-processing-url="/j_spring_security_check"

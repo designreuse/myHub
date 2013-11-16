@@ -26,12 +26,7 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional(readOnly = true)
     public User create(User user) throws Exception {
-        logger.debug("user : " + user);
-        
         return userRepasitory.save(user);
     }
-    
-    
-
 
 }

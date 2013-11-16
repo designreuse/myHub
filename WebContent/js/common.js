@@ -56,6 +56,48 @@ var commonObj = {
 				// jqeury cookie 사용 
 	            $.removeCookie(name);
 			}
+		},
+		
+		// ajax
+		ajax: function(url, _config) {
+			
+			try {
+                if (!_config || !url) {
+                	throw "commonObj.data.ajax configuration error!\ncheck your script code!";
+                }
+
+                if (!_config.method) _config.method = "post";
+                if (_config.async == undefined) _config.async = true;
+                if (_config.contentType == undefined) _config.contentType = "application/x-www-form-urlencoded";
+                if (!_config.data) _config.data = "json";
+
+                jQuery.ajax({
+                    url: url,
+                    data: _config.pars,
+                    type: _config.method,
+                    async: _config.async,
+                    contentType: _config.contentType,
+                    dataType: _config.data,
+                    success: function (res) {
+                    	var result = res;
+                    	
+                    	
+	                    _config.onsucc( result );
+                    },
+                    error: function (res) {
+                    	
+                    	if ( _config.onerr != undefined ){
+                    		_config.onerr ( res.responseText );	
+                    	} else {
+                    		alert("onError : " + res.responseText);
+                    		
+                    	}
+                    },
+                    timeout: function (res) {
+                        alert("onTimeout : " + res.responseText);
+                    }
+                });
+            } catch (e) { alert(e); }
 		}
 	},
 	

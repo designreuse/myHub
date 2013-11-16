@@ -24,7 +24,7 @@ public class User implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "userkey", nullable = false, unique = true)
+    @Column(name = "userkey", nullable = false)
     private int userKey;
     
     @Column(name = "userid", nullable = false, length = 50)
@@ -48,17 +48,23 @@ public class User implements Serializable {
     @Column(name = "priv", nullable = false)
     private int priv;
     
-    @Column(name = "crtdt", nullable = false)
+    @Column(name = "crtdt", nullable = true, insertable = true, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date crtDt;
     
+    @Column(name = "modDt", nullable = true, insertable = false, updatable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
+    private Date modDt;
+    
     /**
-     * 생성일 자동추가
+     * default 날짜 설정
      */
     @PrePersist
     public void prePersist() {
         this.crtDt = new Date();
+        this.modDt = new Date();
     }
 
     public int getUserKey() {
@@ -132,9 +138,12 @@ public class User implements Serializable {
     public void setCrtDt(Date crtDt) {
         this.crtDt = crtDt;
     }
+    
+    public Date getModDt() {
+        return modDt;
+    }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);    // 인스턴스의 값 확인
+    public void setModDt(Date modDt) {
+        this.modDt = modDt;
     }
 }
