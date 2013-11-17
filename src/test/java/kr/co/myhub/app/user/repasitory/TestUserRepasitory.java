@@ -3,8 +3,6 @@ package kr.co.myhub.app.user.repasitory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import kr.co.myhub.app.common.TestConfig;
@@ -19,6 +17,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * 
+ * file   : TestUserRepasitory.java
+ * date   : 2013. 11. 17.
+ * author : jmpark
+ * content: 유저 JPA 테스트 
+ * 수정내용
+ * ----------------------------------------------
+ * 수정일                   수정자                  수정내용
+ * ----------------------------------------------
+ * 2013. 11. 17.   kbtapjm     최초생성
+ */
 public class TestUserRepasitory extends TestConfig {
     
     private static Logger logger = Logger.getLogger(TestUserRepasitory.class);
@@ -36,7 +46,7 @@ public class TestUserRepasitory extends TestConfig {
         logger.debug(" =============================================== ");
     }
     
-    @Before // 해당 클래스, 객체 인스턴스 초깋
+    @Before // 해당 클래스, 객체 인스턴스 초기화
     public void setup() {
         user = new User();
         

@@ -67,7 +67,7 @@
                     init: function() {
                         this.validate();
                     },
-                    
+               
                     // validation func
                     validate: function() {
                         $('#frmCreate').validate({
@@ -78,7 +78,8 @@
                             rules: {
                                 email: {
                                     required: true,
-                                    email: true
+                                    email: true,
+                                    emailDuplicateCheck: true
                                 },
                                 password: {
                                     required: true,
@@ -102,7 +103,8 @@
                             messages: {
                                 email: {
                                     required: '<spring:message code="myhub.label.input.email.address"/>',
-                                    email: '<spring:message code="myhub.label.input.vaild.email.address"/>'
+                                    email: '<spring:message code="myhub.label.input.vaild.email.address"/>',
+                                    emailDuplicateCheck: '<spring:message code="myhub.label.input.email.exists"/>'
                                 },
                                 password: {
                                     required: '<spring:message code="myhub.label.input.password"/>',
@@ -138,6 +140,27 @@
                                 $(element).parents('.form-group').addClass('has-success');
                             }
                         });
+                        
+                        // email 중복체크
+                        $.validator.addMethod('emailDuplicateCheck', function(email) {
+                        	var url = '/user/getUserByEmail';
+                        	var pars = 'email='.concat(email);
+                        	
+                            var ret = true;
+                        	commonObj.data.ajax(url, {pars: pars, async: false, 
+                                onsucc: function(res) {
+                                	// 중복시
+                                	if (res === true) {
+                                    	ret = false;
+                                    } 
+                                },
+                                onerr: function(res) {
+                                	return false;
+                                }
+                            });
+                        	
+                        	return ret;
+                        }, '');
                     },
                     
                     // 유저 등록
@@ -148,8 +171,6 @@
                     	}
                     	
                     	// ajax call
-                    	log('11111111111111');
-                    	
                     	var pars = $('#frmCreate').serialize();
                     	var url = '/user/userSave';
                     	
@@ -245,31 +266,31 @@
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
                         <div class="col-sm-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" maxlength="50" value="kbtapjm@gmail.com">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" maxlength="50" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="password" class="col-sm-2 control-label"><spring:message code="myhub.label.password"/></label>
                         <div class="col-sm-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="12" value="111222">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="12" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cfPassword" class="col-sm-2 control-label"><spring:message code="myhub.label.confirm.password"/></label>
                         <div class="col-sm-3">
-                            <input type="password" class="form-control" id="cfPassword" name="cfPassword" placeholder="Password" maxlength="12" value="111222">
+                            <input type="password" class="form-control" id="cfPassword" name="cfPassword" placeholder="Password" maxlength="12" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="userName" class="col-sm-2 control-label"><spring:message code="myhub.label.name"/></label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="userName" name="userName" placeholder="UserName" maxlength="50" value="검은몽스">
+                            <input type="text" class="form-control" id="userName" name="userName" placeholder="UserName" maxlength="50" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.birthday"/></label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="birthday" name="birthday" placeholder="Birthday" maxlength="8" value="19820509">
+                            <input type="text" class="form-control" id="birthday" name="birthday" placeholder="Birthday" maxlength="8" value="">
                         </div>
                     </div>
                     <div class="form-group">
@@ -277,7 +298,7 @@
                         <div class="col-sm-3">
                             <select class="form-control" id="gender" name="gender">
                                 <option value=""><spring:message code="myhub.label.select"/></option>
-                                <option value="M" selected><spring:message code="myhub.label.gender.male"/></option>
+                                <option value="M"><spring:message code="myhub.label.gender.male"/></option>
                                 <option value="F"><spring:message code="myhub.label.gender.female"/></option>
                             </select>
                         </div>
@@ -285,7 +306,7 @@
                     <div class="form-group">
                         <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.personal.received"/></label>
                         <div class="col-sm-3">
-                            <input type="checkbox" id="agree" name="agree" checked> 
+                            <input type="checkbox" id="agree" name="agree"> 
                         </div>
                     </div>
                     <div class="form-group">
