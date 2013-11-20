@@ -12,12 +12,13 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "user")
+@XmlRootElement
 public class User implements Serializable {
 
     private static final long serialVersionUID = -4189088277865932249L;

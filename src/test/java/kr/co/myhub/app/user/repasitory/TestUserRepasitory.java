@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * file   : TestUserRepasitory.java
  * date   : 2013. 11. 17.
  * author : jmpark
- * content: 유저 JPA 테스트 
+ * content: Repasitory 테스트 
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
@@ -81,7 +81,7 @@ public class TestUserRepasitory extends TestConfig {
     public void save() {
         user.setUserId("kbtapjm");
         user.setEmail("kbtapjm@gmail.com");
-        user.setPassword(EncryptionUtil.getEncryptStr("jmpark7100"));
+        user.setPassword(EncryptionUtil.getEncryptPassword("111222"));
         user.setUserName("검은몽스");
         user.setBirthday("19820509");
         user.setGender("0");
@@ -113,7 +113,7 @@ public class TestUserRepasitory extends TestConfig {
     public void findOne() {
         user.setUserId("tapjm");
         user.setEmail("tapjm@naver.com");
-        user.setPassword(EncryptionUtil.getEncryptStr("111222"));
+        user.setPassword(EncryptionUtil.getEncryptPassword("111222"));
         user.setUserName("박재명");
         user.setBirthday("19000000");
         user.setGender("2");
@@ -135,7 +135,7 @@ public class TestUserRepasitory extends TestConfig {
     public void update() {
         user.setUserId("tapjm5603");
         user.setEmail("tapjm@hanmail.com");
-        user.setPassword(EncryptionUtil.getEncryptStr("qwer1234"));
+        user.setPassword(EncryptionUtil.getEncryptPassword("qwer1234"));
         user.setUserName("홍길동");
         user.setBirthday("19000000");
         user.setGender("2");

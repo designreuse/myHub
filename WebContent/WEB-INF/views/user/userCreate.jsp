@@ -170,6 +170,11 @@
                     		// 일반 폼 검증
                     	}
                     	
+                    	// set userId
+                    	var email = $('#email').val();
+                    	var userId = email.substring(0, email.indexOf('@'));
+                    	alert(userId);
+                        
                     	// ajax call
                     	var pars = $('#frmCreate').serialize();
                     	var url = '/user/userSave';
@@ -262,7 +267,7 @@
                     <p><spring:message code="myhub.label.signup"/></p>
                 </blockquote>
                 <form class="form-horizontal" role="form" id="frmCreate" name="frmCreate" onsubmit="return false;">
-                    <input type="hidden" name="userId" id="userId" value="kbtapjm">
+                    <input type="hidden" name="userId" id="userId" value="">
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
                         <div class="col-sm-3">

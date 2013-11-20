@@ -1,14 +1,24 @@
 package kr.co.myhub.app.user.controller;
 
+import java.util.Locale;
+
 import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
+import kr.co.myhub.appframework.constant.TypeEnum;
+import kr.co.myhub.appframework.util.EncryptionUtil;
+import kr.co.myhub.appframework.vo.ApiResult;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,6 +54,10 @@ public class UserController {
     @Autowired
     UserService userService;
     
+    // ===================================================================================
+    // Simple URL Mapping
+    // ===================================================================================
+    
     /**
      * 사용자 등록 화면(회원가입 화면)
      * @param model
@@ -68,13 +82,17 @@ public class UserController {
         return "/user/userSearch";         
     }
     
+    // ===================================================================================
+    // API
+    // ===================================================================================
+    
     /**
      * email 중복체크
      * @param model
      * @param email
      * @return 중복유무
      */
-    @RequestMapping(value = "/getUserByEmail", method = RequestMethod.POST)
+    @RequestMapping(value = "/getUserByEmail", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Boolean getUserByEmail(Model model,
             @RequestParam(value = "email", required = true) String email) {
@@ -100,26 +118,55 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/userSave", method = RequestMethod.POST)
+    @RequestMapping(value = "/userSave", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public User userSave(Model model, @ModelAttribute User user) {
-        if (logger.isInfoEnabled()) {
-            logger.debug("UserController  userSave Call -----------------------------");
-        }
+    public ApiResult userSave(Model model, 
+            @ModelAttribute User user,
+            BindingResult bindResult,
+            Locale locole) {
         
-        // TODO: Spring Validator
-        
-        // TODO: JSON, XML data return 
-        
-        
-        User result = null;
+        ApiResult result = new ApiResult();
         
         try {
-            result = userService.create(user);
+            /* Data Vaildation Check */
+            UserValidator userValidator = new UserValidator(TypeEnum.CREATE);
+            userValidator.validate(user, bindResult);
             
-            // TODO: API result 타입으로 변경
+            if (bindResult.hasErrors()) {
+                if (bindResult.getErrorCount() > 0) {
+                    FieldError fe = bindResult.getFieldError();
+                    
+                    result.setStatus(StatusEnum.FAIL);
+                    result.setMessage(messageSourceAccessor.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
+                } else {
+                    ObjectError oe = bindResult.getGlobalError();
+                    
+                    result.setStatus(StatusEnum.FAIL);
+                    result.setMessage(messageSourceAccessor.getMessage(bindResult.getGlobalError().getCode(), locole));
+                }
+                
+                return result;
+            }
+            
+            // password encrypt
+            String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
+            user.setPassword(encryptPassword);
+            
+            User retUser = userService.create(user);
+            
+            // result
+            if (retUser == null) {
+                result.setStatus(StatusEnum.FAIL);    
+            } else {
+                result.setStatus(StatusEnum.SUCCESS);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
+        
+            // Exception result
+            result.setStatus(StatusEnum.FAIL);
+            result.setMessage(e.getMessage());
         }
         
         return result;

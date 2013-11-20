@@ -9,8 +9,9 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.2.xsd">
      
-    <!-- REST Conficguration -->   
-        
+    <!-- ============================================================================================ -->
+    <!-- REST Conficguration -->
+    <!-- ============================================================================================ -->
     <beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <beans:property name="order" value="0" />
     </beans:bean>
@@ -45,11 +46,9 @@
                     <beans:property name="contentType" value="javascript/jsonp" />
                 </beans:bean>
                  -->
-                <!-- XML view 
                 <beans:bean class="org.springframework.web.servlet.view.xml.MarshallingView">
                     <beans:property name="marshaller" ref="marshaller" />
                 </beans:bean>
-                -->
             </beans:list>
         </beans:property>
     </beans:bean>
@@ -61,6 +60,9 @@
     <!-- ============================================================================================ -->
     <!-- xml obj -->
     <!-- ============================================================================================ -->
-    <!-- <oxm:jaxb2-marshaller id="marshaller"></oxm:jaxb2-marshaller>  -->
+    <oxm:jaxb2-marshaller id="marshaller">
+        <oxm:class-to-be-bound name="kr.co.myhub.app.user.domain.User" />
+        <oxm:class-to-be-bound name="kr.co.myhub.appframework.vo.ApiResult" />
+    </oxm:jaxb2-marshaller>
     
 </beans:beans>
