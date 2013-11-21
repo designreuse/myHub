@@ -173,7 +173,7 @@
                     	// set userId
                     	var email = $('#email').val();
                     	var userId = email.substring(0, email.indexOf('@'));
-                    	alert(userId);
+                    	$('#userId').val(userId);
                         
                     	// ajax call
                     	var pars = $('#frmCreate').serialize();
@@ -181,10 +181,16 @@
                     	
                         commonObj.data.ajax(url, {pars: pars, async: true, 
                             onsucc: function(res) {
-                                
+                            	var status = res.status;
+                            	
+                            	if (status === 'SUCCESS') {
+                            		location.href = '<c:url value="/login"/>';
+                            	} else{
+                            		alert(res.message);
+                            	}
                             },
                             onerr: function(res) {
-                                
+                            	alert(res);
                             }
                         });
                     }

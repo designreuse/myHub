@@ -106,7 +106,7 @@
 	<body>
 	   <!-- container -->
         <div class="container">
-            <form class="form-signin" name="frmLogin" id="frmLogin" action="<c:url value='/j_spring_security_check' />">
+            <form class="form-signin" name="frmLogin" id="frmLogin" method="POST" action="<c:url value='/j_spring_security_check' />">
                 <h4 class="form-signin-heading"><spring:message code="myhub.label.signin"/></h4>
                 <input type="text" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>

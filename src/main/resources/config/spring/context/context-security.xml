@@ -58,9 +58,11 @@
         <security:intercept-url pattern="/user/**" access="permitAll" />
         
         <security:form-login
+            username-parameter="email"
+            password-parameter="password"
             login-processing-url="/j_spring_security_check"
             login-page="/login"
-            default-target-url="/login/loginSuccess"
+            default-target-url="/loginSuccess"
             authentication-failure-url="/loginFailed"
         />
         <security:logout
@@ -87,8 +89,10 @@
             <security:jdbc-user-service
                 id="userDetailsService"
                 data-source-ref="dataSource"
-                users-by-username-query="select login_id, password, '1' as enabled from users where login_id = ?"
-                authorities-by-username-query="select login_id, case when priv = 0 then 'ROLE_ADMIN' when priv = 1 then 'ROLE_MANAGER' when priv = 2 then 'ROLE_USER' end as authority from users where login_id = ?"
+                users-by-username-query="select email, password, '1' as enabled from user where email = ?"
+                authorities-by-username-query="select email, case when priv = 0 then 'ROLE_ADMIN' when priv = 1 then 'ROLE_MANAGER' when priv = 2 then 'ROLE_USER' end as authority 
+                                                from user
+                                                where email = ?"
             />
         </security:authentication-provider>
     </security:authentication-manager>

@@ -81,7 +81,7 @@ public class UserValidator extends MyHubValidator implements Validator {
                  * 모든정책은  상수(Enum)에 정의를 하고  정책을 관리하는 부분을 admin으로 만들어서 관리한다.
                  */
                 
-                // ============================================================================================
+                /*// ============================================================================================
                 // 1) NotMatchUsername(암호는 사용자 계정과 일치해서는 안된다.)
                 // ============================================================================================
                 if (user.getUserId().equals(user.getPassword())) {
@@ -135,7 +135,7 @@ public class UserValidator extends MyHubValidator implements Validator {
                 
                 if (user.getPassword().length() < minimumPasswordLength) {
                     MyHubValidator.rejectValue(errors, "password", "myhub.label.user.passwordMinimumPasswordLength", new String[] {String.valueOf(minimumPasswordLength)});
-                }
+                }*/
             }    
         }
     }
