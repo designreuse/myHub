@@ -58,6 +58,7 @@
                 data: {
                     init: function() {
                         this.getCookie();
+                        this.loginResult();
                     },
                     
                     // 저장된 쿠키 가져오기
@@ -79,6 +80,12 @@
                         } else {
                             commonObj.data.cookie.del('email', email, -1);  // 쿠키 삭제
                         }
+                    },
+                    
+                    loginResult: function() {
+                    	if ('FAIL' === '${status}') {
+                    		alert('로그인이 실패하였습니다.');
+                    	}
                     }
                 },
                 

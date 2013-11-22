@@ -3,16 +3,23 @@ package kr.co.myhub.app.common.login.controller;
 import java.security.Principal;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.StatusEnum;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.FlashMap;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * 
@@ -42,6 +49,12 @@ public class LoginController {
     MessageSourceAccessor messageSourceAccessor;
     
     /**
+     *  Service DI
+     */
+    @Autowired
+    UserService userService;
+    
+    /**
      * 로그인 화면
      * @param model
      * @param locale
@@ -58,6 +71,18 @@ public class LoginController {
     }
     
     /**
+     * 메인
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/main", method = RequestMethod.GET)
+    public String main(Model model) throws Exception {
+        
+        return "/common/main";         
+    }
+    
+    /**
      * 로그인 성공
      * @param modelMap
      * @param principal
@@ -66,10 +91,31 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
-    public String loginSuccess(ModelMap modelMap, Principal principal, HttpSession session, Locale locale) {
-        logger.debug("Login Success!!!");
+    public String loginSuccess(Model model, Principal principal, HttpSession session, Locale locale) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Login Success!!!");    
+        }
         
-        return "/common/main";
+        String email = principal.getName();
+        
+        try {
+            // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책)
+            
+            // TODO: 로그인 상태 처리 추가
+            
+            User user = userService.findByEmail(email);
+            
+            // session save
+            session.setAttribute("sUser", user);
+            
+            // TODO: 로그인 이력 처리 추가
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.invalidate();
+        }
+        
+        return "redirect:/main";
     }
     
     /**
@@ -80,10 +126,22 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/loginFailed", method = RequestMethod.GET)
-    public String loginFailed(ModelMap modelMap, HttpSession session, Locale locale) {
-        logger.debug("Login Fail!!!");
+    public String loginFailed(Model model, 
+            HttpSession session,
+            RedirectAttributes redirectAttr,
+            HttpServletRequest request) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Login Fail!!!");    
+        }
         
-        return "/common/login/login";
+        // 세션값에 저장
+        //redirectAttr.addAttribute("status", StatusEnum.FAIL);
+        
+        // FlashMap에 전달할 값을 저장한다.
+        FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
+        fm.put("status", StatusEnum.FAIL);
+        
+        return "redirect:/login";
     }
     
     /**
@@ -92,10 +150,9 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/timeout", method = RequestMethod.GET)
-    public String timeout(ModelMap modelMap) {
+    public String timeout(Model model) {
         
         return "/common/login/timeout";
-        
     }
 
 
