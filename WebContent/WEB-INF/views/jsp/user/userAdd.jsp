@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/views/common/include/taglibs.jsp" %>
+<%@ include file="/WEB-INF/views/jsp/common/include/taglibs.jsp" %>
 
 <%@ page pageEncoding="utf-8" contentType="text/html;charset=utf-8"%>
 
@@ -177,7 +177,7 @@
                         
                     	// ajax call
                     	var pars = $('#frmCreate').serialize();
-                    	var url = '/user/userSave';
+                    	var url = '/user/userCreate';
                     	
                         commonObj.data.ajax(url, {pars: pars, async: true, 
                             onsucc: function(res) {

@@ -1,5 +1,6 @@
 package kr.co.myhub.app.user.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import kr.co.myhub.app.user.domain.User;
@@ -8,18 +9,23 @@ import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
+import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.util.EncryptionUtil;
+import kr.co.myhub.appframework.vo.ApiResponse;
 import kr.co.myhub.appframework.vo.ApiResult;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
-    private static Logger logger = Logger.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     /**
      * messageSource DI
@@ -64,10 +70,10 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/userCreate", method = RequestMethod.GET)
+    @RequestMapping(value = "/userAdd", method = RequestMethod.GET)
     public String userCreate(Model model) throws Exception {
         
-        return "/user/userCreate";         
+        return "/user/userAdd";         
     }
     
     /**
@@ -80,6 +86,30 @@ public class UserController {
     public String userSearch(Model model) throws Exception {
         
         return "/user/userSearch";         
+    }
+    
+    /**
+     * 유저 정보 화면
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
+    public String userInfo(Model model) throws Exception {
+        
+        return "/user/userInfo";         
+    }
+    
+    /**
+     * 유저 수정 화면
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userEdit", method = RequestMethod.GET)
+    public String userEdit(Model model) throws Exception {
+        
+        return "/user/userEdit";         
     }
     
     // ===================================================================================
@@ -118,9 +148,9 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/userSave", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/userCreate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult userSave(Model model, 
+    public ApiResult userCreate(Model model, 
             @ModelAttribute User user,
             BindingResult bindResult,
             Locale locole) {
@@ -152,13 +182,20 @@ public class UserController {
             String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
             user.setPassword(encryptPassword);
             
+            // priv
+            if (user.getUserId().equals("admin")) {
+                user.setPriv(UserPrivEnum.SuperUser.getCode());
+            } else {
+                user.setPriv(UserPrivEnum.Operators.getCode());
+            }
+            
             User retUser = userService.create(user);
             
             // result
-            if (retUser == null) {
-                result.setStatus(StatusEnum.FAIL);    
-            } else {
+            if (retUser != null) {
                 result.setStatus(StatusEnum.SUCCESS);
+            } else {
+                result.setStatus(StatusEnum.FAIL);    
             }
             
         } catch (Exception e) {
@@ -171,6 +208,98 @@ public class UserController {
         
         return result;
     }
+  
+    /**
+     * 유저정보 조회 
+     * @param model
+     * @param userKey
+     * @return
+     */
+    @RequestMapping(value = "/getUserByUserKey/{userKey}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ApiResult getUserByUserKey(Model model, @PathVariable("userKey") int userKey) {
+        ApiResult result = new ApiResult();
+        User retuser = null;
+        
+        try {
+            retuser = userService.findByUserKey(userKey);
+            
+            result.setStatus(StatusEnum.SUCCESS);
+            result.setData(retuser);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            // Exception result
+            result.setStatus(StatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 유저목록
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/getUserList", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ApiResult getUserList(Model model) {
+        ApiResult result = new ApiResult();
+        List<User> list = null;
+        
+        try {
+            list = userService.findAllUser();
+            
+            result.setStatus(StatusEnum.SUCCESS);
+            result.setData(list);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            // Exception result
+            result.setStatus(StatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 유저목록
+     * @param modelMap
+     * @return JSON/XML 데이터 반환
+     */
+    @RequestMapping(value = "/getUserListToXmlToJson", method = RequestMethod.GET)
+    public String getUserListToXmlToJson(ModelMap modelMap) {
+        ApiResponse response = new ApiResponse();
+        List<User> list = null;
+        
+        try {
+            list = userService.findAllUser();
+            
+            response.setStatus(StatusEnum.SUCCESS);
+            response.setList(list);
+            
+            modelMap.addAttribute("result", response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            // Exception result
+            response.setStatus(StatusEnum.FAIL);
+            response.setMessage(e.getMessage());
+            
+            modelMap.addAttribute("result", response);
+        }
+        
+        return null;
+    }
+    
+    
+    
+    
     
     
 

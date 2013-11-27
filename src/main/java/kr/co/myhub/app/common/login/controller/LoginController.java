@@ -6,11 +6,13 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import kr.co.myhub.app.user.controller.UserController;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.StatusEnum;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
@@ -29,7 +31,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * content: 로그인 관련 컨트롤러(스프링 시큐리티 핸들러 처리) 
  * 
  * http://www.java-school.net/spring/spring-security.php
- * http://blog.naver.com/PostView.nhn?blogId=belldie&logNo=30157181107
  * http://blog.naver.com/alucard99?Redirect=Log&logNo=192570650
  * 
  * 수정내용
@@ -40,7 +41,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class LoginController {
-    private static Logger logger = Logger.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     
     /**
      * messageSource DI
@@ -63,8 +64,8 @@ public class LoginController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, Locale locale) throws Exception {
-        if (logger.isInfoEnabled()) {
-            logger.debug(" =====> Local : " + locale);
+        if (log.isInfoEnabled()) {
+            log.debug(" =====> Local : " + locale);
         }
         
         return "/common/login/login";         
@@ -92,8 +93,8 @@ public class LoginController {
      */
     @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
     public String loginSuccess(Model model, Principal principal, HttpSession session, Locale locale) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Login Success!!!");    
+        if (log.isDebugEnabled()) {
+            log.debug("Login Success!!!");    
         }
         
         String email = principal.getName();
@@ -129,9 +130,10 @@ public class LoginController {
     public String loginFailed(Model model, 
             HttpSession session,
             RedirectAttributes redirectAttr,
-            HttpServletRequest request) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Login Fail!!!");    
+            HttpServletRequest request,
+            Locale locale) {
+        if (log.isDebugEnabled()) {
+            log.debug("Login Fail!!!");    
         }
         
         // 세션값에 저장
@@ -140,6 +142,7 @@ public class LoginController {
         // FlashMap에 전달할 값을 저장한다.
         FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
         fm.put("status", StatusEnum.FAIL);
+        fm.put("message", messageSourceAccessor.getMessage("myhub.error.login.fail", locale));
         
         return "redirect:/login";
     }

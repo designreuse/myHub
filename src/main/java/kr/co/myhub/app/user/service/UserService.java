@@ -1,5 +1,7 @@
 package kr.co.myhub.app.user.service;
 
+import java.util.List;
+
 import kr.co.myhub.app.user.domain.User;
 
 /**
@@ -25,12 +27,43 @@ public interface UserService {
     public User create(User user) throws Exception;
     
     /**
-     * E-mail로 유저정보 조회
+     * E-mail로 유저 정보 조회
      * @param email
      * @return
      * @throws Exception
      */
     public User findByEmail(String email) throws Exception;
+    
+    /**
+     * 유저 정보 조회
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public User findByUserKey(int userKey) throws Exception;
+    
+    /**
+     * 유저 목록
+     * @return
+     * @throws Exception
+     */
+    public List<User> findAllUser() throws Exception;
+    
+    /**
+     * 유저 수정
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    public User update(User user) throws Exception;
+    
+    /**
+     * 유저 삭제
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    public void delete(User user) throws Exception;
     
     
 }

@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/views/common/include/taglibs.jsp" %>
+<%@ include file="/WEB-INF/views/jsp/common/include/taglibs.jsp" %>
 
 <%@ page pageEncoding="utf-8" contentType="text/html;charset=utf-8"%>
 
@@ -84,7 +84,7 @@
                     
                     loginResult: function() {
                     	if ('FAIL' === '${status}') {
-                    		alert('로그인이 실패하였습니다.');
+                    		alert('${message}');
                     	}
                     }
                 },
@@ -123,7 +123,7 @@
                 <label>
                     <a href="<c:url value='/user/userSearch' />"><spring:message code="myhub.label.forgot.password"/></a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="<c:url value='/user/userCreate' />"><spring:message code="myhub.label.signup"/></a>
+                    <a href="<c:url value='/user/userAdd' />"><spring:message code="myhub.label.signup"/></a>
                 </label>
                 <button class="btn btn-lg btn-primary btn-block" type="submit"><spring:message code="myhub.label.login"/></button>
             </form>

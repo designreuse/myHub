@@ -1,5 +1,7 @@
 package kr.co.myhub.app.user.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import kr.co.myhub.app.user.domain.User;
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * E-mail로 유저정보 조회
+     * E-mail로 유저 정보 조회
      * @param email
      * @return
      * @throws Exception
@@ -48,7 +50,43 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) throws Exception {
         return userRepasitory.findByEmail(email);
     }
-    
-    
 
+    /**
+     * 유저 정보 조회
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public User findByUserKey(int userKey) throws Exception {
+        return userRepasitory.findByUserKey(userKey);
+    }
+
+    /**
+     * 유저 목록
+     * @return
+     * @throws Exception
+     */
+    public List<User> findAllUser() throws Exception {
+        return userRepasitory.findAll();
+    }
+
+    /**
+     * 유저 수정
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    public User update(User user) throws Exception {
+        return userRepasitory.saveAndFlush(user);
+    }
+
+    /**
+     * 유저 삭제
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    public void delete(User user) throws Exception {
+        userRepasitory.delete(user);
+    }
 }

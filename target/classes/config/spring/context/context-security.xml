@@ -51,12 +51,18 @@
     <beans:bean id="secureChannelProcessor" class="org.springframework.security.web.access.channel.SecureChannelProcessor"/>
     <beans:bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor"/>
    
+    <!-- ============================================================================================ -->
+    <!-- 보안  HTTP url 인증처리  -->
+    <!-- ============================================================================================ -->
     <security:http use-expressions="true" auto-config="true"
         access-denied-page="/accessDenied"
         disable-url-rewriting="true">
+        
+        <!-- Authorization(권한정보) -->
         <security:intercept-url pattern="/login" access="permitAll" />
         <security:intercept-url pattern="/user/**" access="permitAll" />
         
+        <!-- Login -->        
         <security:form-login
             username-parameter="email"
             password-parameter="password"
@@ -65,6 +71,8 @@
             default-target-url="/loginSuccess"
             authentication-failure-url="/loginFailed"
         />
+        
+        <!-- Logout -->
         <security:logout
             invalidate-session="true"
             logout-url="/j_spring_security_logout"
@@ -82,10 +90,19 @@
         </security:port-mappings>
     </security:http>
     
-    <!-- http://blog.naver.com/alucard99?Redirect=Log&logNo=192570650 -->
+    <!-- ============================================================================================ -->
+    <!-- 인증 DB쿼리 인증 , 추가적으로 인메모리 인증, properties 사용한 인증이 있으나 잘 사용하지 않음 --> 
+    <!-- ============================================================================================ -->
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider>
             <security:password-encoder hash="sha-256"></security:password-encoder>
+            
+            <!-- 인메모리 인증
+            <security:user-service>
+                <security:user name="kbtapjm" password="92c7d71b95dc6540fc58e891dbe649fe72ae5e93b5f42fd7fbdeefe6cef3e51d" authorities="kbtapjm"/>
+            </security:user-service>
+             -->
+            
             <security:jdbc-user-service
                 id="userDetailsService"
                 data-source-ref="dataSource"
@@ -97,6 +114,9 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
+    <!-- ============================================================================================ -->
+    <!-- Bean scan  -->
+    <!-- ============================================================================================ -->
     <context:component-scan base-package="kr.co.myhub" />
 
 </beans:beans>
