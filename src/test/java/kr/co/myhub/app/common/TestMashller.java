@@ -62,7 +62,7 @@ public class TestMashller extends TestConfig {
         ApiResponse response = new ApiResponse();
         response.setMessage("list");
         response.setStatus(StatusEnum.SUCCESS);
-        response.setData(list);
+        response.setList(list);
         
         JAXBContext jaxbContext = JAXBContext.newInstance(ApiResponse.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

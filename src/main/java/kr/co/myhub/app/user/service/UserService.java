@@ -40,7 +40,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public User findByUserKey(int userKey) throws Exception;
+    public User findByUserKey(Long userKey) throws Exception;
     
     /**
      * 유저 목록

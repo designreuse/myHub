@@ -16,6 +16,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+/**
+ * 
+ * file   : User.java
+ * date   : 2013. 11. 28.
+ * author : jmpark
+ * content: 유저 도메인 
+ * 수정내용
+ * ----------------------------------------------
+ * 수정일                   수정자                  수정내용
+ * ----------------------------------------------
+ * 2013. 11. 28.   kbtapjm     최초생성
+ */
 @Entity
 @Table(name = "user")
 @XmlRootElement
@@ -26,7 +38,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userkey", nullable = false)
-    private int userKey;
+    private Long userKey;
     
     @Column(name = "userid", nullable = false, length = 50)
     private String userId;
@@ -67,12 +79,12 @@ public class User implements Serializable {
         this.crtDt = new Date();
         this.modDt = new Date();
     }
-
-    public int getUserKey() {
+    
+    public Long getUserKey() {
         return userKey;
     }
 
-    public void setUserKey(int userKey) {
+    public void setUserKey(Long userKey) {
         this.userKey = userKey;
     }
 

@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
      * @return
      * @throws Exception
      */
-    public User findByUserKey(int userKey) throws Exception {
+    public User findByUserKey(Long userKey) throws Exception {
         return userRepasitory.findByUserKey(userKey);
     }
 

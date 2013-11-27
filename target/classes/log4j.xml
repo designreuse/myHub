@@ -37,8 +37,8 @@
     </logger>
     
     <!-- Application Loggers --> 
-    <category name="com.sycros" additivity="false">
-        <level value="info" />
+    <category name="kr.co.myhub" additivity="false">
+        <level value="debug" />
         <appender-ref ref="console" />
         <!-- <appender-ref ref="file" />  -->
     </category>

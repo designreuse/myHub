@@ -25,7 +25,7 @@ public interface UserRepasitory extends JpaRepository<User, Long> {
      * @param userKey
      * @return
      */
-    public User findByUserKey(int userKey);
+    public User findByUserKey(Long userKey);
     
     /**
      * E-mail로 유저정보 조회
