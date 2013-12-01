@@ -133,7 +133,9 @@ public class LoginController {
             HttpServletRequest request,
             Locale locale) {
         if (log.isDebugEnabled()) {
+            log.debug("=========================================================");
             log.debug("Login Fail!!!");    
+            log.debug("=========================================================");
         }
         
         // 세션값에 저장

@@ -8,7 +8,6 @@ import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
 import kr.co.myhub.app.user.service.UserService;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
