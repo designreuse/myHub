@@ -50,6 +50,13 @@ public interface UserService {
     public List<User> findAllUser() throws Exception;
     
     /**
+     * 유저 카운트
+     * @return
+     * @throws Exception
+     */
+    public Long findAllCount() throws Exception;
+    
+    /**
      * 유저 수정
      * @param user
      * @return

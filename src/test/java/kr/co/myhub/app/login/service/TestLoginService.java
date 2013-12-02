@@ -12,6 +12,7 @@ import kr.co.myhub.app.common.TestConfig;
 import kr.co.myhub.app.common.login.domain.LoginLog;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.login.repasitory.TestLoginRepasitory;
+import kr.co.myhub.app.user.domain.User;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -64,11 +65,16 @@ public class TestLoginService extends TestConfig {
      * @throws Exception 
      */
     @Test
-    @Ignore
     public void create() throws Exception {
-        loginLog.setEmail("kbtapjm@gmail.com");
+        loginLog.setEmail("tapjm@naver.com");
         loginLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
-        loginLog.setLoginDate(new Date());  
+        loginLog.setLoginDate(new Date());
+        
+        // 유저정보
+        User user = new User();
+        user.setUserKey((long) 2);
+        
+        loginLog.setUser(user);
         
         LoginLog result = loginService.create(loginLog);
         
@@ -102,8 +108,8 @@ public class TestLoginService extends TestConfig {
  
         assertNotNull(list);
         
-        int page = 2;   // 페이지
-        int size = 10;   // 목록 카운트
+        int page = 1;   // 페이지
+        int size = 10;  // 목록 카운트
         
         PageRequest pageRequest = new PageRequest(page - 1, size, Sort.Direction.DESC, "loginDate");
         
@@ -126,6 +132,9 @@ public class TestLoginService extends TestConfig {
             LoginLog vo = iter.next();
             
             log.debug("loginKey : " + vo.getLoginLogKey());
+            
+            // many to one User
+            log.debug("getEmail : " + vo.getUser().getEmail());
         }
         log.debug(" ======================================================================== ");
         

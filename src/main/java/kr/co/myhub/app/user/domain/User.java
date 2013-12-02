@@ -2,17 +2,24 @@ package kr.co.myhub.app.user.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import kr.co.myhub.app.common.login.domain.LoginLog;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -70,6 +77,12 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date modDt;
+    
+    /**
+     * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="user")
+    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
     
     /**
      * default 날짜 설정
@@ -158,5 +171,13 @@ public class User implements Serializable {
 
     public void setModDt(Date modDt) {
         this.modDt = modDt;
+    }
+
+    public Set<LoginLog> getLoginLog() {
+        return loginLog;
+    }
+
+    public void setLoginLog(Set<LoginLog> loginLog) {
+        this.loginLog = loginLog;
     }
 }

@@ -70,6 +70,15 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 유저 카운트
+     * @return
+     * @throws Exception
+     */
+    public Long findAllCount() throws Exception {
+        return userRepasitory.count();
+    }
+
+    /**
      * 유저 수정
      * @param user
      * @return

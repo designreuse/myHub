@@ -1,20 +1,22 @@
 package kr.co.myhub.app.user.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
 import kr.co.myhub.app.common.TestConfig;
 import kr.co.myhub.app.user.domain.User;
-import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.appframework.util.EncryptionUtil;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 /**
  * 
@@ -30,7 +32,7 @@ import org.springframework.validation.FieldError;
  */
 public class TestUserService extends TestConfig {
     
-    private static Logger logger = Logger.getLogger(TestUserService.class);
+    private static final Logger log = LoggerFactory.getLogger(TestUserService.class);
 
     @Autowired
     UserService userService;
@@ -40,16 +42,16 @@ public class TestUserService extends TestConfig {
     
     @BeforeClass
     public static void start() {
-        System.out.println(" =============================================== ");
-        System.out.println(" Test Start ");
-        System.out.println(" =============================================== ");
+        log.debug(" =============================================== ");
+        log.debug(" Test Start ");
+        log.debug(" =============================================== ");
     }
     
     @Before // 해당 클래스, 객체 인스턴스 초기화
     public void setup() {
         user = new User();
         
-        System.out.println("Test init");
+        log.debug("Test init");
     }
     
     /**
@@ -71,6 +73,71 @@ public class TestUserService extends TestConfig {
         assertNotNull(retUser);
     }
     
+    /**
+     * 유저 정보 조회
+     * @throws Exception
+     */
+    @Test
+    public void findOne() throws Exception {
+        User retUser = userService.findByUserKey((long) 1);
+        
+        log.debug(" =============================================== ");
+        log.debug("LoginLog : {}", retUser.getLoginLog().size());
+        log.debug(" =============================================== ");
+        
+        assertNotNull(retUser);
+    }
+    
+    /**
+     * 유저 목록 카운트
+     * @throws Exception
+     */
+    @Test
+    public void findAll() throws Exception {
+        // 전체 목록
+        List<User> list = userService.findAllUser();        
+        // 총 카운트
+        Long count = userService.findAllCount();
+        
+        log.debug(" =============================================== ");
+        log.debug("findAll : {}", count);
+        log.debug(" =============================================== ");
+        
+        assertEquals(count.intValue(), list.size()); 
+    }
+    
+    /**
+     * 유저 수정
+     * @throws Exception
+     */
+    @Test
+    public void update() throws Exception {
+        user.setUserKey((long) 2);
+        user.setUserId("tapjm");
+        user.setEmail("tapjm@gmail.com");
+        user.setPassword(EncryptionUtil.getEncryptPassword("111222"));
+        user.setUserName("수정 테스트");
+        user.setBirthday("19820509");
+        user.setGender("0");
+        user.setPriv(1);
+                
+        User retUser = userService.create(user);
+        
+        assertNotNull(retUser);
+    }
+    
+    /**
+     * 유저 삭제
+     * @throws Exception
+     */
+    @Test
+    public void delete() throws Exception {
+        user.setUserKey((long) 1);
+        
+        userService.delete(user);
+    }
+    
+    
     @After
     public void after() {
         
@@ -78,9 +145,9 @@ public class TestUserService extends TestConfig {
     
     @AfterClass
     public static void end() {
-        logger.debug(" =============================================== ");
-        logger.debug(" Test End ");
-        logger.debug(" =============================================== ");
+        log.debug(" =============================================== ");
+        log.debug(" Test End ");
+        log.debug(" =============================================== ");
     }
     
 }
