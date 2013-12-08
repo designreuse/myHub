@@ -72,7 +72,7 @@ public class TestLoginService extends TestConfig {
         
         // 유저정보
         User user = new User();
-        user.setUserKey((long) 2);
+        user.setUserKey((long) 5);
         
         loginLog.setUser(user);
         
@@ -87,7 +87,7 @@ public class TestLoginService extends TestConfig {
      */
     @Test
     public void findOne() throws Exception {
-        Long loginLogKey = (long) 1;
+        Long loginLogKey = (long) 11;
         
         LoginLog result = loginService.findByLoginLogKey(loginLogKey);
         
@@ -160,7 +160,7 @@ public class TestLoginService extends TestConfig {
         
         assertNotNull(result);*/
         
-        int ret = loginService.setLogoutDateFor(new Date(), (long) 1);
+        int ret = loginService.setLogoutDateFor(new Date(), (long) 11);
         log.debug(" ===========> update : " + ret);
         
         assertEquals(1, ret);
@@ -173,7 +173,7 @@ public class TestLoginService extends TestConfig {
     @Test
     @Ignore
     public void delete() throws Exception {
-        loginLog.setLoginLogKey((long) 7);
+        loginLog.setLoginLogKey((long) 11);
         
         loginService.delete(loginLog);
     }

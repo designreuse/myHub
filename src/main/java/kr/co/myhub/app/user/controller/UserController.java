@@ -199,6 +199,8 @@ public class UserController {
                 result.setStatus(StatusEnum.FAIL);    
             }
             
+            // TODO: 유저등록(회원가입) 후 이메일 전송 기능 추가
+            
         } catch (Exception e) {
             e.printStackTrace();
         

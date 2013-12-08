@@ -1,11 +1,15 @@
 package kr.co.myhub.app.common.login.controller;
 
+import java.net.InetAddress;
 import java.security.Principal;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.StatusEnum;
@@ -49,10 +53,16 @@ public class LoginController {
     MessageSourceAccessor messageSourceAccessor;
     
     /**
-     *  Service DI
+     *  userService DI
      */
     @Autowired
     UserService userService;
+    
+    /**
+     *  loginService DI
+     */
+    @Autowired
+    LoginService loginService;
     
     /**
      * 로그인 화면
@@ -93,7 +103,9 @@ public class LoginController {
     @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
     public String loginSuccess(Model model, Principal principal, HttpSession session, Locale locale) {
         if (log.isDebugEnabled()) {
-            log.debug("Login Success!!!");    
+            log.debug("=========================================================");
+            log.debug("Login Success!!!");
+            log.debug("=========================================================");
         }
         
         String email = principal.getName();
@@ -103,12 +115,18 @@ public class LoginController {
             
             // TODO: 로그인 상태 처리 추가
             
+            /* 로그인 정보 세션에 저장 */
             User user = userService.findByEmail(email);
-            
-            // session save
             session.setAttribute("sUser", user);
             
-            // TODO: 로그인 이력 처리 추가
+            /* 로그인 이력 추가 */
+            LoginLog loginLog = new LoginLog();
+            loginLog.setEmail(user.getEmail());
+            loginLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+            loginLog.setLoginDate(new Date());
+            loginLog.setUser(user);
+            
+            loginService.create(loginLog);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,6 +154,8 @@ public class LoginController {
             log.debug("Login Fail!!!");    
             log.debug("=========================================================");
         }
+        
+        // TODO: 로그인 실패시 실패 카운트를 업데이트 한다.
         
         // 세션값에 저장
         //redirectAttr.addAttribute("status", StatusEnum.FAIL);

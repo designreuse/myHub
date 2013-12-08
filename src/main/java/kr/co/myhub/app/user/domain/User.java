@@ -78,6 +78,26 @@ public class User implements Serializable {
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date modDt;
     
+    /* 비밀번호 수정일 */
+    @Column(name = "passwordModDt", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
+    private Date passwordModDt;
+    
+    /* 마지막 비밀번호 */
+    @Column(name = "lastPassword", nullable = false, length = 100)
+    private String lastPassword;
+    
+    /* 로그인 실패 카운트 */
+    @Column(name = "loginFailCount", nullable = false)
+    private int loginFailCount;
+    
+    /* 로그인 실패일자 */
+    @Column(name = "loginFailDt", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
+    private Date loginFailDt;
+    
     /**
      * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
@@ -171,6 +191,38 @@ public class User implements Serializable {
 
     public void setModDt(Date modDt) {
         this.modDt = modDt;
+    }
+
+    public Date getPasswordModDt() {
+        return passwordModDt;
+    }
+
+    public void setPasswordModDt(Date passwordModDt) {
+        this.passwordModDt = passwordModDt;
+    }
+
+    public String getLastPassword() {
+        return lastPassword;
+    }
+
+    public void setLastPassword(String lastPassword) {
+        this.lastPassword = lastPassword;
+    }
+
+    public int getLoginFailCount() {
+        return loginFailCount;
+    }
+
+    public void setLoginFailCount(int loginFailCount) {
+        this.loginFailCount = loginFailCount;
+    }
+
+    public Date getLoginFailDt() {
+        return loginFailDt;
+    }
+
+    public void setLoginFailDt(Date loginFailDt) {
+        this.loginFailDt = loginFailDt;
     }
 
     public Set<LoginLog> getLoginLog() {
