@@ -12,8 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -65,10 +68,7 @@ public class User implements Serializable {
     @Column(name = "gender", nullable = false)
     private String gender;
     
-    @Column(name = "priv", nullable = false)
-    private int priv;
-    
-    @Column(name = "crtdt", nullable = true, insertable = true, updatable = false)
+    @Column(name = "crtDt", nullable = true, insertable = true, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date crtDt;
@@ -101,18 +101,40 @@ public class User implements Serializable {
     /**
      * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Set<LoginLog> loginLog = new HashSet<LoginLog>();
     
     /**
-     * default 날짜 설정
+     * 유저권한관의 1:1 관계 정보 로딩
+     * optional false: 결코 Null일 수 없다는 뜻
+     * 
      */
-    @PrePersist
-    public void prePersist() {
-        this.crtDt = new Date();
-        this.modDt = new Date();
-    }
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, mappedBy = "user")
+    @PrimaryKeyJoinColumn
+    private UserAuth userAuth;
     
+    public User() {}
+    
+    public User(String userId, String email, String password, String userName,
+            String birthday, String gender, Date crtDt, Date modDt,
+            Date passwordModDt, String lastPassword, int loginFailCount,
+            Date loginFailDt, Set<LoginLog> loginLog, UserAuth userAuth) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.crtDt = crtDt;
+        this.modDt = modDt;
+        this.passwordModDt = passwordModDt;
+        this.lastPassword = lastPassword;
+        this.loginFailCount = loginFailCount;
+        this.loginFailDt = loginFailDt;
+        this.loginLog = loginLog;
+        this.userAuth = userAuth;
+    }
+
     public Long getUserKey() {
         return userKey;
     }
@@ -169,14 +191,6 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public int getPriv() {
-        return priv;
-    }
-
-    public void setPriv(int priv) {
-        this.priv = priv;
-    }
-
     public Date getCrtDt() {
         return crtDt;
     }
@@ -231,5 +245,23 @@ public class User implements Serializable {
 
     public void setLoginLog(Set<LoginLog> loginLog) {
         this.loginLog = loginLog;
+    }
+
+    public UserAuth getUserAuth() {
+        return userAuth;
+    }
+
+    public void setUserAuth(UserAuth userAuth) {
+        this.userAuth = userAuth;
+        this.userAuth.setUser(this);
+    }
+    
+    /**
+     * default 날짜 설정
+     */
+    @PrePersist
+    public void prePersist() {
+        this.crtDt = new Date();
+        this.modDt = new Date();
     }
 }

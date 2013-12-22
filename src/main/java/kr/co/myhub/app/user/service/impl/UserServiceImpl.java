@@ -5,9 +5,14 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.app.user.domain.UserAuth;
+import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.UserPrivEnum;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("UserService")
 public class UserServiceImpl implements UserService {
     
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+    
     @Resource
     UserRepasitory userRepasitory;
+    
+    @Resource
+    UserAuthRepasitory userAuthRepasitory;
 
     /**
      * 유저 등록
@@ -37,7 +47,32 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional(readOnly = true)
     public User create(User user) throws Exception {
-        return userRepasitory.save(user);
+        
+        log.debug("======================================================");
+        
+        UserAuth userAuth = new UserAuth();
+        userAuth.setEmail(user.getEmail());
+        
+        // 권한 설정
+        if (user.getUserId().equals("admin")) {
+            userAuth.setPriv(UserPrivEnum.SuperUser.getCode());
+        } else {
+            userAuth.setPriv(UserPrivEnum.Operators.getCode());
+        }
+        
+        log.debug("getUserId : " + user.getUserId());
+        
+        // 1:1 관계에서의 객체 세팅
+        userAuth.setUser(user);
+        user.setUserAuth(userAuth);
+        
+        // 유저 등록, 권한 등록
+        User retUser = userRepasitory.save(user);
+        log.debug("retUser : " + retUser);
+        
+        log.debug("======================================================");
+        
+        return retUser;
     }
 
     /**

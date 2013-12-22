@@ -66,7 +66,6 @@ public class TestUserService extends TestConfig {
         user.setUserName("검은몽스");
         user.setBirthday("19820509");
         user.setGender("0");
-        user.setPriv(1);
                 
         User retUser = userService.create(user);
         
@@ -119,7 +118,6 @@ public class TestUserService extends TestConfig {
         user.setUserName("수정 테스트");
         user.setBirthday("19820509");
         user.setGender("0");
-        user.setPriv(1);
                 
         User retUser = userService.create(user);
         

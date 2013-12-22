@@ -85,7 +85,6 @@ public class TestUserRepasitory extends TestConfig {
         user.setUserName("검은몽스");
         user.setBirthday("19820509");
         user.setGender("0");
-        user.setPriv(1);
         
         User retUser = userRepository.save(user) ;
         
@@ -117,7 +116,6 @@ public class TestUserRepasitory extends TestConfig {
         user.setUserName("박재명");
         user.setBirthday("19000000");
         user.setGender("2");
-        user.setPriv(2);
         
         // 등록
         User crtUser = userRepository.save(user) ;
@@ -139,7 +137,6 @@ public class TestUserRepasitory extends TestConfig {
         user.setUserName("홍길동");
         user.setBirthday("19000000");
         user.setGender("2");
-        user.setPriv(2);
         
         // 등록
         User crtUser = userRepository.saveAndFlush(user);

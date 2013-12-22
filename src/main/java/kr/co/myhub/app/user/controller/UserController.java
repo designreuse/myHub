@@ -183,12 +183,8 @@ public class UserController {
             String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
             user.setPassword(encryptPassword);
             
-            // priv
-            if (user.getUserId().equals("admin")) {
-                user.setPriv(UserPrivEnum.SuperUser.getCode());
-            } else {
-                user.setPriv(UserPrivEnum.Operators.getCode());
-            }
+            // 마지막 패스워드 값 설정
+            user.setLastPassword(encryptPassword);
             
             User retUser = userService.create(user);
             
