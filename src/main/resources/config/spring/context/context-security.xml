@@ -82,6 +82,9 @@
         <security:session-management
             session-fixation-protection="none"
             invalid-session-url="/login" >
+            
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+            
         </security:session-management>
 
         <security:port-mappings>
@@ -108,7 +111,7 @@
                 data-source-ref="dataSource"
                 users-by-username-query="select email, password, '1' as enabled from user where email = ?"
                 authorities-by-username-query="select email, case when priv = 0 then 'ROLE_ADMIN' when priv = 1 then 'ROLE_MANAGER' when priv = 2 then 'ROLE_USER' end as authority 
-                                                from user
+                                                from userauth
                                                 where email = ?"
             />
         </security:authentication-provider>

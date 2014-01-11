@@ -105,36 +105,20 @@ public class User implements Serializable {
     private Set<LoginLog> loginLog = new HashSet<LoginLog>();
     
     /**
+     * UserAuth와 1:N
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private Set<UserAuth> userAuth = new HashSet<UserAuth>();
+    
+    /**
      * 유저권한관의 1:1 관계 정보 로딩
      * optional false: 결코 Null일 수 없다는 뜻
      * 
      */
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, mappedBy = "user")
-    @PrimaryKeyJoinColumn
-    private UserAuth userAuth;
-    
-    public User() {}
-    
-    public User(String userId, String email, String password, String userName,
-            String birthday, String gender, Date crtDt, Date modDt,
-            Date passwordModDt, String lastPassword, int loginFailCount,
-            Date loginFailDt, Set<LoginLog> loginLog, UserAuth userAuth) {
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
-        this.userName = userName;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.crtDt = crtDt;
-        this.modDt = modDt;
-        this.passwordModDt = passwordModDt;
-        this.lastPassword = lastPassword;
-        this.loginFailCount = loginFailCount;
-        this.loginFailDt = loginFailDt;
-        this.loginLog = loginLog;
-        this.userAuth = userAuth;
-    }
-
+//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, mappedBy = "user")
+//    @PrimaryKeyJoinColumn
+//    private UserAuth userAuth;
+   
     public Long getUserKey() {
         return userKey;
     }
@@ -247,13 +231,21 @@ public class User implements Serializable {
         this.loginLog = loginLog;
     }
 
-    public UserAuth getUserAuth() {
+//    public UserAuth getUserAuth() {
+//        return userAuth;
+//    }
+//
+//    public void setUserAuth(UserAuth userAuth) {
+//        this.userAuth = userAuth;
+//        this.userAuth.setUser(this);
+//    }
+
+    public Set<UserAuth> getUserAuth() {
         return userAuth;
     }
 
-    public void setUserAuth(UserAuth userAuth) {
+    public void setUserAuth(Set<UserAuth> userAuth) {
         this.userAuth = userAuth;
-        this.userAuth.setUser(this);
     }
     
     /**

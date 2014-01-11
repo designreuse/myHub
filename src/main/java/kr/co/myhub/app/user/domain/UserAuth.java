@@ -7,7 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -39,10 +42,15 @@ public class UserAuth implements Serializable {
 
     private static final long serialVersionUID = 1150248750560957540L;
     
+//    @Id
+//    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
+//    @GeneratedValue(generator = "generator")
+//    @Column(name = "userAuthKey", nullable = false, unique = true)
+//    private Long userAuthKey;
+    
     @Id
-    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
-    @GeneratedValue(generator = "generator")
-    @Column(name = "userAuthKey", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "userAuthKey", nullable = false)
     private Long userAuthKey;
     
     @Column(name = "email", nullable = false, unique = true, length = 50)
@@ -56,19 +64,14 @@ public class UserAuth implements Serializable {
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date crtDt;
     
-    /* 유저 정보 */
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @PrimaryKeyJoinColumn
-    private User user;
+//    @OneToOne(fetch = FetchType.LAZY, optional = false)
+//    @PrimaryKeyJoinColumn
+//    private User user;
     
-    public UserAuth() {}
-
-    public UserAuth(String email, int priv, Date crtDt, User user) {
-        this.email = email;
-        this.priv = priv;
-        this.crtDt = crtDt;
-        this.user = user;
-    }
+    /* 유저 정보 */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userKey", nullable = false)
+    private User user;
 
     public Long getUserAuthKey() {
         return userAuthKey;

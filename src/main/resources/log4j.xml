@@ -40,14 +40,14 @@
     <category name="kr.co.myhub" additivity="false">
         <level value="debug" />
         <appender-ref ref="console" />
-        <!-- <appender-ref ref="file" />  -->
+        <appender-ref ref="file" />
     </category>
         
     <!-- Root Logger -->
     <root>
         <priority value="info" />
         <appender-ref ref="console" />
-        <!-- <appender-ref ref="file" />  -->
+        <appender-ref ref="file" />
     </root>
 
 </log4j:configuration>

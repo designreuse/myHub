@@ -14,6 +14,7 @@ import kr.co.myhub.appframework.constant.UserPrivEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -45,11 +46,8 @@ public class UserServiceImpl implements UserService {
      * @return
      * @throws Exception
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
     public User create(User user) throws Exception {
-        
-        log.debug("======================================================");
-        
         UserAuth userAuth = new UserAuth();
         userAuth.setEmail(user.getEmail());
         
@@ -59,18 +57,13 @@ public class UserServiceImpl implements UserService {
         } else {
             userAuth.setPriv(UserPrivEnum.Operators.getCode());
         }
-        
-        log.debug("getUserId : " + user.getUserId());
-        
-        // 1:1 관계에서의 객체 세팅
         userAuth.setUser(user);
-        user.setUserAuth(userAuth);
-        
-        // 유저 등록, 권한 등록
+         
+        // 유저 등록
         User retUser = userRepasitory.save(user);
-        log.debug("retUser : " + retUser);
         
-        log.debug("======================================================");
+        // 유저 권한 등록
+        userAuthRepasitory.save(userAuth);
         
         return retUser;
     }

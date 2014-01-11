@@ -95,7 +95,6 @@ public class MyHubValidator extends ValidationUtils {
      * @param msgKey
      */
     public static void rejectIsNumber(Errors errors, String field, String msgKey) {
-        
         try {
             String value = getString(errors, field);
 
@@ -117,7 +116,6 @@ public class MyHubValidator extends ValidationUtils {
      * @param msgKey
      */
     public static void rejectIsEmail(Errors errors, String field, String msgKey) {
-        
         try {
             String value = getString(errors, field);
 
@@ -144,7 +142,6 @@ public class MyHubValidator extends ValidationUtils {
      * @param max
      */
     public static void rejectMaxlength(Errors errors, String field, String msgKey, int max) {
-        
         try {
             String value = getString(errors, field);
             
@@ -165,7 +162,6 @@ public class MyHubValidator extends ValidationUtils {
      * @param length
      */
     public static void rejectNotEqualslength(Errors errors, String field, String msgKey, int length) {
-        
         try {
             String value = getString(errors, field);
             
