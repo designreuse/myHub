@@ -1,6 +1,9 @@
 package kr.co.myhub.app.user.service;
 
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.data.repository.query.Param;
 
 import kr.co.myhub.app.user.domain.User;
 
@@ -72,5 +75,13 @@ public interface UserService {
      */
     public void delete(User user) throws Exception;
     
+    /**
+     * 로그인 결과 수정
+     * @param loginFailCount
+     * @param loginFailDt
+     * @param userId
+     * @return
+     */
+    public int updateUserLogin(Date loginFailDt, String userId);
     
 }

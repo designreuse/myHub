@@ -111,11 +111,11 @@ public class LoginController {
         String email = principal.getName();
         
         try {
-            // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책)
+            // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책) -> 주기적으로 암호를 바꿔야되는 상황에 체크해서 알려준다.
             
             // TODO: 로그인 상태 처리 추가
             
-            /* 로그인 정보 세션에 저장 */
+            /* TODO: 로그인 정보는 필요한 정보만 세팅 */
             User user = userService.findByEmail(email);
             session.setAttribute("sUser", user);
             
@@ -154,8 +154,6 @@ public class LoginController {
             log.debug("Login Fail!!!");    
             log.debug("=========================================================");
         }
-        
-        // TODO: 로그인 실패시 실패 카운트를 업데이트 한다.
         
         // 세션값에 저장
         //redirectAttr.addAttribute("status", StatusEnum.FAIL);

@@ -1,8 +1,13 @@
 package kr.co.myhub.app.user.repasitory;
 
+import java.util.Date;
+
 import kr.co.myhub.app.user.domain.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -33,5 +38,16 @@ public interface UserRepasitory extends JpaRepository<User, Long> {
      * @return
      */
     public User findByEmail(String email);
+    
+    /**
+     * 로그인 결과 수정
+     * @param loginFailCount
+     * @param loginFailDt
+     * @param userId
+     * @return
+     */
+    @Modifying
+    @Query("update User set loginFailCount = loginFailCount + 1, loginFailDt = :loginFailDt where userId = :userId")
+    public int updateUserLogin(@Param("loginFailDt")Date loginFailDt, @Param("userId")String userId);
     
 }

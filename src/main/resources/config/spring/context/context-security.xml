@@ -32,11 +32,9 @@
     <!-- ============================================================================================ -->
     <!-- Login failuerEvent  --> 
     <!-- ============================================================================================ -->
-    <!-- 
     <beans:bean id="authenticationFailureEventHandler"
-        class="com.sycros.SCWebConsole.common.bean.login.AuthenticationFailureEventHandler" />
-    -->
-
+        class="kr.co.myhub.app.common.login.controller.AuthenticationFailureEventHandler" />
+    
     <!-- ============================================================================================ -->
     <!-- channel  --> 
     <!-- ============================================================================================ -->

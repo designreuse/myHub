@@ -1,5 +1,6 @@
 package kr.co.myhub.app.user.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -125,4 +126,17 @@ public class UserServiceImpl implements UserService {
     public void delete(User user) throws Exception {
         userRepasitory.delete(user);
     }
+
+    /**
+     * 로그인 결과 수정
+     * @param loginFailCount
+     * @param loginFailDt
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public int updateUserLogin(Date loginFailDt, String userId) {
+        return userRepasitory.updateUserLogin(loginFailDt, userId);
+    }
+    
 }
