@@ -88,6 +88,7 @@ public class LoginController {
      */
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String main(Model model) throws Exception {
+        log.debug("main!!!");
         
         return "/common/main";         
     }
@@ -114,6 +115,7 @@ public class LoginController {
             // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책) -> 주기적으로 암호를 바꿔야되는 상황에 체크해서 알려준다.
             
             // TODO: 로그인 상태 처리 추가
+            userService.updateUserSuccessLogin(null, email);
             
             /* TODO: 로그인 정보는 필요한 정보만 세팅 */
             User user = userService.findByEmail(email);

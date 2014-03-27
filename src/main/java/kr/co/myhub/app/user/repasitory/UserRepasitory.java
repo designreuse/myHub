@@ -40,14 +40,23 @@ public interface UserRepasitory extends JpaRepository<User, Long> {
     public User findByEmail(String email);
     
     /**
-     * 로그인 결과 수정
+     * 로그인실패 업데이트
      * @param loginFailCount
      * @param loginFailDt
      * @param userId
      * @return
      */
     @Modifying
-    @Query("update User set loginFailCount = loginFailCount + 1, loginFailDt = :loginFailDt where userId = :userId")
-    public int updateUserLogin(@Param("loginFailDt")Date loginFailDt, @Param("userId")String userId);
+    @Query("update User set loginFailCount = loginFailCount + 1, loginFailDt = :loginFailDt where email = :email")
+    public int updateUserFailLogin(@Param("loginFailDt")Date loginFailDt, @Param("email")String email);
+    
+    /**
+     * 로그인 성공시 수정
+     * @param email
+     * @return
+     */
+    @Modifying
+    @Query("update User set loginFailCount = 0, loginFailDt = :loginFailDt where email = :email")
+    public int updateUserSuccessLogin(@Param("loginFailDt")Date loginFailDt, @Param("email")String email);
     
 }

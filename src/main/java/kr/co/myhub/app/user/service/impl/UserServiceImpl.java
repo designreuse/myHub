@@ -135,8 +135,18 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public int updateUserLogin(Date loginFailDt, String userId) {
-        return userRepasitory.updateUserLogin(loginFailDt, userId);
+    public int updateUserFailLogin(Date loginFailDt, String email) {
+        return userRepasitory.updateUserFailLogin(loginFailDt, email);
+    }
+    
+    /**
+     * 로그인성공시 수정
+     * @param email
+     * @return
+     */
+    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public int updateUserSuccessLogin(Date loginFailDt, String email) {
+        return userRepasitory.updateUserSuccessLogin(loginFailDt, email);
     }
     
 }

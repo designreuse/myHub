@@ -82,6 +82,13 @@ public interface UserService {
      * @param userId
      * @return
      */
-    public int updateUserLogin(Date loginFailDt, String userId);
+    public int updateUserFailLogin(Date loginFailDt, String email);
+    
+    /**
+     * 로그인성공시 수정
+     * @param email
+     * @return
+     */
+    public int updateUserSuccessLogin(Date loginFailDt, String email);
     
 }
