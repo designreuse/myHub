@@ -56,7 +56,7 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 삭제
      */
-    @Test
+    //@Test
     public void delete() {
         
         // 1) 해당리스트만 삭제
@@ -79,12 +79,13 @@ public class TestUserRepasitory extends TestConfig {
      */
     @Test
     public void save() {
-        user.setUserId("kbtapjm");
-        user.setEmail("kbtapjm@gmail.com");
+        user.setUserId("tapjm");
+        user.setEmail("tapjm@naver.com");
         user.setPassword(EncryptionUtil.getEncryptPassword("111222"));
-        user.setUserName("검은몽스");
-        user.setBirthday("19820509");
+        user.setUserName("박재명");
+        user.setBirthday("19820101");
         user.setGender("0");
+        user.setLastPassword(EncryptionUtil.getEncryptPassword("111222"));
         
         User retUser = userRepository.save(user) ;
         
@@ -94,7 +95,7 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 목록, 카운트
      */
-    @Test
+    //@Test
     public void findAll() {
         // 전체 목록
         List<User> list = userRepository.findAll();
@@ -108,7 +109,7 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 정보 
      */
-    @Test
+    //@Test
     public void findOne() {
         user.setUserId("tapjm");
         user.setEmail("tapjm@naver.com");
@@ -129,7 +130,7 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 수정
      */
-    @Test
+    //@Test
     public void update() {
         user.setUserId("tapjm5603");
         user.setEmail("tapjm@hanmail.com");
@@ -149,7 +150,7 @@ public class TestUserRepasitory extends TestConfig {
         assertNotNull(retuser);
     }
     
-    @After
+    //@After
     public void after() {
         
     }

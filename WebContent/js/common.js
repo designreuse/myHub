@@ -3,8 +3,9 @@
  */
 var commonObj = {
 	config: {
-		siteName: "MyHub",
-		version: "1.0",	
+		siteName: 'MyHub',
+		version: '1.0',
+		contextPath: '/myHub'
 	},
 	
 	// 데이터 관련
@@ -58,7 +59,7 @@ var commonObj = {
 			}
 		},
 		
-		// ajax
+		// ajax TODO: AJAX 모듈 정리
 		ajax: function(url, _config) {
 			
 			try {
@@ -104,6 +105,14 @@ var commonObj = {
 	// 날짜 처리 관련
 	date: {
 		
+	},
+	
+	// 상수모음(클라이언트에서의 하드 코딩 방지)
+	constants : {
+		status : {
+			SUCCESS: '0000',
+			FAIL: '9000'
+		}
 	}
 	
 	

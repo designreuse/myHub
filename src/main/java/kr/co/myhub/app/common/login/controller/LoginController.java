@@ -3,7 +3,9 @@ package kr.co.myhub.app.common.login.controller;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -12,6 +14,7 @@ import kr.co.myhub.app.common.login.domain.LoginLog;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 
 import org.slf4j.Logger;
@@ -22,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -90,7 +95,51 @@ public class LoginController {
     public String main(Model model) throws Exception {
         log.debug("main!!!");
         
-        return "/common/main";         
+        return "/main";         
+    }
+    
+    /**
+     * 계정 잠금 체크
+     * @param model
+     * @param loginId
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/isAccountLocked", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> isAccountLocked(Model model, 
+            @RequestParam(value = "email", required = true) String email,
+            Locale locale) {
+      
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> scPolicy = new HashMap<String, Object>();
+        
+        try {
+            boolean result = loginService.isAccountLocked(email, scPolicy);
+            if (log.isDebugEnabled()) {
+                log.debug("result : {} ", result);    
+            }
+            
+            if (result) {
+                String args1 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutDurationValue.getText()).toString();
+                String args2 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutThresholdValue.getText()).toString();
+                
+                String msg = messageSourceAccessor.getMessage("myhub.label.login.msg.accountBlocked", new Object[] {args2, args1}, locale);
+                
+                resultMap.put("code", StatusEnum.FAIL.getValue());
+                resultMap.put("message", msg);
+            } else {
+                resultMap.put("code", StatusEnum.SUCCESS.getValue());
+                resultMap.put("message", "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            resultMap.put("code", StatusEnum.FAIL.getValue());
+            resultMap.put("message", e.getMessage());
+        }
+        
+        return resultMap;
     }
     
     /**
@@ -114,10 +163,10 @@ public class LoginController {
         try {
             // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책) -> 주기적으로 암호를 바꿔야되는 상황에 체크해서 알려준다.
             
-            // TODO: 로그인 상태 처리 추가
+            /* 로그인 상태 처리 추가 */
             userService.updateUserSuccessLogin(null, email);
             
-            /* TODO: 로그인 정보는 필요한 정보만 세팅 */
+            /* 로그인 정보는 필요한 정보만 세팅 */
             User user = userService.findByEmail(email);
             session.setAttribute("sUser", user);
             

@@ -13,7 +13,7 @@ import javax.crypto.spec.PBEKeySpec;
 import org.springframework.util.StringUtils;
 
 /**
- * 
+ * TODO: SHA-512 적용
  * file   : EncryptionUtil.java
  * date   : 2013. 11. 16.
  * author : jmpark

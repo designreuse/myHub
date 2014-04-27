@@ -2,11 +2,12 @@ package kr.co.myhub.app.common.login.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import kr.co.myhub.app.common.login.domain.LoginLog;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import kr.co.myhub.app.common.login.domain.LoginLog;
 
 /**
  * 
@@ -94,5 +95,12 @@ public interface LoginService {
      * @param loginLogKey
      * @return
      */
-    public int setLogoutDateFor(Date logoutDate, Long loginLogKey);
+    public int setLogoutDateFor(Date logoutDate, Long loginLogKey) throws Exception;
+    
+    /**
+     * 계정 락 여부 체크(true: locked, false: unlocked)
+     * @param email
+     * @return
+     */
+    public boolean isAccountLocked(String email, Map<String, Object> scPolicy) throws Exception;
 }

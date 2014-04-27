@@ -48,6 +48,8 @@
         
             var MyHubApp = {
                 pageInit: function() {
+                	'use strict';
+                	
                     // data init
                     this.data.init();
                     
@@ -82,6 +84,43 @@
                         }
                     },
                     
+                    login: function() {
+                    	var email = $('#email').val();
+                        if($.trim(email).length === 0) {
+                            alert('email을 입력하세요.');
+                            $('#email').focus();
+                            return false;
+                        }
+                        var password = $('#password').val();
+                        if($.trim(password).length === 0) {
+                            alert('비밀번호를 입력하세요.');
+                            $('#password').focus();
+                            return false;
+                        }
+                        
+                        // 계정 락 여부 체크
+                        var url = commonObj.config.contextPath.concat('/isAccountLocked');
+                        var pars = 'email='.concat(email);
+                            
+                        commonObj.data.ajax(url, {pars: pars, async: false, 
+                            onsucc: function(res) {
+                            	if (res.code === commonObj.constants.status.FAIL) {
+                            		alert(res.message);
+                            		return false;	
+                            	}
+                            	
+                            	$('form[name=frmLogin]').attr('onsubmit', 'return true;');
+                            	$('form[name=frmLogin]').attr("action", "<c:url value='/j_spring_security_check' />");
+                                $('form[name=frmLogin]').attr("method", "POST");
+                                $('form[name=frmLogin]').submit();
+                            },
+                            onerr: function(res) {
+                            
+                            }
+                        });
+                        
+                    },
+                    
                     loginResult: function() {
                     	if ('FAIL' === '${status}') {
                     		alert('${message}');
@@ -94,6 +133,11 @@
                         // Remember me
                         $('#rememberMe').on('click', function() {
                             MyHubApp.data.saveCookie();
+                        });
+                        
+                        // Login
+                        $('#btnLogin').on('click', function() {
+                            MyHubApp.data.login();
                         });
                     }
                 }
@@ -113,10 +157,10 @@
 	<body>
 	   <!-- container -->
         <div class="container">
-            <form class="form-signin" name="frmLogin" id="frmLogin" method="POST" action="<c:url value='/j_spring_security_check' />">
+            <form class="form-signin" id="frmLogin" name="frmLogin" onsubmit="return false;">
                 <h4 class="form-signin-heading"><spring:message code="myhub.label.signin"/></h4>
-                <input type="text" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="text" id="email" name="email" class="form-control" placeholder="Email address">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password">
                 <label class="checkbox">
                     <input type="checkbox" value="remember-me" id="rememberMe"> <spring:message code="myhub.label.remember.id"/>
                 </label>
@@ -125,7 +169,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="<c:url value='/user/userAdd' />"><spring:message code="myhub.label.signup"/></a>
                 </label>
-                <button class="btn btn-lg btn-primary btn-block" type="submit"><spring:message code="myhub.label.login"/></button>
+                <button class="btn btn-lg btn-primary btn-block" id="btnLogin"><spring:message code="myhub.label.login"/></button>
             </form>
         </div>
         <!-- /container -->

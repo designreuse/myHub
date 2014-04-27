@@ -13,30 +13,28 @@ package kr.co.myhub.appframework.constant;
  * 2013. 11. 18.   kbtapjm     최초생성
  */
 public enum StatusEnum {
-    SUCCESS(0, "SUCCESS"),
-    FAIL(0, "FAIL");
+    SUCCESS(0, "SUCCESS", "0000"),
+    FAIL(1, "FAIL", "9000");
     
     private int code;
     private String text;
+    private String value;
     
-    private StatusEnum(int code, String text) {
+    private StatusEnum(int code, String text, String value) {
         this.code = code;
         this.text = text;
+        this.value = value;
     }
 
     public int getCode() {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public String getValue() {
+        return value;
     }
 }
