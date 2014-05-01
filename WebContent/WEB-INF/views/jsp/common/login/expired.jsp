@@ -5,7 +5,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Timeout</title>
+        <title>Expired</title>
         <meta charset="utf-8">
         <!-- IE쿼크모드(호환성보기) 설정, 최신버젼으로 렌더링  -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -82,7 +82,7 @@
     <body>
        <!-- container -->
         <div class="container">
-            사용자의 세션이 만료되었습니다. 다시 로그인을 하여 주시기 바랍니다.
+            Expired
         </div>
         <!-- /container -->
     </body>

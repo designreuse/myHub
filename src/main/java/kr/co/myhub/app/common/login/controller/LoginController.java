@@ -1,6 +1,5 @@
 package kr.co.myhub.app.common.login.controller;
 
-import java.net.InetAddress;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import kr.co.myhub.app.common.login.domain.LoginLog;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.AccountExpiredEnum;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.FlashMap;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -40,6 +41,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * 
  * http://www.java-school.net/spring/spring-security.php
  * http://blog.naver.com/alucard99?Redirect=Log&logNo=192570650
+ * http://antop.tistory.com/151(로그아웃시 로그 기록)
  * 
  * 수정내용
  * ----------------------------------------------
@@ -117,7 +119,7 @@ public class LoginController {
         try {
             boolean result = loginService.isAccountLocked(email, scPolicy);
             if (log.isDebugEnabled()) {
-                log.debug("result : {} ", result);    
+                log.debug("isAccountLocked : {} ", result);    
             }
             
             if (result) {
@@ -151,38 +153,63 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
-    public String loginSuccess(Model model, Principal principal, HttpSession session, Locale locale) {
+    public String loginSuccess(Model model, 
+            Principal principal, 
+            HttpSession session, 
+            HttpServletRequest request, 
+            Locale locale) {
         if (log.isDebugEnabled()) {
             log.debug("=========================================================");
             log.debug("Login Success!!!");
             log.debug("=========================================================");
         }
         
+        Map<String, Object> scPolicy = new HashMap<String, Object>();
+        String message = "";
+        String code = "";
+        
         String email = principal.getName();
         
         try {
-            // TODO: 계정 암호 만료 여부 확인 로직 추가(보안정책) -> 주기적으로 암호를 바꿔야되는 상황에 체크해서 알려준다.
+            /* 암호만료여부 체크 */
+            int isAccountExpired = loginService.isAccountExpired(email, scPolicy);
             
-            /* 로그인 상태 처리 추가 */
-            userService.updateUserSuccessLogin(null, email);
-            
-            /* 로그인 정보는 필요한 정보만 세팅 */
-            User user = userService.findByEmail(email);
-            session.setAttribute("sUser", user);
-            
-            /* 로그인 이력 추가 */
-            LoginLog loginLog = new LoginLog();
-            loginLog.setEmail(user.getEmail());
-            loginLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
-            loginLog.setLoginDate(new Date());
-            loginLog.setUser(user);
-            
-            loginService.create(loginLog);
-            
+            if (isAccountExpired == AccountExpiredEnum.expired.getValue()) {
+                message = messageSourceAccessor.getMessage("myhub.label.login.msg.passwordExpired", locale);
+                code = String.valueOf(SecurityPoliciesEnum.MaximumPasswordAgeRegular.getCode());
+            } else {
+                if (isAccountExpired == AccountExpiredEnum.expiring.getValue()) {
+                    String args1 = scPolicy.get("ExpiryDate").toString();
+                    
+                    message = messageSourceAccessor.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
+                    code = String.valueOf(SecurityPoliciesEnum.PasswordExpiryWarning.getCode());
+                }
+                
+                /* 로그인 상태 처리 추가 */
+                userService.updateUserSuccessLogin(null, email);
+                
+                /* 로그인 정보는 필요한 정보만 세팅 */
+                User user = userService.findByEmail(email);
+                session.setAttribute("sUser", user);
+                session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
+                
+                /* 로그인 이력 추가 */
+                LoginLog loginLog = new LoginLog();
+                loginLog.setEmail(user.getEmail());
+                loginLog.setIpAddress(request.getRemoteAddr());
+                loginLog.setLoginDate(new Date());
+                loginLog.setUser(user);
+                
+                loginService.create(loginLog);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             session.invalidate();
         }
+        
+        FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
+        fm.put("code", code);
+        fm.put("message", message);
         
         return "redirect:/main";
     }
@@ -227,6 +254,16 @@ public class LoginController {
         
         return "/common/login/timeout";
     }
-
+    
+    /**
+     * expired(이중로그인시 세션만료)
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/expired", method = RequestMethod.GET)
+    public String expired(Model model) {
+        
+        return "/common/login/expired";
+    }
 
 }

@@ -35,14 +35,50 @@ public enum SecurityPoliciesEnum {
     /* 최소 한개 이상의 알파벳 이외의 문자 */
     ContainNonAlphabetic(6, "Contain Non Alphabetic","0"),
     
+    /* 비밀번호 이력 */
+    PasswordHistory(8, "Password History", "0"),
+    
+    /* 비밀번호 이력 값*/
+    PasswordHistoryValue(9, "Password History Value", "2"),
+    
+    /* 최대 암호 사용기간(관리자) (0 : 미적용, 1 : 적용) */
+    MaximumPasswordAgeAdmin(10, "Maximum Password Age(Admin)", "1"),
+    
+    /* 최대 암호 사용기간(관리자) 값 */
+    MaximumPasswordAgeValueAdmin(11, "Maximum Password Age Value(Admin)", "30"),
+    
+    /* 최대 암호 사용기간(일반) (0 : 미적용, 1 : 적용)  */
+    MaximumPasswordAgeRegular(12, "Maximum Password Age(Regular)", "1"),
+    
+    /* 최대 암호 사용기간(일반) 값*/
+    MaximumPasswordAgeValueRegular(13, "Maximum Password Age Value(Regular)", "90"),
+    
     /* 계정 락 */
     AccountLockout(14, "Account Lockout", "0"),
     
     /* 계정 잠금 기간 값(5분) */
     AccountLockoutDurationValue(15, "Account Lockout Duration Value", "5"),
     
-    /* 계정 잠금 임계 값 (3회)*/
-    AccountLockoutThresholdValue(16, "Account Lockout Threshold Value", "3");
+    /* 계정 잠금 임계 값 (3회) */
+    AccountLockoutThresholdValue(16, "Account Lockout Threshold Value", "3"),
+    
+    /* 초기 암호 */
+    InitialPassword(17, "Initial Password", "1"),
+    
+    /* 초기 암호  값*/
+    InitialPasswordValue(18, "Initial Password Value", "admin1234"),
+    
+    /* 최소암호 사용기간  미적용, (0 : 미적용, 1 : 적용) */
+    MinimumPasswordAge(19, "Minimum Password Age", "1"),
+    
+    /* 최소암호 사용기간 값 */
+    MinimumPasswordAgeValue(20, "Minimum Password Age Value", "1"),
+    
+    /* 비밀번호 만료 경고  (0 : 미적용, 1 : 적용) */
+    PasswordExpiryWarning(21, "Password Expiry Warning", "1"),
+    
+    /* 비밀번호 만료 경고  값*/
+    PasswordExpiryWarningValue(22, "Password Expiry Warning Value", "14");
     
     private int code;
     private String text;

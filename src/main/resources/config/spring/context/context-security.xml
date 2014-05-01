@@ -77,11 +77,30 @@
             logout-success-url="/login"
         />
 
+        <!-- 
+                        유효하지 않는 세션관리
+            1) session-fixation-protection
+	            migrateSession - 새로운 세션을 생성하고 기존의 세션 값들을 새 세션에 복사해준다. 기본값으로 설정되어 있다.
+	            none - 아무것도 수행하지 않는다. 원래의 세션이 유지된다.
+	            newSession - "깨끗한" 새로운 세션을 생성한다. 기존의 세션데이터는 복사하지 않는다.
+            2) invalid-session-url: 세션만료시 이동 할 페이지  
+        -->
         <security:session-management
             session-fixation-protection="none"
-            invalid-session-url="/login" >
+            invalid-session-url="/timeout"
+            >
             
-            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+            <!-- 
+            1) max-sessions : 동시에 두번 로그인을 방지 
+                ex) 첫번째 로그인 후 두번째 다른곳에서 로그인을 할 경우 첫번째 로그인의 세션은 만료가 된다 
+            2) error-if-maximum-exceeded(true) : 두번째 로그인을 방지
+            3) expired-url : 중복 로그인시 이동할 url
+            -->
+            <security:concurrency-control 
+                max-sessions="1"
+                error-if-maximum-exceeded="true"
+                expired-url="/expired" 
+            />
             
         </security:session-management>
 
@@ -104,6 +123,7 @@
             </security:user-service>
              -->
             
+            <!-- DB로 사용자 인증 -->
             <security:jdbc-user-service
                 id="userDetailsService"
                 data-source-ref="dataSource"

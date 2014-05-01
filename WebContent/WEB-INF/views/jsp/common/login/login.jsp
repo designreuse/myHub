@@ -110,12 +110,12 @@
                             	}
                             	
                             	$('form[name=frmLogin]').attr('onsubmit', 'return true;');
-                            	$('form[name=frmLogin]').attr("action", "<c:url value='/j_spring_security_check' />");
-                                $('form[name=frmLogin]').attr("method", "POST");
+                            	$('form[name=frmLogin]').attr('action', '<c:url value="/j_spring_security_check" />');
+                                $('form[name=frmLogin]').attr('method', 'POST');
                                 $('form[name=frmLogin]').submit();
                             },
                             onerr: function(res) {
-                            
+                                alert('로그인이 실패하였습니다.');
                             }
                         });
                         

@@ -20,4 +20,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserAuthRepasitory extends JpaRepository<UserAuth, Long>{
 
+    /**
+     * 유저권한정보 조회
+     * @param email
+     * @return
+     * @throws Exception
+     */
+    public UserAuth findByEmail(String email) throws Exception;
 }

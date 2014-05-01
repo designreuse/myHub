@@ -1,7 +1,9 @@
 package kr.co.myhub.app.common.login.service.impl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +13,13 @@ import kr.co.myhub.app.common.login.domain.LoginLog;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
+import kr.co.myhub.app.user.domain.UserAuth;
+import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
+import kr.co.myhub.appframework.constant.AccountExpiredEnum;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
+import kr.co.myhub.appframework.constant.UseEnum;
+import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.util.DateUtil;
 
 import org.slf4j.Logger;
@@ -43,6 +50,9 @@ public class LoginServiceImpl implements LoginService {
     
     @Resource
     UserRepasitory userRepasitory;
+    
+    @Resource
+    UserAuthRepasitory userAuthRepasitory;
 
     /**
      * 로그인 이력 등록
@@ -144,8 +154,6 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     public boolean isAccountLocked(String email, Map<String, Object> scPolicy) throws Exception {
-        log.debug("isAccountLocked email : {}", email);
-        
         int blockUser = 0;          // 블락 유저
         int limitFailCount = 0;     // 계정 잠금 임계 값 
         int limitBlockTime = 0;     // 계정 잠금 기간 값
@@ -172,7 +180,7 @@ public class LoginServiceImpl implements LoginService {
         /* 유저 조회 (DB) */
         User user = userRepasitory.findByEmail(email);
         if (user == null) {
-            throw new Exception("User Not Found");
+            throw new Exception("사용자 정보가 존재하지 않습니다.");
         }
         
         // 로그인 실패일자가 없는 경우
@@ -207,6 +215,101 @@ public class LoginServiceImpl implements LoginService {
         }
        
         return false;
+    }
+    
+    /**
+     * 계정 만료 여부 체크(-1 : expired, 0 : expiring, 1 : ok) 
+     * @param email
+     * @param scPolicy
+     * @return
+     * @throws Exception
+     */
+    public int isAccountExpired(String email, Map<String, Object> scPolicy) throws Exception {
+        long timeGapDay = 0;    // 일자차이
+        long expiryDay  = 0;    // 만료일자
+        long remainedDays = 0;  // 남은기간
+        
+        int maximumPasswordAgeAdmin;
+        int maximumPasswordAgeRegular;
+        int maximumPasswordAgeValueAdmin;
+        int maximumPasswordAgeValueRegular;
+        int passwordExpiryWarning;
+        int passwordExpiryWarningValue;
+        
+        /* 로그인 정책 객체에 닫기 */
+        for (SecurityPoliciesEnum sp : SecurityPoliciesEnum.values()) {
+            scPolicy.put(sp.getText(), sp.getValue());
+        }
+        
+        /* 보안정책을 DB로 관리하는 경우에는 select해서 기본적으로 enum에 설정되어있는 정책과 합친다. */
+        
+        maximumPasswordAgeAdmin = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.MaximumPasswordAgeAdmin.getText()).toString());
+        maximumPasswordAgeRegular = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.MaximumPasswordAgeRegular.getText()).toString());
+        maximumPasswordAgeValueAdmin = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.MaximumPasswordAgeValueAdmin.getText()).toString());
+        maximumPasswordAgeValueRegular = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.MaximumPasswordAgeValueRegular.getText()).toString());
+        passwordExpiryWarning = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.PasswordExpiryWarning.getText()).toString());
+        passwordExpiryWarningValue = Integer.parseInt(scPolicy.get(SecurityPoliciesEnum.PasswordExpiryWarningValue.getText()).toString());
+        
+        /* 유저 조회 (DB) */
+        User user = userRepasitory.findByEmail(email);
+        if (user == null) {
+            throw new Exception("User Not Found");
+        }
+        
+        /* 유저  권한정보 조회 (DB) */
+        UserAuth userAuth = userAuthRepasitory.findByEmail(email);
+        if (userAuth == null) {
+            throw new Exception("User Auth Not Found");
+        }
+        
+        /* 암호만료 권한 적용 여부 체크 */
+        if (userAuth.getPriv() == UserPrivEnum.SuperUser.getCode()) {
+            if (maximumPasswordAgeAdmin == UseEnum.Use.getCode()) {
+                expiryDay = maximumPasswordAgeValueAdmin;
+            } else {
+                return AccountExpiredEnum.ok.getValue();
+            }
+        } else {
+            if (maximumPasswordAgeRegular == UseEnum.Use.getCode()) {
+                expiryDay = maximumPasswordAgeValueRegular;
+            } else {
+                return AccountExpiredEnum.ok.getValue();
+            }
+        }
+        
+        /* 마지막 비밀번호 변경일과 현재시간과의 차이 계산 */
+        Timestamp currentTime = DateUtil.getCurrentDateTimeStamp();     // 현재시간
+        Date passwordModDt = user.getPasswordModDt();
+        Timestamp lastTime = new Timestamp(passwordModDt.getTime());    // 마지막 패스워드 변경일
+        
+        if (currentTime != null && lastTime != null) {
+            timeGapDay = (currentTime.getTime() - lastTime.getTime()) / (24 * 60 * 60 * 1000);
+            remainedDays = expiryDay - timeGapDay;
+        } else {
+            throw new Exception("The time value is null");
+        }
+        
+        log.info("expiryDay : " + expiryDay + " Till now : " + timeGapDay + ", Remained till the time : " + remainedDays);
+        log.info("passwordExpiryWarning : " + passwordExpiryWarning + " passExpiryValue : " + (remainedDays - passwordExpiryWarningValue));
+        
+        /* 계정만료 여부 체크 */
+        if (remainedDays < 0) {
+            return AccountExpiredEnum.expired.getValue();
+        } else if (remainedDays >= 0 && passwordExpiryWarning != 0 && remainedDays - passwordExpiryWarningValue <= 0) {
+            GregorianCalendar cal=new GregorianCalendar(); 
+            cal.setTime(lastTime);
+            cal.add(GregorianCalendar.DATE, Long.valueOf(expiryDay).intValue());
+            Date date = cal.getTime();
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd"); 
+            String expiryDate = fmt.format(date);
+            scPolicy.put("ExpiryDate", expiryDate);
+            
+            log.info("--- exiring ---" + String.format("%s", scPolicy.get("ExpiryDate")));
+            
+            return AccountExpiredEnum.expiring.getValue();
+        }
+        
+        return AccountExpiredEnum.ok.getValue();
     }
     
 }

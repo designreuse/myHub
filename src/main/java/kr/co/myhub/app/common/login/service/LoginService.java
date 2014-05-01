@@ -98,9 +98,18 @@ public interface LoginService {
     public int setLogoutDateFor(Date logoutDate, Long loginLogKey) throws Exception;
     
     /**
-     * 계정 락 여부 체크(true: locked, false: unlocked)
+     * 계정 락 여부 체크(true : locked, false : unlocked)
      * @param email
      * @return
      */
     public boolean isAccountLocked(String email, Map<String, Object> scPolicy) throws Exception;
+    
+    /**
+     * 계정 만료 여부 체크(-1 : expired, 0 : expiring, 1 : ok) 
+     * @param email
+     * @param scPolicy
+     * @return
+     * @throws Exception
+     */
+    public int isAccountExpired(String email, Map<String, Object> scPolicy) throws Exception;
 }
