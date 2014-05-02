@@ -47,9 +47,7 @@ public class AuthenticationFailureEventHandler implements ApplicationListener<Au
         Object userId = event.getAuthentication().getPrincipal();
         
         try {
-            int result = userService.updateUserFailLogin(new Date(), userId.toString()); 
-            log.debug("result : {}", result);
-            
+            userService.updateUserFailLogin(new Date(), userId.toString()); 
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Error : " + e.getMessage());

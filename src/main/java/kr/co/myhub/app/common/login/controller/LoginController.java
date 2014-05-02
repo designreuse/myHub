@@ -79,9 +79,15 @@ public class LoginController {
      * @throws Exception
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model, Locale locale) throws Exception {
+    public String login(Model model, Locale locale,
+            @RequestParam(value = "error", required = false, defaultValue = "false") Boolean error) throws Exception {
         if (log.isInfoEnabled()) {
             log.debug(" =====> Local : " + locale);
+        }
+        
+        if (error) {
+            model.addAttribute("status", StatusEnum.FAIL);
+            model.addAttribute("message", "사용자의 세션이 만료되었습니다. 다시 로그인을 하여 주세요. ");
         }
         
         return "/common/login/login";         

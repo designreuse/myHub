@@ -87,7 +87,7 @@
         -->
         <security:session-management
             session-fixation-protection="none"
-            invalid-session-url="/timeout"
+            invalid-session-url="/login?error=true"
             >
             
             <!-- 

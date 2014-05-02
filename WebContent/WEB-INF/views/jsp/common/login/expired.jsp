@@ -82,7 +82,7 @@
     <body>
        <!-- container -->
         <div class="container">
-            Expired
+            다른장치에서 이중로그인이 되어 세션이 만료되었습니다.
         </div>
         <!-- /container -->
     </body>
