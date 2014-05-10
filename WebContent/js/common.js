@@ -99,6 +99,29 @@ var commonObj = {
                     }
                 });
             } catch (e) { alert(e); }
+		},
+		
+		// 데이터 검증
+		vaild: {
+			email: function(_val) {
+				var regExp = /[0-9a-zA-Z][_0-9a-zA-Z-]*@[_0-9a-zA-Z-]+(\.[_0-9a-zA-Z-]+){1,2}$/;
+				
+				if (!_val.match(regExp)) {
+					return false;
+				}
+				
+				return true;
+			},
+			
+			number: function(_val) {
+				var regExp =  /^[0-9]+$/;
+				
+				if (!_val.match(regExp)) {
+					return false;
+				}
+				
+				return true;
+			}
 		}
 	},
 	

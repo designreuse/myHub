@@ -45,41 +45,50 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -4189088277865932249L;
     
+    /* 사용자 key */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userkey", nullable = false)
     private Long userKey;
     
+    /* 사용자아이디 */
     @Column(name = "userid", nullable = false, length = 50)
     private String userId;
     
+    /* email */
     @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
     
+    /* 비밀번호 */
     @Column(name = "password", nullable = false, length = 100)
     private String password;
     
+    /* 이름 */
     @Column(name = "username", nullable = false, length = 100)
     private String userName;
     
+    /* 생일 */
     @Column(name = "birthday", nullable = false, length = 8)
     private String birthday;
     
+    /* 성별 */
     @Column(name = "gender", nullable = false)
     private String gender;
     
+    /* 등록일 */
     @Column(name = "crtDt", nullable = true, insertable = true, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date crtDt;
     
+    /* 수정일 */
     @Column(name = "modDt", nullable = true, insertable = false, updatable = true)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date modDt;
     
     /* 비밀번호 수정일 */
-    @Column(name = "passwordModDt", nullable = true)
+    @Column(name = "passwordModDt", nullable = true, insertable = true)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date passwordModDt;
@@ -255,5 +264,6 @@ public class User implements Serializable {
     public void prePersist() {
         this.crtDt = new Date();
         this.modDt = new Date();
+        this.passwordModDt = new Date();
     }
 }

@@ -87,7 +87,7 @@
         -->
         <security:session-management
             session-fixation-protection="none"
-            invalid-session-url="/login?error=true"
+            invalid-session-url="/login"
             >
             
             <!-- 

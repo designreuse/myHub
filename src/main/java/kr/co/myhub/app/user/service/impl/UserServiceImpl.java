@@ -1,7 +1,9 @@
 package kr.co.myhub.app.user.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -11,6 +13,7 @@ import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
+import kr.co.myhub.appframework.util.MailUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +63,19 @@ public class UserServiceImpl implements UserService {
         }
         userAuth.setUser(user);
          
-        // 유저 등록
+        /* 유저 등록  */
         User retUser = userRepasitory.save(user);
         
-        // 유저 권한 등록
+        /* 유저 권한 등록 */
         userAuthRepasitory.save(userAuth);
+        
+        /* 회원가입 이메일 전송 */
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("to", user.getEmail());
+        params.put("subject", "회원가입을 축하드립니다.");
+        params.put("content", "회원가입을 축하드립니다.");
+        
+        MailUtil.mailsend(params);
         
         return retUser;
     }

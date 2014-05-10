@@ -3,6 +3,9 @@ package kr.co.myhub.app.user.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
 
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
@@ -10,7 +13,6 @@ import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
-import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.util.EncryptionUtil;
 import kr.co.myhub.appframework.vo.ApiResponse;
 import kr.co.myhub.appframework.vo.ApiResult;
@@ -18,13 +20,13 @@ import kr.co.myhub.appframework.vo.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +56,12 @@ public class UserController {
      */
     @Autowired 
     MessageSourceAccessor messageSourceAccessor;
+    
+    /**
+     * application.properties 정보
+     */
+    @Autowired 
+    Properties prop;
     
     /**
      *  Service DI
@@ -156,6 +164,10 @@ public class UserController {
             BindingResult bindResult,
             Locale locole) {
         
+        if (log.isDebugEnabled()) {
+            log.debug("userCreate User Domain  : {}", user);
+        }
+        
         ApiResult result = new ApiResult();
         
         try {
@@ -182,8 +194,6 @@ public class UserController {
             // password encrypt
             String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
             user.setPassword(encryptPassword);
-            
-            // 마지막 패스워드 값 설정
             user.setLastPassword(encryptPassword);
             
             User retUser = userService.create(user);
@@ -194,8 +204,6 @@ public class UserController {
             } else {
                 result.setStatus(StatusEnum.FAIL);    
             }
-            
-            // TODO: 유저등록(회원가입) 후 이메일 전송 기능 추가
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,49 +247,30 @@ public class UserController {
     }
     
     /**
-     * 이메일로 유저정보 조회
+     * 이메일로 유저정보 조회(중복체크)
      * @param model
      * @param email
      * @return
      */
     @RequestMapping(value = "/getUserByEmail", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult getUserByEmail(Model model, 
+    public Boolean getUserByEmail(Model model, 
             @RequestParam("email") String email,
             Locale locole) {
-        ApiResult result = new ApiResult();
-        User retuser = null;
-        
-        // get방식일때는  String문자는 인코딩처리 필수
-        if (log.isDebugEnabled()) {
-            log.debug(" ====================================================== ");
-            log.debug(" email : " + email);
-            log.debug(" ====================================================== ");    
-        }
+        boolean ret = false;
         
         try {
-            /* 필수값 체크 (조회는 validator 사용 안함) */
-            if (email == null || email.length() == 0) {
-                result.setStatus(StatusEnum.FAIL);
-                result.setMessage(messageSourceAccessor.getMessage("myhub.label.input.email.address", locole));
-                
-                return result;
-            }
+            User user = userService.findByEmail(email);
             
-            retuser = userService.findByEmail(email);
-            
-            result.setStatus(StatusEnum.SUCCESS);
-            result.setData(retuser);
+            if (user != null) {
+                ret = true;    
+            } 
             
         } catch (Exception e) {
             e.printStackTrace();
-            
-            // Exception result
-            result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         }
         
-        return result;
+        return ret;
     }
     
     /**

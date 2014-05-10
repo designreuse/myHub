@@ -56,6 +56,8 @@
         
             var MyHubApp = {
                 pageInit: function() {
+                	'use strict';
+                	
                     // data init
                     this.data.init();
                     
@@ -143,7 +145,7 @@
                         
                         // email 중복체크
                         $.validator.addMethod('emailDuplicateCheck', function(email) {
-                        	var url = '/user/getUserByEmail';
+                        	var url = commonObj.config.contextPath.concat('/user/getUserByEmail');
                         	var pars = 'email='.concat(email);
                         	
                             var ret = true;
@@ -165,9 +167,72 @@
                     
                     // 유저 등록
                     userCreate: function(vaild) {
-                    	// validation check
+                    	
+                    	// 일반 폼 검증
                     	if (!vaild) {
-                    		// 일반 폼 검증
+                    		var email = $.trim($('#email').val());
+                    		if (email.length === 0) {
+                    			alert('<spring:message code="myhub.label.input.email.address"/>');
+                    			$('#email').focus();
+                    			return false;
+                    		}
+                    		// 이메일 검증
+                    		if (!commonObj.data.vaild.email(email)) {
+                    			alert('<spring:message code="myhub.label.input.vaild.email.address"/>');
+                                $('#email').focus();
+                                return false;
+                    		}
+                    		var password = $.trim($('#password').val());
+                            if (password.length === 0) {
+                                alert('<spring:message code="myhub.label.input.password"/>');
+                                $('#password').focus();
+                                return false;
+                            }
+                            if (password.length < 6) {
+                            	alert('<spring:message code="myhub.label.input.minimum.characters" arguments="6" />');
+                                $('#password').focus();
+                                return false;
+                            }
+                            var cfPassword = $.trim($('#cfPassword').val());
+                            if (cfPassword.length === 0) {
+                                alert('<spring:message code="myhub.label.input.confirm.password"/>');
+                                $('#cfPassword').focus();
+                                return false;
+                            }
+                            var userName = $.trim($('#userName').val());
+                            if (userName.length === 0) {
+                                alert('<spring:message code="myhub.label.input.name"/>');
+                                $('#userName').focus();
+                                return false;
+                            }
+                            var birthday = $.trim($('#birthday').val());
+                            if (birthday.length === 0) {
+                                alert('<spring:message code="myhub.label.input.birthdy"/>');
+                                $('#birthday').focus();
+                                return false;
+                            }
+                            if (birthday.length !== 8) {
+                                alert('<spring:message code="myhub.label.input.minimum.characters" arguments="8"/>');
+                                $('#birthday').focus();
+                                return false;
+                            }
+                            if (!commonObj.data.vaild.number(birthday)) {
+                                alert('<spring:message code="myhub.label.input.only.numbers"/>');
+                                $('#birthday').focus();
+                                return false;
+                            }
+                            var gender = $.trim($('#gender').val());
+                            if (gender.length === 0) {
+                                alert('<spring:message code="myhub.label.select.gender"/>');
+                                $('#gender').focus();
+                                return false;
+                            }
+                            var agree = $('#agree').is(':checked');
+                            if (!agree) {
+                            	alert('<spring:message code="myhub.label.check.privacy.aggree"/>');
+                                $('#agree').focus();
+                                return false;
+                            }
                     	}
                     	
                     	// set userId
@@ -176,16 +241,17 @@
                     	$('#userId').val(userId);
                         
                     	// ajax call
+                    	var url = commonObj.config.contextPath.concat('/user/userCreate');
                     	var pars = $('#frmCreate').serialize();
-                    	var url = '/user/userCreate';
                     	
                         commonObj.data.ajax(url, {pars: pars, async: true, 
                             onsucc: function(res) {
                             	var status = res.status;
                             	
                             	if (status === 'SUCCESS') {
+                            		alert('회원가입을 축하드립니다. 로그인을 하시기 바랍니다.');
                             		location.href = '<c:url value="/login"/>';
-                            	} else{
+                            	} else {
                             		alert(res.message);
                             	}
                             },
@@ -199,9 +265,8 @@
                 event: {
                     init: function() {
                         
-                        // 등록
+                        // 등록(jQuery validator 사용시에는 이벤트 등록 안함)
                         $('#btnCreate').on('click', function() {
-                            // create
                         	//MyHubApp.data.userCreate(false);
                         });
                         
@@ -227,52 +292,20 @@
     <body>
         <div class="navbar-wrapper">
             <div class="container">
-                <!-- Header Start -->
-                <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="#">MyHub</a>
-                        </div>
-                        <div class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                <li class="active"><a href="#">Home</a></li>
-                                <li><a href="#friend">Friend</a></li>
-                                <li><a href="#contact">My</a></li>
-                            </ul>
-                            <form class="navbar-form navbar-left" role="search">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Search">
-                                </div>
-                                <button type="submit" class="btn btn-default">Search</button>
-                            </form>
-                            <ul class="nav navbar-nav navbar-right">
-                                <li>
-                                    <a href="#">Memo</a>
-                                </li>
-                                <li class="dropdowmyn">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Korean</a></li>
-                                        <li><a href="#">English</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- Heaser End -->
+                <!-- header -->
+                <%@ include file="/WEB-INF/views/jsp/common/layout/header.jsp" %>
+                <!-- /header -->
 
                 <!-- form Strart -->
                 <blockquote>
-                    <p><spring:message code="myhub.label.signup"/></p>
+                    <p>
+                        <spring:message code="myhub.label.signup"/>
+                        <!-- Spring EL  
+                        <spring:eval expression="@prop['mail.id']" />
+                         -->
+                    </p>
                 </blockquote>
-                <form class="form-horizontal" role="form" id="frmCreate" name="frmCreate" onsubmit="return false;">
+                <form class="form-horizontal" id="frmCreate" name="frmCreate" onsubmit="return false;">
                     <input type="hidden" name="userId" id="userId" value="">
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
