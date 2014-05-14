@@ -10,7 +10,7 @@
     <!-- context-common -->
     <import resource="context/context-common.xml" />
     
-    <!-- messagebundle -->
+    <!-- message -->
     <import resource="context/context-message.xml" />
      
     <!-- Spring Data JPA -->

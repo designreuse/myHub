@@ -25,7 +25,7 @@
         <level value="debug" />
     </category>
     <category name="java.sql.ResultSet">
-        <level value="fatal" />
+        <level value="debug" />
     </category>
     <category name="java.sql.Statement">
         <level value="debug" />
@@ -33,7 +33,7 @@
      
     <!-- 3rdparty Loggers --> 
     <logger name="org.springframework">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     
     <!-- Application Loggers --> 

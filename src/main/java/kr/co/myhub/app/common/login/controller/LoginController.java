@@ -81,9 +81,6 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, Locale locale,
             @RequestParam(value = "error", required = false, defaultValue = "false") Boolean error) throws Exception {
-        if (log.isInfoEnabled()) {
-            log.debug(" =====> Local : " + locale);
-        }
         
         if (error) {
             model.addAttribute("status", StatusEnum.FAIL);
@@ -101,7 +98,6 @@ public class LoginController {
      */
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String main(Model model) throws Exception {
-        log.debug("main!!!");
         
         return "/main";         
     }
@@ -165,9 +161,7 @@ public class LoginController {
             HttpServletRequest request, 
             Locale locale) {
         if (log.isDebugEnabled()) {
-            log.debug("=========================================================");
-            log.debug("Login Success!!!");
-            log.debug("=========================================================");
+            log.debug("====== Login Result : Success ===== ");
         }
         
         Map<String, Object> scPolicy = new HashMap<String, Object>();
@@ -234,9 +228,7 @@ public class LoginController {
             HttpServletRequest request,
             Locale locale) {
         if (log.isDebugEnabled()) {
-            log.debug("=========================================================");
-            log.debug("Login Fail!!!");    
-            log.debug("=========================================================");
+            log.debug("====== Login Result : Fail ===== ");
         }
         
         // 세션값에 저장
@@ -257,6 +249,9 @@ public class LoginController {
      */
     @RequestMapping(value = "/timeout", method = RequestMethod.GET)
     public String timeout(Model model) {
+        if (log.isDebugEnabled()) {
+            log.debug("====== Login Result : Timeout ===== ");
+        }
         
         return "/common/login/timeout";
     }
@@ -268,6 +263,9 @@ public class LoginController {
      */
     @RequestMapping(value = "/expired", method = RequestMethod.GET)
     public String expired(Model model) {
+        if (log.isDebugEnabled()) {
+            log.debug("====== Login Result : Expired ===== ");    
+        }
         
         return "/common/login/expired";
     }
