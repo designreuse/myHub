@@ -61,7 +61,7 @@ public class LoggingAspect {
     public Object loggingAround(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("\n");
         log.info("**************************************************************************************************");
-        log.info("<aop> hooked method -->: " + ((null == joinPoint.getTarget()) ? "" : joinPoint.getTarget().getClass()) + "." + joinPoint.getSignature().getName() +"()");
+        log.info("<aop> hooked method    : " + ((null == joinPoint.getTarget()) ? "" : joinPoint.getTarget().getClass()) + "." + joinPoint.getSignature().getName() +"()");
         log.info("<aop> hooked arguments : " + Arrays.toString(joinPoint.getArgs()));
         
         Object result = joinPoint.proceed();    //continue on the intercepted method

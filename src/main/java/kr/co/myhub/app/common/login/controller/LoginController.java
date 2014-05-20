@@ -14,6 +14,7 @@ import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.AccountExpiredEnum;
+import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 
@@ -130,17 +131,17 @@ public class LoginController {
                 
                 String msg = messageSourceAccessor.getMessage("myhub.label.login.msg.accountBlocked", new Object[] {args2, args1}, locale);
                 
-                resultMap.put("code", StatusEnum.FAIL.getValue());
-                resultMap.put("message", msg);
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", msg);
             } else {
-                resultMap.put("code", StatusEnum.SUCCESS.getValue());
-                resultMap.put("message", "");
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", "");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
             
-            resultMap.put("code", StatusEnum.FAIL.getValue());
-            resultMap.put("message", e.getMessage());
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
         }
         
         return resultMap;

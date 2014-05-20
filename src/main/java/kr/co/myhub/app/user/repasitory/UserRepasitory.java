@@ -7,6 +7,7 @@ import kr.co.myhub.app.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Repository;
  * 2013. 11. 17.   kbtapjm     최초생성
  */
 @Repository 
-public interface UserRepasitory extends JpaRepository<User, Long> {
+public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredicateExecutor<User> {
     
     /**
      * 유저 키에 해당하는 유저정보 조회
@@ -58,5 +59,15 @@ public interface UserRepasitory extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User set loginFailCount = 0, loginFailDt = :loginFailDt where email = :email")
     public int updateUserSuccessLogin(@Param("loginFailDt")Date loginFailDt, @Param("email")String email);
+    
+    /**
+     * 비밀번호 수정
+     * @param password
+     * @param email
+     * @return
+     */
+    @Modifying
+    @Query("update User set password = :password, lastPassword = :lastPassword where email = :email")
+    public int updatePassword(@Param("password")String password, @Param("lastPassword")String lastPassword, @Param("email")String email);
     
 }

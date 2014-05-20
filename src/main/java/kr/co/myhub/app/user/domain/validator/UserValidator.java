@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
-import kr.co.myhub.appframework.constant.TypeEnum;
 import kr.co.myhub.appframework.validator.MyHubValidator;
 
 import org.apache.commons.lang.StringUtils;

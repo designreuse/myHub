@@ -80,9 +80,9 @@
         <!-- 
                         유효하지 않는 세션관리
             1) session-fixation-protection
-	            migrateSession - 새로운 세션을 생성하고 기존의 세션 값들을 새 세션에 복사해준다. 기본값으로 설정되어 있다.
-	            none - 아무것도 수행하지 않는다. 원래의 세션이 유지된다.
-	            newSession - "깨끗한" 새로운 세션을 생성한다. 기존의 세션데이터는 복사하지 않는다.
+                migrateSession - 새로운 세션을 생성하고 기존의 세션 값들을 새 세션에 복사해준다. 기본값으로 설정되어 있다.
+                none - 아무것도 수행하지 않는다. 원래의 세션이 유지된다.
+                newSession - "깨끗한" 새로운 세션을 생성한다. 기존의 세션데이터는 복사하지 않는다.
             2) invalid-session-url: 세션만료시 이동 할 페이지  
         -->
         <security:session-management

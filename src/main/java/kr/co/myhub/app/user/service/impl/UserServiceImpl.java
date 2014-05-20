@@ -13,6 +13,8 @@ import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
+import kr.co.myhub.appframework.util.CommonUtil;
+import kr.co.myhub.appframework.util.EncryptionUtil;
 import kr.co.myhub.appframework.util.MailUtil;
 
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 2013. 11. 17.   kbtapjm     최초생성
  */
 @Service("UserService")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService  {
     
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     
@@ -146,7 +148,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public int updateUserFailLogin(Date loginFailDt, String email) {
+    public int updateUserFailLogin(Date loginFailDt, String email) throws Exception {
         return userRepasitory.updateUserFailLogin(loginFailDt, email);
     }
     
@@ -155,9 +157,47 @@ public class UserServiceImpl implements UserService {
      * @param email
      * @return
      */
-    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public int updateUserSuccessLogin(Date loginFailDt, String email) {
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public int updateUserSuccessLogin(Date loginFailDt, String email) throws Exception {
         return userRepasitory.updateUserSuccessLogin(loginFailDt, email);
+    }
+    
+    /**
+     * 비밀번호 검색
+     * @param email
+     * @throws Exception
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void passwordSearch(String email) throws Exception {
+        
+        /* 유저정보 조회 */
+        User user = userRepasitory.findByEmail(email);
+        if (user == null) {
+            throw new Exception("유저정보가 존재 하지 않습니다.");
+        }
+        
+        /* 임시비밀번호 생성 */
+        String tmpPassword = CommonUtil.getTmpPassword();
+        
+        /* 유저 비밀번호 수정 */
+        String password = EncryptionUtil.getEncryptPassword(tmpPassword);
+        int ret = userRepasitory.updatePassword(password, password, email);
+        if (ret == 0) {
+            throw new Exception("임시 비밀번호 수정이 실패하였습니다.");
+        }
+        
+        // TODO: queryDSl로 변경 필요 (http://whiteship.me/?p=13230)
+        
+        /* email 전송 */
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("to", email);
+        params.put("subject", "임시 비밀번호 안내입니다.");
+        params.put("content", "고객님의 임시 비밀번호는  [".concat(tmpPassword).concat("] 입니다."));
+        
+        boolean result = MailUtil.mailsend(params);
+        if (!result) {
+            throw new Exception("임시 비밀번호 안내 메일 발송이 실패하였습니다. ");
+        }
     }
     
 }

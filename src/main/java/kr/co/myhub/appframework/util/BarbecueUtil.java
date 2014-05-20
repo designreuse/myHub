@@ -3,7 +3,6 @@ package kr.co.myhub.appframework.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -11,7 +10,6 @@ import java.security.SecureRandom;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeFactory;
-import net.sourceforge.barbecue.BarcodeImageHandler;
 import net.sourceforge.barbecue.output.OutputException;
 
 public class BarbecueUtil {
@@ -116,21 +114,10 @@ public class BarbecueUtil {
      * barcode create test
      */
     public static void main(String[] args) {
-        try {
-            String cpNo = "1234 5678 3456 2198";
-            
-            // 바코드 생성
-            Barcode barcode = BarbecueUtil.createBar(BarbecueUtil.CODE_128C, cpNo, BarbecueUtil.GIFTICON_WIDTH_SIZE, BarbecueUtil.GIFTICON_HEIGHT_SIZE, Color.WHITE);
-            
-            // 파일 생성
-            String fileName = BarbecueUtil.getFileName().concat(BarbecueUtil.FILE_EXT_JPG);
-            File file = new File(PATH + fileName);
-            
-            // 업로드된 파일에 바코드 이미지 생성
-            BarcodeImageHandler.saveJPEG(barcode, file);
-        } catch (OutputException e) {
-            e.printStackTrace();
-        } 
+        String cpNo = "1234 5678 3456 2198";
+        
+        
+        System.out.println(" aaaa : " + BarbecueUtil.getFileName()); 
 
     }
     

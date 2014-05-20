@@ -12,11 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,7 +38,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "user")
 @XmlRootElement
-public class User implements Serializable {
+public class User implements Serializable { 
 
     private static final long serialVersionUID = -4189088277865932249L;
     
@@ -49,7 +46,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userkey", nullable = false)
-    private Long userKey;
+    private Long userKey; 
     
     /* 사용자아이디 */
     @Column(name = "userid", nullable = false, length = 50)
@@ -74,6 +71,10 @@ public class User implements Serializable {
     /* 성별 */
     @Column(name = "gender", nullable = false)
     private String gender;
+    
+    /* 전화번호 */
+    @Column(name = "phoneNo", nullable = false, length = 11)
+    private int phoneNo;
     
     /* 등록일 */
     @Column(name = "crtDt", nullable = true, insertable = true, updatable = false)
@@ -182,6 +183,14 @@ public class User implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public int getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(int phoneNo) {
+        this.phoneNo = phoneNo;
     }
 
     public Date getCrtDt() {

@@ -148,14 +148,41 @@ public class EncryptionUtil {
         }
     }
     
+    /**
+     * 암호화(MD5)
+     * @param str
+     * @return
+     */
+    public static String getMD5Str(String str) {
+        String MD5 = ""; 
+        
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5"); 
+            md.update(str.getBytes()); 
+            byte byteData[] = md.digest();
+            StringBuffer sb = new StringBuffer(); 
+            for(int i = 0 ; i < byteData.length ; i++){
+                sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+            }
+            MD5 = sb.toString();
+            
+        } catch(NoSuchAlgorithmException e) {
+            e.printStackTrace(); 
+            MD5 = null; 
+        }
+        return MD5;
+    }
+    
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException  {
         String originalPassword = "qwer1234";
         
         String encryptPBKDF2 = getEncryptPBKDF2(originalPassword);
         String getSha256 = getEncryptPassword(originalPassword);
+        String getMd5 = getMD5Str(originalPassword);
         
         System.out.println("PBKDF2 : " +  encryptPBKDF2);
         System.out.println("SHA256 : " + getSha256);
+        System.out.println("getMd5 : " + getMd5);
     }
 
 }

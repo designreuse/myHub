@@ -18,6 +18,7 @@
         </developer>
     </developers>
     
+    <!-- maven properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
        
@@ -299,6 +300,20 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
+        </dependency>
+        
+        <!-- QueryDsl -->
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>${querydsl.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>${querydsl.version}</version>
         </dependency>
         
         <!-- XML Parser -->

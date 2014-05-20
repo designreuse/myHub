@@ -1,15 +1,16 @@
 package kr.co.myhub.app.user.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
-
-import javax.annotation.PostConstruct;
 
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
@@ -20,7 +21,6 @@ import kr.co.myhub.appframework.vo.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,7 +80,7 @@ public class UserController {
      * @throws Exception
      */
     @RequestMapping(value = "/userAdd", method = RequestMethod.GET)
-    public String userCreate(Model model) throws Exception {
+    public String userAdd(Model model) throws Exception {
         
         return "/user/userAdd";         
     }
@@ -442,5 +442,31 @@ public class UserController {
         }
         
         return result;
+    }
+    
+    /**
+     * 비밀번호 찾기
+     * @param model
+     * @param email
+     * @return
+     */
+    @RequestMapping(value = "/passwordSearch", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> passwordSearch(Model model, @RequestParam(value="email", required=true) String email) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            userService.passwordSearch(email);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", "임시 비밀번호가 가입한 이메일로 전송되었습니다. 확인하세요.");
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
+        }
+        
+        return resultMap;
     }
 }

@@ -3,8 +3,6 @@ package kr.co.myhub.app.user.service;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
-
 import kr.co.myhub.app.user.domain.User;
 
 /**
@@ -82,13 +80,20 @@ public interface UserService {
      * @param userId
      * @return
      */
-    public int updateUserFailLogin(Date loginFailDt, String email);
+    public int updateUserFailLogin(Date loginFailDt, String email) throws Exception;
     
     /**
      * 로그인성공시 수정
      * @param email
      * @return
      */
-    public int updateUserSuccessLogin(Date loginFailDt, String email);
+    public int updateUserSuccessLogin(Date loginFailDt, String email) throws Exception;
+    
+    /**
+     * 비밀번호 검색
+     * @param email
+     * @throws Exception
+     */
+    public void passwordSearch(String email) throws Exception;
     
 }
