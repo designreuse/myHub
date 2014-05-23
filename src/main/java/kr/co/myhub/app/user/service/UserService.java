@@ -25,7 +25,7 @@ public interface UserService {
     * @return
     * @throws Exception
     */
-    public User create(User user) throws Exception;
+    public User insertUser(User user) throws Exception;
     
     /**
      * E-mail로 유저 정보 조회

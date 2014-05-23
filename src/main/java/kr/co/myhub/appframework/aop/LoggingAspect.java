@@ -85,7 +85,7 @@ public class LoggingAspect {
      */
     @AfterReturning(pointcut="execution(public * kr.co.myhub..controller..*(..))", returning="result")
     public void allControllerAfterReturning(JoinPoint joinPoint, Object result) {
-        log.info("return value is [" + result.toString() + "]");
+        log.info("Return : " + result.toString());
         log.info("**************************************************************************************************");
     }
     

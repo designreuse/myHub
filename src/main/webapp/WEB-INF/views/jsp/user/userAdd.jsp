@@ -97,6 +97,11 @@
                                     minlength: 8, 
                                     number: true
                                 },
+                                phoneNo: {
+                                    required: true,
+                                    minlength: 10, 
+                                    number: true
+                                },
                                 gender: 'required',
                                 agree: 'required'
                             },
@@ -119,6 +124,11 @@
                                 userName: '<spring:message code="myhub.label.input.name"/>',
                                 birthday: {
                                     required: '<spring:message code="myhub.label.input.birthdy"/>',
+                                    minlength: jQuery.format('<spring:message code="myhub.label.input.minimum.characters"/>'),
+                                    number: '<spring:message code="myhub.label.input.only.numbers"/>'
+                                },
+                                phoneNo: {
+                                    required: '<spring:message code="myhub.label.input.phone"/>',
                                     minlength: jQuery.format('<spring:message code="myhub.label.input.minimum.characters"/>'),
                                     number: '<spring:message code="myhub.label.input.only.numbers"/>'
                                 },
@@ -246,14 +256,14 @@
                     	
                         commonObj.data.ajax(url, {pars: pars, async: true, 
                             onsucc: function(res) {
-                            	var status = res.status;
-                            	
-                            	if (status === 'SUCCESS') {
-                            		alert('회원가입을 축하드립니다. 로그인을 하시기 바랍니다.');
-                            		location.href = '<c:url value="/login"/>';
-                            	} else {
-                            		alert(res.message);
-                            	}
+                            	var resultCd = res.resultCd;
+                                if (resultCd === commonObj.constants.result.FAIL) {
+                                	alert(res.resultMsg);
+                                	return false;
+                                } 
+                                
+                                alert(res.resultMsg);
+                                location.href = '<c:url value="/login"/>';
                             },
                             onerr: function(res) {
                             	alert(res);
@@ -335,6 +345,12 @@
                         <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.birthday"/></label>
                         <div class="col-sm-3">
                             <input type="text" class="form-control" id="birthday" name="birthday" placeholder="Birthday" maxlength="8" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.phone"/></label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="phoneNo" name="phoneNo" placeholder="phoneNo" maxlength="11" value="">
                         </div>
                     </div>
                     <div class="form-group">

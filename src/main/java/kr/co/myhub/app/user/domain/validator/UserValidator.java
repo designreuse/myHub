@@ -82,9 +82,11 @@ public class UserValidator extends MyHubValidator implements Validator {
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "userName", "myhub.label.input.name");
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "birthday", "myhub.label.input.birthdy");
         MyHubValidator.rejectNotEqualslength(errors, "birthday", "myhub.label.input.birthdy.length", 8);
+        MyHubValidator.rejectIfEmptyOrWhitespace(errors, "phoneNo", "myhub.label.input.phone");
+        MyHubValidator.rejectNotEqualslength(errors, "phoneNo", "myhub.label.input.phone.length.minimum", 10);
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "gender", "myhub.label.select.gender");
         
-        // 패스워드 검증
+        // 비밀번호 검증
         if (StringUtils.isNotEmpty(user.getPassword())) {
             //this.validatePassword();
         }

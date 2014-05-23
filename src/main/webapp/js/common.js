@@ -5,7 +5,7 @@ var commonObj = {
 	config: {
 		siteName: 'MyHub',
 		version: '1.0',
-		contextPath: '/myHub'
+		contextPath: '/myhub'
 	},
 	
 	// 데이터 관련

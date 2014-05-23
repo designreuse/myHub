@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService  {
      * @throws Exception
      */
     @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public User create(User user) throws Exception {
+    public User insertUser(User user) throws Exception {
         UserAuth userAuth = new UserAuth();
         userAuth.setEmail(user.getEmail());
         

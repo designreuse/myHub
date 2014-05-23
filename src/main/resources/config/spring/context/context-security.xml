@@ -50,11 +50,14 @@
     <beans:bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor"/>
    
     <!-- ============================================================================================ -->
-    <!-- 보안  HTTP url 인증처리  -->
+    <!-- 
+        보안  HTTP url 인증처리
+        use-expressions="true" : 스프링 표현식 언어(SpEl)를 사용한 접근 설정  
+    -->
     <!-- ============================================================================================ -->
     <security:http use-expressions="true" auto-config="true"
         access-denied-page="/accessDenied"
-        disable-url-rewriting="true">
+        disable-url-rewriting="true" >
         
         <!-- Authorization(권한정보) -->
         <security:intercept-url pattern="/login" access="permitAll" />

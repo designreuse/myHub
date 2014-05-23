@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * file   : UserController.java
  * date   : 2013. 11. 17.
  * author : jmpark
- * content: 유저 웹 요청 처리 (URL Mapping, Data API)
+ * content: 유저 웹 요청 처리 (URL Mapping, Data Response)
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
@@ -55,7 +55,7 @@ public class UserController {
      * messageSource DI
      */
     @Autowired 
-    MessageSourceAccessor messageSourceAccessor;
+    MessageSourceAccessor message;
     
     /**
      * application.properties 정보
@@ -81,7 +81,6 @@ public class UserController {
      */
     @RequestMapping(value = "/userAdd", method = RequestMethod.GET)
     public String userAdd(Model model) throws Exception {
-        
         return "/user/userAdd";         
     }
     
@@ -93,7 +92,6 @@ public class UserController {
      */
     @RequestMapping(value = "/userSearch", method = RequestMethod.GET)
     public String userSearch(Model model) throws Exception {
-        
         return "/user/userSearch";         
     }
     
@@ -105,7 +103,6 @@ public class UserController {
      */
     @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
     public String userInfo(Model model) throws Exception {
-        
         return "/user/userInfo";         
     }
     
@@ -117,12 +114,11 @@ public class UserController {
      */
     @RequestMapping(value = "/userEdit", method = RequestMethod.GET)
     public String userEdit(Model model) throws Exception {
-        
         return "/user/userEdit";         
     }
     
     // ===================================================================================
-    // API
+    // Data 처리
     // ===================================================================================
     
     /**
@@ -159,16 +155,12 @@ public class UserController {
      */
     @RequestMapping(value = "/userCreate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult userCreate(Model model, 
-            @ModelAttribute User user,
-            BindingResult bindResult,
-            Locale locole) {
-        
+    public Map<String, Object> userCreate(Model model, @ModelAttribute User user, BindingResult bindResult, Locale locale) {
         if (log.isDebugEnabled()) {
-            log.debug("userCreate User Domain  : {}", user);
+            log.debug("userCreate User Domain  : {}", user.toString());
         }
         
-        ApiResult result = new ApiResult();
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
             /* Data Vaildation Check */
@@ -176,44 +168,37 @@ public class UserController {
             userValidator.validate(user, bindResult);
             
             if (bindResult.hasErrors()) {
-                if (bindResult.getErrorCount() > 0) {
-                    FieldError fe = bindResult.getFieldError();
-                    
-                    result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(messageSourceAccessor.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
-                } else {
-                    //ObjectError oe = bindResult.getGlobalError();
-                    
-                    result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(messageSourceAccessor.getMessage(bindResult.getGlobalError().getCode(), locole));
-                }
+                FieldError fe = bindResult.getFieldError();
                 
-                return result;
+                resultMap.put("resultCd", Result.FAIL.getCode());
+                resultMap.put("resultMsg", message.getMessage(fe.getCode(), locale));
+                
+                return resultMap;
             }
             
-            // password encrypt
+            /* 비밀번호 암호화(SHA-256) */
             String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
             user.setPassword(encryptPassword);
             user.setLastPassword(encryptPassword);
             
-            User retUser = userService.create(user);
+            /* 유저 등록 */
+            User retUser = userService.insertUser(user);
             
-            // result
             if (retUser != null) {
-                result.setStatus(StatusEnum.SUCCESS);
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", message.getMessage("myhub.error.register.success", locale));
             } else {
-                result.setStatus(StatusEnum.FAIL);    
+                resultMap.put("resultCd", Result.FAIL.getCode());
+                resultMap.put("resultMsg", message.getMessage("myhub.error.register.failed", locale));
             }
-            
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
         
-            // Exception result
-            result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
         }
         
-        return result;
+        return resultMap;
     }
   
     /**
@@ -360,12 +345,12 @@ public class UserController {
                     FieldError fe = bindResult.getFieldError();
                     
                     result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(messageSourceAccessor.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
+                    result.setMessage(message.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
                 } else {
                     //ObjectError oe = bindResult.getGlobalError();
                     
                     result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(messageSourceAccessor.getMessage(bindResult.getGlobalError().getCode(), locole));
+                    result.setMessage(message.getMessage(bindResult.getGlobalError().getCode(), locole));
                 }
                 
                 return result;
@@ -423,7 +408,7 @@ public class UserController {
                 FieldError fe = bindResult.getFieldError();
                 
                 result.setStatus(StatusEnum.FAIL);
-                result.setMessage(messageSourceAccessor.getMessage(fe.getCode(), locole));
+                result.setMessage(message.getMessage(fe.getCode(), locole));
                 
                 return result;
             }
