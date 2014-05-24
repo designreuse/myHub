@@ -16,22 +16,18 @@
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5r %-5p [%t] %c{3} - %m%n"/> 
         </layout> 
     </appender> 
-
-    <!-- java  sql logger-->
-    <category name="java.sql.Connection">
-        <level value="debug" />
-    </category>
-    <category name="java.sql.PreparedStatement">
-        <level value="debug" />
-    </category>
-    <category name="java.sql.ResultSet">
-        <level value="debug" />
-    </category>
-    <category name="java.sql.Statement">
-        <level value="debug" />
-    </category>
      
-    <!-- 3rdparty Loggers --> 
+    <!-- hibernate sql Logger --> 
+    <logger name="org.hibernate.SQL" additivity="false" >
+        <level value="info" />
+        <appender-ref ref="console" />
+    </logger>
+    <logger name="org.hibernate.type" additivity="false" >
+        <level value="trace" />
+        <appender-ref ref="console" />
+    </logger>
+    
+    <!-- 3rdparty Loggers -->
     <logger name="org.springframework">
         <level value="info" />
     </logger>

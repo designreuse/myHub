@@ -156,10 +156,6 @@ public class UserController {
     @RequestMapping(value = "/userCreate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, Object> userCreate(Model model, @ModelAttribute User user, BindingResult bindResult, Locale locale) {
-        if (log.isDebugEnabled()) {
-            log.debug("userCreate User Domain  : {}", user.toString());
-        }
-        
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {

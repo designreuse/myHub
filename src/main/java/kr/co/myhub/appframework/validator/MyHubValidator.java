@@ -155,6 +155,26 @@ public class MyHubValidator extends ValidationUtils {
     }
     
     /**
+     * 문자열의 길이를 체크(최소길이)
+     * @param errors
+     * @param field
+     * @param msgKey
+     * @param min
+     */
+    public static void rejectMinlength(Errors errors, String field, String msgKey, int min) {
+        try {
+            String value = getString(errors, field);
+            
+            if (value.length() <= min) {
+                rejectValue(errors, field, msgKey);
+            }
+            
+        } catch (Exception e) {
+            rejectValue(errors, field, msgKey);
+        }
+    }
+    
+    /**
      * 문자열의 길이가 다른지 체크한다.
      * @param errors
      * @param field

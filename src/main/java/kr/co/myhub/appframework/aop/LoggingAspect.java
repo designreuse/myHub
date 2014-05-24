@@ -2,6 +2,8 @@ package kr.co.myhub.appframework.aop;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -60,9 +62,15 @@ public class LoggingAspect {
     @Around(value = "targetMethod()")
     public Object loggingAround(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("\n");
-        log.info("**************************************************************************************************");
+        log.info("***************************************************************************************************************");
         log.info("<aop> hooked method    : " + ((null == joinPoint.getTarget()) ? "" : joinPoint.getTarget().getClass()) + "." + joinPoint.getSignature().getName() +"()");
         log.info("<aop> hooked arguments : " + Arrays.toString(joinPoint.getArgs()));
+        
+        /*Object args[] = joinPoint.getArgs();
+        
+        for (Object obj : args) {
+            log.info("<aop> Parameter : " + ToStringBuilder.reflectionToString(obj, ToStringStyle.MULTI_LINE_STYLE));
+        }*/
         
         Object result = joinPoint.proceed();    //continue on the intercepted method
    
@@ -86,7 +94,7 @@ public class LoggingAspect {
     @AfterReturning(pointcut="execution(public * kr.co.myhub..controller..*(..))", returning="result")
     public void allControllerAfterReturning(JoinPoint joinPoint, Object result) {
         log.info("Return : " + result.toString());
-        log.info("**************************************************************************************************");
+        log.info("***************************************************************************************************************");
     }
     
     /**

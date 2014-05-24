@@ -74,7 +74,7 @@ public class User implements Serializable {
     
     /* 전화번호 */
     @Column(name = "phoneNo", nullable = false, length = 11)
-    private int phoneNo;
+    private String phoneNo;
     
     /* 등록일 */
     @Column(name = "crtDt", nullable = true, insertable = true, updatable = false)
@@ -185,12 +185,16 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public int getPhoneNo() {
+    public String getPhoneNo() {
         return phoneNo;
     }
 
-    public void setPhoneNo(int phoneNo) {
+    public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
     public Date getCrtDt() {

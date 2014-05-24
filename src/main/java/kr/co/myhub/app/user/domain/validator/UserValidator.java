@@ -59,8 +59,8 @@ public class UserValidator extends MyHubValidator implements Validator {
         this.errors = errors;
         
         switch(type) {
-        case 0: // Create
-            this.validateCreate();
+        case 0: // Insert
+            this.validateInsert();
             break;
         case 2: // Update
             this.validateUpdate();
@@ -74,7 +74,7 @@ public class UserValidator extends MyHubValidator implements Validator {
     /**
      * 유저 등록 체크
      */
-    public void validateCreate() {
+    public void validateInsert() {
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "email", "myhub.label.input.email.address");
         MyHubValidator.rejectIsEmail(errors, "email", "myhub.label.input.vaild.email.address");
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "userId", "myhub.label.input.id");
@@ -83,7 +83,7 @@ public class UserValidator extends MyHubValidator implements Validator {
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "birthday", "myhub.label.input.birthdy");
         MyHubValidator.rejectNotEqualslength(errors, "birthday", "myhub.label.input.birthdy.length", 8);
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "phoneNo", "myhub.label.input.phone");
-        MyHubValidator.rejectNotEqualslength(errors, "phoneNo", "myhub.label.input.phone.length.minimum", 10);
+        MyHubValidator.rejectMinlength(errors, "phoneNo", "myhub.label.input.phone.length.minimum", 10);
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "gender", "myhub.label.select.gender");
         
         // 비밀번호 검증

@@ -67,7 +67,7 @@ public class TestUserService extends TestConfig {
         user.setBirthday("19820509");
         user.setGender("0");
                 
-        User retUser = userService.create(user);
+        User retUser = userService.insertUser(user);
         
         assertNotNull(retUser);
     }
@@ -119,7 +119,7 @@ public class TestUserService extends TestConfig {
         user.setBirthday("19820509");
         user.setGender("0");
                 
-        User retUser = userService.create(user);
+        User retUser = userService.insertUser(user);
         
         assertNotNull(retUser);
     }
