@@ -13,15 +13,10 @@ import javax.crypto.spec.PBEKeySpec;
 import org.springframework.util.StringUtils;
 
 /**
- * TODO: SHA-512 적용
  * file   : EncryptionUtil.java
  * date   : 2013. 11. 16.
  * author : jmpark
- * content: SHA-256 (Sechre Hash Standard) 
- * 1) 160bit 의 해쉬를 제공
- * 2) SHA(Secure Hash Algorithm, 안전한 해시 알고리즘) 
- * 3) 단방향 해시(복호화가 불가능)
- * 
+ * content: 암호화 
  * 참조 : http://helloworld.naver.com/helloworld/318732
  * 
  * 수정내용
@@ -34,6 +29,10 @@ public class EncryptionUtil {
  
     /**
      * 암호화(SHA-256)
+     * 1) 160bit 의 해쉬를 제공
+     * 2) SHA(Secure Hash Algorithm, 안전한 해시 알고리즘) 
+     * 3) 단방향 해시(복호화가 불가능)
+     * 
      * @param 암호화 처리 할 문자
      * @return hash값으로 암호화된 문자열
      */
@@ -56,8 +55,40 @@ public class EncryptionUtil {
             encryptStr = sb.toString();
             
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            e.printStackTrace();    
         } 
+        
+        return encryptStr;
+    }
+    
+    /**
+     * 암호화(SHA-512)
+     * @param password
+     * @return
+     */
+    public static String getEncryptionBySha512(String password) {
+        String encryptStr = "";
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(password.getBytes());
+            byte[] mb = md.digest();
+            
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mb.length; i++) {
+                byte temp = mb[i];
+                String str = Integer.toHexString(new Byte(temp));
+                while (str.length() < 2) {
+                    str = "0".concat(str);
+                }
+                str = str.substring(str.length() - 2);
+                sb.append(str);
+            }
+            encryptStr = sb.toString();
+            
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();    
+        }
         
         return encryptStr;
     }
@@ -178,10 +209,12 @@ public class EncryptionUtil {
         
         String encryptPBKDF2 = getEncryptPBKDF2(originalPassword);
         String getSha256 = getEncryptPassword(originalPassword);
+        String getSha512 = getEncryptionBySha512(originalPassword);
         String getMd5 = getMD5Str(originalPassword);
         
         System.out.println("PBKDF2 : " +  encryptPBKDF2);
         System.out.println("SHA256 : " + getSha256);
+        System.out.println("SHA512 : " + getSha512);
         System.out.println("getMd5 : " + getMd5);
     }
 

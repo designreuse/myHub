@@ -1,6 +1,7 @@
 package kr.co.myhub.app.user.repasitory;
 
 import java.util.Date;
+import java.util.List;
 
 import kr.co.myhub.app.user.domain.User;
 
@@ -69,5 +70,12 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
     @Modifying
     @Query("update User set password = :password, lastPassword = :lastPassword where email = :email")
     public int updatePassword(@Param("password")String password, @Param("lastPassword")String lastPassword, @Param("email")String email);
+    
+    /**
+     * 이메일 검색
+     * @param phoneNo
+     * @return
+     */
+    public List<User> findByPhoneNo(String phoneNo);
     
 }

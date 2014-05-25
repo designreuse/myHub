@@ -111,14 +111,14 @@ public class User implements Serializable {
     /**
      * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+//    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
     
     /**
      * UserAuth와 1:N
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private Set<UserAuth> userAuth = new HashSet<UserAuth>();
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+//    private Set<UserAuth> userAuth = new HashSet<UserAuth>();
     
     /**
      * 유저권한관의 1:1 관계 정보 로딩
@@ -245,14 +245,14 @@ public class User implements Serializable {
         this.loginFailDt = loginFailDt;
     }
 
-    public Set<LoginLog> getLoginLog() {
-        return loginLog;
-    }
-
-    public void setLoginLog(Set<LoginLog> loginLog) {
-        this.loginLog = loginLog;
-    }
-
+//    public Set<LoginLog> getLoginLog() {
+//        return loginLog;
+//    }
+//
+//    public void setLoginLog(Set<LoginLog> loginLog) {
+//        this.loginLog = loginLog;
+//    }
+//
 //    public UserAuth getUserAuth() {
 //        return userAuth;
 //    }
@@ -261,14 +261,14 @@ public class User implements Serializable {
 //        this.userAuth = userAuth;
 //        this.userAuth.setUser(this);
 //    }
-
-    public Set<UserAuth> getUserAuth() {
-        return userAuth;
-    }
-
-    public void setUserAuth(Set<UserAuth> userAuth) {
-        this.userAuth = userAuth;
-    }
+//
+//    public Set<UserAuth> getUserAuth() {
+//        return userAuth;
+//    }
+//
+//    public void setUserAuth(Set<UserAuth> userAuth) {
+//        this.userAuth = userAuth;
+//    }
     
     /**
      * default 날짜 설정

@@ -14,7 +14,9 @@ import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
+import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
+import kr.co.myhub.appframework.util.MailUtil;
 import kr.co.myhub.appframework.vo.ApiResponse;
 import kr.co.myhub.appframework.vo.ApiResult;
 
@@ -426,6 +428,46 @@ public class UserController {
     }
     
     /**
+     * 이메일 찾기
+     * @param model
+     * @param phoneNo
+     * @return
+     */
+    @RequestMapping(value = "/emailSearch", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> emailSearch(Model model, @RequestParam(value = "phoneNo", required = true) String phoneNo,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            List<User> list = userService.findByPhoneNo(phoneNo);
+            if (!list.isEmpty()) {
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", Result.SUCCESS.getText());
+                
+                StringBuilder sb = new StringBuilder();
+                for (User data : list) {
+                    if (data == null) continue;
+                    
+                    sb.append(data.getUserName().concat(" : ").concat(data.getEmail()).concat("  "));
+                }
+                
+                resultMap.put("resultData", sb.toString());
+            } else {
+                resultMap.put("resultCd", Result.FAIL.getCode());
+                resultMap.put("resultMsg", message.getMessage("myhub.label.list.null", locale));    
+            }
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
+        }
+        
+        return resultMap;
+    }
+    
+    /**
      * 비밀번호 찾기
      * @param model
      * @param email
@@ -437,7 +479,36 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            userService.passwordSearch(email);
+            /* 유저정보 조회 */
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                throw new Exception("유저정보가 존재 하지 않습니다.");
+            }
+            
+            /* 임시비밀번호 생성 */
+            String tmpPassword = CommonUtil.getTmpPassword();
+            
+            /* 비밀번호 암호화 */
+            String password = EncryptionUtil.getEncryptPassword(tmpPassword);
+            
+            /* 유저 비밀번호 수정 */
+            int ret = userService.updatePassword(password, password, email);
+            if (ret == 0) {
+                throw new Exception("임시 비밀번호 수정이 실패하였습니다.");
+            }
+            
+            // TODO: queryDSl로 변경 필요 (http://whiteship.me/?p=13230)
+            
+            /* email 전송 */
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("to", email);
+            params.put("subject", "임시 비밀번호 안내입니다.");
+            params.put("content", "고객님의 임시 비밀번호는  [".concat(tmpPassword).concat("] 입니다."));
+            
+            boolean result = MailUtil.mailsend(params);
+            if (!result) {
+                throw new Exception("임시 비밀번호 안내 메일 발송이 실패하였습니다. ");
+            }
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", "임시 비밀번호가 가입한 이메일로 전송되었습니다. 확인하세요.");

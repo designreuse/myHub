@@ -90,10 +90,19 @@ public interface UserService {
     public int updateUserSuccessLogin(Date loginFailDt, String email) throws Exception;
     
     /**
-     * 비밀번호 검색
-     * @param email
+     * 이메일 검색
+     * @return
      * @throws Exception
      */
-    public void passwordSearch(String email) throws Exception;
+    public List<User> findByPhoneNo(String phoneNo) throws Exception;
+    
+    /**
+     * 비밀번호 수정
+     * @param password
+     * @param lastPassword
+     * @param email
+     * @return
+     */
+    public int updatePassword(String password, String lastPassword, String email);
     
 }

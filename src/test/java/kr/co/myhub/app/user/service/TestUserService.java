@@ -80,10 +80,6 @@ public class TestUserService extends TestConfig {
     public void findOne() throws Exception {
         User retUser = userService.findByUserKey((long) 1);
         
-        log.debug(" =============================================== ");
-        log.debug("LoginLog : {}", retUser.getLoginLog().size());
-        log.debug(" =============================================== ");
-        
         assertNotNull(retUser);
     }
     

@@ -179,21 +179,23 @@ var commBootObj = {
 		html = html.concat('<strong id="typeNm"></strong>&nbsp;'.concat(prop.msg));
 		html = html.concat('</div>');
 		
-		$('#'.concat(prop.renderId)).html(html);
+		var renderObj = $('#'.concat(prop.renderId));
 		
-		$('#typeNm').text(prop.type.concat('!'));
+		renderObj.html(html);
+		
+		renderObj.find('#typeNm').text(prop.type.concat('!'));
 		switch(prop.type) {
 		case this.constants.alerts.SUCCESS:
-			$('.alert').addClass('alert-success');
+			renderObj.find('.alert').addClass('alert-success');
 			break;
 		case this.constants.alerts.INFO:
-			$('.alert').addClass('alert-info');
+			renderObj.find('.alert').addClass('alert-info');
 			break;
 		case this.constants.alerts.WARNING:
-			$('.alert').addClass('alert-warning');
+			renderObj.find('.alert').addClass('alert-warning');
 			break;
 		case this.constants.alerts.DANGER:
-			$('.alert').addClass('alert-danger');
+			renderObj.find('.alert').addClass('alert-danger');
 			break;
 		}
 	},
