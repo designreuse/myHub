@@ -164,6 +164,12 @@
                 <label class="checkbox">
                     <input type="checkbox" value="remember-me" id="rememberMe"> <spring:message code="myhub.label.remember.id"/>
                 </label>
+                <!-- Remember me 
+                <label class="checkbox">
+                    <input type="checkbox" value="true" name="_spring_security_remember_me" id="_spring_security_remember_me">
+                    Remember-me
+                </label>
+                 -->
                 <label>
                     <a href="<c:url value='/user/userSearch' />"><spring:message code="myhub.label.forgot.password"/></a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

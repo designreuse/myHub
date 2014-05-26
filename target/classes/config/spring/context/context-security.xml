@@ -60,15 +60,16 @@
         disable-url-rewriting="true" >
         
         <!-- Authorization(권한정보) -->
-        <security:intercept-url pattern="/login" access="permitAll" />
+        <security:intercept-url pattern="/" access="permitAll" />
         <security:intercept-url pattern="/user/**" access="permitAll" />
+        <security:intercept-url pattern="/main" access="isAuthenticated()" />
         
         <!-- Login -->        
         <security:form-login
             username-parameter="email"
             password-parameter="password"
             login-processing-url="/j_spring_security_check"
-            login-page="/login"
+            login-page="/"
             default-target-url="/loginSuccess"
             authentication-failure-url="/loginFailed"
         />
@@ -77,9 +78,13 @@
         <security:logout
             invalidate-session="true"
             logout-url="/j_spring_security_logout"
-            logout-success-url="/login"
+            logout-success-url="/"
         />
-
+        
+        <!-- 사용자 인식 기능(페이지 유지)   
+        <security:remember-me key="myhubKey"/>
+        -->
+        
         <!-- 
                         유효하지 않는 세션관리
             1) session-fixation-protection
@@ -90,7 +95,7 @@
         -->
         <security:session-management
             session-fixation-protection="none"
-            invalid-session-url="/login"
+            invalid-session-url="/"
             >
             
             <!-- 

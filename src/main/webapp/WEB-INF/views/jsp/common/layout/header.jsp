@@ -4,6 +4,7 @@
  
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %> 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
                 
                 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
                     <div class="container">
@@ -14,13 +15,11 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">MyHub</a>
+                            <a class="navbar-brand" href="<c:url value='/main'/>">MyHub</a>
                         </div>
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-                                <li class="active"><a href="#">Home</a></li>
-                                <li><a href="#friend">Friend</a></li>
-                                <li><a href="#contact">Memo</a></li>
+                                <li class="active"><a href="#">Friend</a></li>
                             </ul>
                             <form class="navbar-form navbar-left" role="search">
                                 <div class="form-group">
@@ -29,9 +28,18 @@
                                 <button type="submit" class="btn btn-default">Search</button>
                             </form>
                             <ul class="nav navbar-nav navbar-right">
+                                
+                                <!-- 로그인한 사용자 정보 -->
+                                <security:authorize access="fullyAuthenticated">
                                 <li>
-                                    <a href="#">My</a>
+	                               <a href="#">
+	                                   <security:authentication property="principal.username"/>
+	                               </a>
                                 </li>
+                                </security:authorize>
+                                
+                                
+                                
                                 <li class="dropdowmyn">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language <b class="caret"></b></a>
                                     <ul class="dropdown-menu">

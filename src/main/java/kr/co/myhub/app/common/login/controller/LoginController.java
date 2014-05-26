@@ -79,7 +79,7 @@ public class LoginController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String login(Model model, Locale locale,
             @RequestParam(value = "error", required = false, defaultValue = "false") Boolean error) throws Exception {
         
@@ -240,7 +240,7 @@ public class LoginController {
         fm.put("status", StatusEnum.FAIL);
         fm.put("message", messageSourceAccessor.getMessage("myhub.error.login.fail", locale));
         
-        return "redirect:/login";
+        return "redirect:/";
     }
     
     /**
