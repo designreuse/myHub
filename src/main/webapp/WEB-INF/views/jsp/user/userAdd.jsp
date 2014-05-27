@@ -263,7 +263,7 @@
                                 } 
                                 
                                 alert(res.resultMsg);
-                                location.href = '<c:url value="/login"/>';
+                                location.href = '<c:url value="/"/>';
                             },
                             onerr: function(res) {
                             	alert(res);
