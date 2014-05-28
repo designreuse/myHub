@@ -48,6 +48,15 @@
     </beans:bean>
     <beans:bean id="secureChannelProcessor" class="org.springframework.security.web.access.channel.SecureChannelProcessor"/>
     <beans:bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor"/>
+    
+    <!-- ============================================================================================ -->
+    <!-- 메서드 애노테이션 보안을 사용 설정  --> 
+    <!-- ============================================================================================ -->
+    <security:global-method-security pre-post-annotations="enabled"/>
+    
+    <!-- JSR250 표준 사용 
+    <security:global-method-security jsr250-annotations="enabled"/> 
+    -->
    
     <!-- ============================================================================================ -->
     <!-- 

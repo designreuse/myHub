@@ -8,6 +8,7 @@ import kr.co.myhub.app.common.login.domain.LoginLog;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * 
@@ -102,6 +103,7 @@ public interface LoginService {
      * @param email
      * @return
      */
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public boolean isAccountLocked(String email, Map<String, Object> scPolicy) throws Exception;
     
     /**

@@ -5,6 +5,8 @@ import java.util.List;
 
 import kr.co.myhub.app.user.domain.User;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 /**
  * 
  * file   : UserService.java
@@ -103,6 +105,7 @@ public interface UserService {
      * @param email
      * @return
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
     public int updatePassword(String password, String lastPassword, String email);
     
 }

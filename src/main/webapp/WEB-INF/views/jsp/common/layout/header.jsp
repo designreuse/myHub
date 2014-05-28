@@ -64,7 +64,7 @@
                                 </security:authorize>
 
                                 <!-- 로그인을 안한 상태는 로그인 버튼 활성화 -->
-                                <security:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN" >
+                                <security:authorize ifNotGranted="ROLE_ADMIN, ROLE_MANAGER, ROLE_USER" >
                                 <li>
                                     <a href="<c:url value='/' />">Login</a>
                                 </li>

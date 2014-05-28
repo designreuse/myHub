@@ -125,6 +125,29 @@
                     	if ('FAIL' === '${status}') {
                     		alert('${message}');
                     	}
+                    },
+                    
+                    setUserAccount: function() {
+                    	var userVal = $('#userChange').val();
+                    	
+                    	switch(Number(userVal)) {
+                    	case 1:
+                    		$('#email').val('kbtapjm@gmail.com');
+                    		$('#password').val('111222');
+                    		break;
+                    	case 2:
+                    		$('#email').val('tapjm@naver.com');
+                            $('#password').val('qwer1234');
+                            break;
+                    	case 3:
+                    		$('#email').val('tapjm@hanmail.net');
+                            $('#password').val('111222');
+                            break;
+                    	case 4:
+                    		$('#email').val('kbtapjm@nate.com');
+                            $('#password').val('111222');
+                            break;
+                    	}
                     }
                 },
                 
@@ -138,6 +161,11 @@
                         // Login
                         $('#btnLogin').on('click', function() {
                             MyHubApp.data.login();
+                        });
+                        
+                        // 유저 정보 세팅
+                        $('#userChange').on('change', function() {
+                        	MyHubApp.data.setUserAccount();
                         });
                     }
                 }
@@ -176,6 +204,14 @@
                     <a href="<c:url value='/user/userAdd' />"><spring:message code="myhub.label.signup"/></a>
                 </label>
                 <button class="btn btn-lg btn-primary btn-block" id="btnLogin"><spring:message code="myhub.label.login"/></button>
+                <br>
+                <select class="form-control" id="userChange" name="userChange">
+                    <option value=""><spring:message code="myhub.label.select"/></option>
+                    <option value="1">admin(kbtapjm@gmail.com)</option>
+                    <option value="2">tapjm(tapjm@naver.com)</option>
+                    <option value="3">tapjm(tapjm@hanmail.net)</option>
+                    <option value="4">kbtapjm(kbtapjm@nate.com)</option>
+                </select>
             </form>
         </div>
         <!-- /container -->
