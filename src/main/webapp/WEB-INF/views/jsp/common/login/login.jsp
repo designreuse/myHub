@@ -122,8 +122,8 @@
                     },
                     
                     loginResult: function() {
-                    	if ('FAIL' === '${status}') {
-                    		alert('${message}');
+                    	if ('${resultCd}' === commonObj.constants.result.FAIL) {
+                    		alert('${resultMsg}');
                     	}
                     },
                     

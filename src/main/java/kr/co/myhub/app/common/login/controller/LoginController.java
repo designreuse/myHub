@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,13 +81,13 @@ public class LoginController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = {"/login", "/"}, method = RequestMethod.GET)
     public String login(Model model, Locale locale,
-            @RequestParam(value = "error", required = false, defaultValue = "false") Boolean error) throws Exception {
+            @RequestParam(value = "error", required = false, defaultValue = "none") String error) throws Exception {
         
-        if (error) {
-            model.addAttribute("status", StatusEnum.FAIL);
-            model.addAttribute("message", "사용자의 세션이 만료되었습니다. 다시 로그인을 하여 주세요. ");
+        if (error.equals("expired")) {
+            model.addAttribute("resultCd", Result.FAIL.getCode());
+            model.addAttribute("resultMsg", "다른장치에서 이중 로그인이 되어 세션이 만료되었습니다.");
         }
         
         return "/common/login/login";         
@@ -138,6 +140,7 @@ public class LoginController {
                 resultMap.put("resultMsg", "");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
@@ -240,21 +243,25 @@ public class LoginController {
         fm.put("status", StatusEnum.FAIL);
         fm.put("message", messageSourceAccessor.getMessage("myhub.error.login.fail", locale));
         
-        return "redirect:/";
+        return "redirect:/login";
     }
     
     /**
-     * timeout(세션만료)
+     * 접근 거부
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/timeout", method = RequestMethod.GET)
-    public String timeout(Model model) {
+    @RequestMapping(value = "/accessDenied", method = RequestMethod.GET)
+    public String timeout(Model model, HttpServletRequest request) {
         if (log.isDebugEnabled()) {
-            log.debug("====== Login Result : Timeout ===== ");
+            log.debug("====== Login Result : AccessDenied ===== ");
         }
         
-        return "/common/login/timeout";
+        // 접근거부 상세 내용
+        AccessDeniedException ex = (AccessDeniedException) request.getAttribute("SPRING_SECURITY_403_EXCEPTION");
+        log.debug("ex : {}", ex.getMessage());
+        
+        return "/common/login/accessDenied";
     }
     
     /**
@@ -270,5 +277,4 @@ public class LoginController {
         
         return "/common/login/expired";
     }
-
 }

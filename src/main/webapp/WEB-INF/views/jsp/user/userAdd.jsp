@@ -282,7 +282,7 @@
                         
                         // 취소
                         $('#btnCancel').on('click', function() {
-                            location.href = '<c:url value="/"/>';
+                            location.href = '<c:url value="/login"/>';
                         });
                     }
                 }

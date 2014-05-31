@@ -5,7 +5,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %> 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-                
+
                 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
                     <div class="container">
                         <div class="navbar-header">
@@ -74,3 +74,34 @@
                         </div>
                     </div>
                 </div>
+
+<security:authorize access="fullyAuthenticated">
+<!-- 페이지 항상 호출 -->                
+<script type="text/javascript">
+	var headerFn = {
+		getActiveUserList : function() {
+			var url = commonObj.config.contextPath.concat('/user/getActiveUserList');
+            var pars = '';
+            
+            commonObj.data.ajax(url, {pars: pars, async: true, 
+                onsucc: function(res) {
+                    var resultCd = res.resultCd;
+                    if (resultCd === commonObj.constants.result.SUCCESS) {
+                    	var resultData = res.resultData;
+                    	
+                    }
+                },
+                onerr: function(res) {
+                    alert(res);
+                }
+            });
+		}	
+	};
+	
+	// 즉시실행함수
+	(function() {
+		headerFn.getActiveUserList();
+	}());
+
+</script>
+</security:authorize>

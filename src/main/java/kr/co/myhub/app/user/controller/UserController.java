@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -64,6 +66,12 @@ public class UserController {
      */
     @Autowired 
     Properties prop;
+    
+    /**
+     * Session Registry(세션 트래킹)
+     */
+    @Autowired
+    SessionRegistry sessionRegistry;
     
     /**
      *  Service DI
@@ -190,6 +198,7 @@ public class UserController {
                 resultMap.put("resultMsg", message.getMessage("myhub.error.register.failed", locale));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
         
             resultMap.put("resultCd", Result.FAIL.getCode());
@@ -458,6 +467,7 @@ public class UserController {
                 resultMap.put("resultMsg", message.getMessage("myhub.label.list.null", locale));    
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
@@ -513,6 +523,46 @@ public class UserController {
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", "임시 비밀번호가 가입한 이메일로 전송되었습니다. 확인하세요.");
         } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 현재 접속 중인 사용자 세션정보 목록
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/getActiveUserList", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getActiveUserList(Model model) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        HashMap<Object, Date> lastActivityData = new HashMap<Object, Date>();
+        
+        try {
+            // sessionRegistry.getAllPrincipals() : 활성화된 세션을 갖고 있는  Principal 객체(User Detail)
+            for (Object principal : sessionRegistry.getAllPrincipals()) {
+                
+                // 각 Principal이 갖고 있는 세션정보를 담고있는 SessionInformation 객체의 리스트
+                for (SessionInformation  session : sessionRegistry.getAllSessions(principal, false)) {
+                    log.debug("getLastRequest : {}", session.getLastRequest());
+                    log.debug("getSessionId : {}", session.getSessionId());
+                    log.debug("getPrincipal : {}", session.getPrincipal());
+                    
+                    lastActivityData.put(principal, session.getLastRequest());
+                }
+            }
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            resultMap.put("resultData", lastActivityData);  // TODO: Princapal 객체 JSON 데이터로 파싱 처리
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
