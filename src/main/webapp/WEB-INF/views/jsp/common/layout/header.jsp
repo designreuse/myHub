@@ -75,8 +75,7 @@
                     </div>
                 </div>
 
-<security:authorize access="fullyAuthenticated">
-<!-- 페이지 항상 호출 -->                
+<!-- 페이지 공통 함수 -->                
 <script type="text/javascript">
 	var headerFn = {
 		getActiveUserList : function() {
@@ -97,11 +96,5 @@
             });
 		}	
 	};
-	
-	// 즉시실행함수
-	(function() {
-		headerFn.getActiveUserList();
-	}());
 
 </script>
-</security:authorize>

@@ -16,14 +16,12 @@ import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.AccountExpiredEnum;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
-import kr.co.myhub.appframework.constant.StatusEnum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,7 +58,7 @@ public class LoginController {
      * messageSource DI
      */
     @Autowired 
-    MessageSourceAccessor messageSourceAccessor;
+    MessageSourceAccessor msa;
     
     /**
      *  userService DI
@@ -75,7 +73,7 @@ public class LoginController {
     LoginService loginService;
     
     /**
-     * 로그인 화면
+     * 로그인
      * @param model
      * @param locale
      * @return
@@ -85,12 +83,13 @@ public class LoginController {
     public String login(Model model, Locale locale,
             @RequestParam(value = "error", required = false, defaultValue = "none") String error) throws Exception {
         
+        // 토큰만료시 에러 내용  TODO: 세션만료에 대한 처리도 추가 필요
         if (error.equals("expired")) {
             model.addAttribute("resultCd", Result.FAIL.getCode());
-            model.addAttribute("resultMsg", "다른장치에서 이중 로그인이 되어 세션이 만료되었습니다.");
+            model.addAttribute("resultMsg", msa.getMessage("myhub.error.login.expired", locale));
         }
         
-        return "/common/login/login";         
+        return "/login";         
     }
     
     /**
@@ -101,7 +100,6 @@ public class LoginController {
      */
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String main(Model model) throws Exception {
-        
         return "/main";         
     }
     
@@ -131,7 +129,7 @@ public class LoginController {
                 String args1 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutDurationValue.getText()).toString();
                 String args2 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutThresholdValue.getText()).toString();
                 
-                String msg = messageSourceAccessor.getMessage("myhub.label.login.msg.accountBlocked", new Object[] {args2, args1}, locale);
+                String msg = msa.getMessage("myhub.label.login.msg.accountBlocked", new Object[] {args2, args1}, locale);
                 
                 resultMap.put("resultCd", Result.SUCCESS.getCode());
                 resultMap.put("resultMsg", msg);
@@ -179,13 +177,13 @@ public class LoginController {
             int isAccountExpired = loginService.isAccountExpired(email, scPolicy);
             
             if (isAccountExpired == AccountExpiredEnum.expired.getValue()) {
-                message = messageSourceAccessor.getMessage("myhub.label.login.msg.passwordExpired", locale);
+                message = msa.getMessage("myhub.label.login.msg.passwordExpired", locale);
                 code = String.valueOf(SecurityPoliciesEnum.MaximumPasswordAgeRegular.getCode());
             } else {
                 if (isAccountExpired == AccountExpiredEnum.expiring.getValue()) {
                     String args1 = scPolicy.get("ExpiryDate").toString();
                     
-                    message = messageSourceAccessor.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
+                    message = msa.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
                     code = String.valueOf(SecurityPoliciesEnum.PasswordExpiryWarning.getCode());
                 }
                 
@@ -235,13 +233,17 @@ public class LoginController {
             log.debug("====== Login Result : Fail ===== ");
         }
         
-        // 세션값에 저장
-        //redirectAttr.addAttribute("status", StatusEnum.FAIL);
+        /**
+         * addAttribute : URL에 파라미터가 노출
+         * addFlashAttribute : 리다이렉트시 세션 값에 저장 후 소멸
+         */
+        redirectAttr.addFlashAttribute("resultCd", Result.FAIL.getCode());
+        redirectAttr.addFlashAttribute("resultMsg", msa.getMessage("myhub.error.login.fail", locale));
         
         // FlashMap에 전달할 값을 저장한다.
-        FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
-        fm.put("status", StatusEnum.FAIL);
-        fm.put("message", messageSourceAccessor.getMessage("myhub.error.login.fail", locale));
+        /* FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
+        fm.put("resultCd", Result.FAIL.getCode());
+        fm.put("resultMsg", msa.getMessage("myhub.error.login.fail", locale));*/
         
         return "redirect:/login";
     }
@@ -254,14 +256,14 @@ public class LoginController {
     @RequestMapping(value = "/accessDenied", method = RequestMethod.GET)
     public String timeout(Model model, HttpServletRequest request) {
         if (log.isDebugEnabled()) {
-            log.debug("====== Login Result : AccessDenied ===== ");
+            log.debug("====== Page : AccessDenied ===== ");
         }
         
         // 접근거부 상세 내용
         AccessDeniedException ex = (AccessDeniedException) request.getAttribute("SPRING_SECURITY_403_EXCEPTION");
         log.debug("ex : {}", ex.getMessage());
         
-        return "/common/login/accessDenied";
+        return "/common/auth/accessDenied";
     }
     
     /**
@@ -272,9 +274,23 @@ public class LoginController {
     @RequestMapping(value = "/expired", method = RequestMethod.GET)
     public String expired(Model model) {
         if (log.isDebugEnabled()) {
-            log.debug("====== Login Result : Expired ===== ");    
+            log.debug("====== Page : Expired ===== ");    
         }
         
-        return "/common/login/expired";
+        return "/common/auth/expired";
+    }
+    
+    /**
+     * 타임아웃
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/timeout", method = RequestMethod.GET)
+    public String timeout(Model model) {
+        if (log.isDebugEnabled()) {
+            log.debug("====== Page : Timeout ===== ");    
+        }
+        
+        return "/common/auth/timeout";
     }
 }

@@ -59,7 +59,7 @@ public class UserController {
      * messageSource DI
      */
     @Autowired 
-    MessageSourceAccessor message;
+    MessageSourceAccessor msa;
     
     /**
      * application.properties 정보
@@ -177,7 +177,7 @@ public class UserController {
                 FieldError fe = bindResult.getFieldError();
                 
                 resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", message.getMessage(fe.getCode(), locale));
+                resultMap.put("resultMsg", msa.getMessage(fe.getCode(), locale));
                 
                 return resultMap;
             }
@@ -192,10 +192,10 @@ public class UserController {
             
             if (retUser != null) {
                 resultMap.put("resultCd", Result.SUCCESS.getCode());
-                resultMap.put("resultMsg", message.getMessage("myhub.error.register.success", locale));
+                resultMap.put("resultMsg", msa.getMessage("myhub.error.register.success", locale));
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", message.getMessage("myhub.error.register.failed", locale));
+                resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,11 +253,9 @@ public class UserController {
         
         try {
             User user = userService.findByEmail(email);
-            
             if (user != null) {
                 ret = true;    
             } 
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -352,12 +350,12 @@ public class UserController {
                     FieldError fe = bindResult.getFieldError();
                     
                     result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(message.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
+                    result.setMessage(msa.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
                 } else {
                     //ObjectError oe = bindResult.getGlobalError();
                     
                     result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(message.getMessage(bindResult.getGlobalError().getCode(), locole));
+                    result.setMessage(msa.getMessage(bindResult.getGlobalError().getCode(), locole));
                 }
                 
                 return result;
@@ -415,7 +413,7 @@ public class UserController {
                 FieldError fe = bindResult.getFieldError();
                 
                 result.setStatus(StatusEnum.FAIL);
-                result.setMessage(message.getMessage(fe.getCode(), locole));
+                result.setMessage(msa.getMessage(fe.getCode(), locole));
                 
                 return result;
             }
@@ -464,7 +462,7 @@ public class UserController {
                 resultMap.put("resultData", sb.toString());
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", message.getMessage("myhub.label.list.null", locale));    
+                resultMap.put("resultMsg", msa.getMessage("myhub.label.list.null", locale));    
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -485,14 +483,16 @@ public class UserController {
      */
     @RequestMapping(value = "/passwordSearch", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> passwordSearch(Model model, @RequestParam(value="email", required=true) String email) {
+    public Map<String, Object> passwordSearch(Model model, 
+            @RequestParam(value = "email", required = true) String email,
+            Locale locale) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
             /* 유저정보 조회 */
             User user = userService.findByEmail(email);
             if (user == null) {
-                throw new Exception("유저정보가 존재 하지 않습니다.");
+                throw new Exception(msa.getMessage("myhub.label.list.null", locale));
             }
             
             /* 임시비밀번호 생성 */
@@ -504,7 +504,7 @@ public class UserController {
             /* 유저 비밀번호 수정 */
             int ret = userService.updatePassword(password, password, email);
             if (ret == 0) {
-                throw new Exception("임시 비밀번호 수정이 실패하였습니다.");
+                throw new Exception(msa.getMessage("myhub.error.update.error", locale));
             }
             
             // TODO: queryDSl로 변경 필요 (http://whiteship.me/?p=13230)
