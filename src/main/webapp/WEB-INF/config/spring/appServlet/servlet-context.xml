@@ -71,7 +71,7 @@
     <!-- ============================================================================================ -->
     <mvc:interceptors>
         <beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
-           <beans:property name="paramName" value="locale" />
+           <beans:property name="paramName" value="lang" />
         </beans:bean>
         <beans:bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">
             <beans:property name="cacheSeconds" value="0"/>

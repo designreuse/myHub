@@ -87,13 +87,13 @@
                     login: function() {
                     	var email = $('#email').val();
                         if($.trim(email).length === 0) {
-                            alert('email을 입력하세요.');
+                            alert('<spring:message code="myhub.label.input.email.address"/>');
                             $('#email').focus();
                             return false;
                         }
                         var password = $('#password').val();
                         if($.trim(password).length === 0) {
-                            alert('비밀번호를 입력하세요.');
+                            alert('<spring:message code="myhub.label.input.password"/>');
                             $('#password').focus();
                             return false;
                         }
@@ -115,18 +115,22 @@
                                 $('form[name=frmLogin]').submit();
                             },
                             onerr: function(res) {
-                                alert('로그인이 실패하였습니다.');
+                            	commBootObj.alertModalMsg('로그인이 실패하였습니다.');
                             }
                         });
                         
                     },
                     
+                    // 로그인 결과
                     loginResult: function() {
                     	if ('${resultCd}' === commonObj.constants.result.FAIL) {
-                    		alert('${resultMsg}');
+                    		commBootObj.alertModalMsg('${resultMsg}');
                     	}
+                    	// locale
+                    	$('#locale').val('${sessionScope["org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE"]}');
                     },
                     
+                    // 계정 변경(임시)
                     setUserAccount: function() {
                     	var userVal = $('#userChange').val();
                     	
@@ -148,6 +152,16 @@
                             $('#password').val('111222');
                             break;
                     	}
+                    },
+                    
+                    // 언어 변경
+                    localeChange: function() {
+                    	var locale = $('#locale').val();
+                    	if (locale.length === 0) {
+                            return false;
+                        }
+
+                        location.href = '<c:url value="/login?lang="/>'.concat(locale);
                     }
                 },
                 
@@ -166,6 +180,11 @@
                         // 유저 정보 세팅
                         $('#userChange').on('change', function() {
                         	MyHubApp.data.setUserAccount();
+                        });
+                        
+                        // 언어변경
+                        $('#locale').on('change', function() {
+                            MyHubApp.data.localeChange();
                         });
                     }
                 }
@@ -205,6 +224,12 @@
                 </label>
                 <button class="btn btn-lg btn-primary btn-block" id="btnLogin"><spring:message code="myhub.label.login"/></button>
                 <br>
+                <select class="form-control" id="locale" name="locale">
+                    <option value=""><spring:message code="myhub.label.language"/></option>
+                    <option value="ko_KR"><spring:message code="myhub.label.language.korean"/></option>
+                    <option value="en_US"><spring:message code="myhub.label.language.english"/></option>
+                </select>
+                <br>
                 <select class="form-control" id="userChange" name="userChange">
                     <option value=""><spring:message code="myhub.label.select"/></option>
                     <option value="1">admin(kbtapjm@gmail.com)</option>
@@ -215,5 +240,11 @@
             </form>
         </div>
         <!-- /container -->
+        
+        <!-- common html include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/commonHtml.jsp" %>
+        
+        <!-- common js include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/bootstrapJs.jsp" %>
     </body>
 </html>

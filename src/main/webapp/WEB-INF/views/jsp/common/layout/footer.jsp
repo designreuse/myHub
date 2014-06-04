@@ -9,6 +9,5 @@
     <footer>
         <p class="pull-right"><a href="#">Back to top</a></p>
         <p>&copy; Copyright@ 2014 jmpark(kbtapjm@gmail.com), </p>
-        <p>Account : </p>
     </footer>
 

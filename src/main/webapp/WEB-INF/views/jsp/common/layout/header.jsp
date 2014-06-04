@@ -24,11 +24,11 @@
                             <ul class="nav navbar-nav">
                                 <li class="active"><a href="#">Friend</a></li>
                             </ul>
-                            <form class="navbar-form navbar-left" role="search">
+                            <form class="navbar-form navbar-left" role="search" onsubmit="return false;">
                                 <div class="form-group">
                                     <input type="text" class="form-control" placeholder="Search">
                                 </div>
-                                <button type="submit" class="btn btn-default">Search</button>
+                                <button type="submit" id="btnSearch" class="btn btn-default">Search</button>
                             </form>
                             </security:authorize>
                             
@@ -49,15 +49,8 @@
                                 </li>
                                 </security:authorize>
                                 
-                                <!-- 언어변경은 로그인 인증 후 -->
+                                <!-- 로그인 인증 권한 -->
                                 <security:authorize access="fullyAuthenticated">
-                                <li class="dropdowmyn">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Korean</a></li>
-                                        <li><a href="#">English</a></li>
-                                    </ul>
-                                </li>
                                 <li>
                                     <a href="<c:url value='/j_spring_security_logout' />">Logout</a>
                                 </li>
@@ -94,7 +87,7 @@
                     alert(res);
                 }
             });
-		}	
+		}
 	};
 
 </script>

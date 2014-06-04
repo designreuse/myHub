@@ -82,5 +82,11 @@
                 <!-- /footer -->
             </div>
         </div>
+        
+         <!-- common html include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/commonHtml.jsp" %>
+        
+        <!-- common js include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/bootstrapJs.jsp" %>
     </body>
 </html>

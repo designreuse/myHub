@@ -200,6 +200,29 @@ var commBootObj = {
 		}
 	},
 	
+	// 모달 팝업
+	alertModalMsg: function(msg, btnFn) {
+		// 메세지 세팅
+	    $('#notiMsg').html(msg);
+	    $("#notiModal").modal({
+	        backdrop: 'static',
+	        keyboard: true,
+	        show: true
+	    });
+	    
+	    if(btnFn) {
+	        $('#selectYes').on('click', buttons.yes);
+	        $('#selectNo').on('click', buttons.no);
+	        
+	        // 버튼 변경
+	        $('#defaultButton').hide();
+	        $('#changeButton').show();
+	    }  else {
+	        $('#changeButton').hide();
+	        $('#defaultButton').show();
+	    }
+	},
+	
 	constants: {
 		alerts: {
 			SUCCESS : 'Success',
