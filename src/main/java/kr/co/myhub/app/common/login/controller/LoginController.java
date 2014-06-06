@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import kr.co.myhub.app.common.login.domain.LoginLog;
@@ -16,6 +15,7 @@ import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.AccountExpiredEnum;
 import kr.co.myhub.appframework.constant.Result;
+import kr.co.myhub.appframework.constant.Security;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 
 import org.slf4j.Logger;
@@ -29,11 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.FlashMap;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * 
@@ -133,7 +130,7 @@ public class LoginController {
                 
                 String msg = msa.getMessage("myhub.label.login.msg.accountBlocked", new Object[] {args2, args1}, locale);
                 
-                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultCd", Result.FAIL.getCode());
                 resultMap.put("resultMsg", msg);
             } else {
                 resultMap.put("resultCd", Result.SUCCESS.getCode());
@@ -144,7 +141,7 @@ public class LoginController {
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", msa.getMessage("myhub.error.common.fail", locale));
         }
         
         return resultMap;
@@ -169,24 +166,29 @@ public class LoginController {
         }
         
         Map<String, Object> scPolicy = new HashMap<String, Object>();
-        String message = "";
-        String code = "";
+        String resultMsg = "";
+        String resultCd = "";
         
-        String email = principal.getName();
-        
+        /**
+         * 스프링 시큐리티 인증 통과 후 계정 체크,  로그인 이력 등록, db처리 작업이 있는 경우에는
+         * 각종 예외가 발생 할 가능성이 있기 때문에 성공페이지로 이동하기전 로그인 페이지에서 모든걸 처리하는게 최선의 방법
+         * 모든 케이스가 성공이면 메인페이지로 리다이렉트
+         */
         try {
+            String email = principal.getName();
+            
             /* 암호만료여부 체크 */
             int isAccountExpired = loginService.isAccountExpired(email, scPolicy);
             
             if (isAccountExpired == AccountExpiredEnum.expired.getValue()) {
-                message = msa.getMessage("myhub.label.login.msg.passwordExpired", locale);
-                code = String.valueOf(SecurityPoliciesEnum.MaximumPasswordAgeRegular.getCode());
+                resultMsg = msa.getMessage("myhub.label.login.msg.passwordExpired", locale);
+                resultCd = Security.TokenExpired.getCode();
             } else {
                 if (isAccountExpired == AccountExpiredEnum.expiring.getValue()) {
                     String args1 = scPolicy.get("ExpiryDate").toString();
                     
-                    message = msa.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
-                    code = String.valueOf(SecurityPoliciesEnum.PasswordExpiryWarning.getCode());
+                    resultMsg = msa.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
+                    resultCd = Security.TokenExpiring.getCode();
                 }
                 
                 /* 로그인 상태 처리 추가 */
@@ -209,13 +211,15 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
             session.invalidate();
+            
+            resultCd = Security.AuthenticationFail.getCode();
+            resultMsg =  msa.getMessage("myhub.error.common.fail", locale);            
         }
         
-        FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
-        fm.put("code", code);
-        fm.put("message", message);
+        model.addAttribute("resultCd", resultCd);
+        model.addAttribute("resultMsg", resultMsg);
         
-        return "redirect:/main";
+        return "/common/login/loginResult";  
     }
     
     /**
@@ -239,15 +243,18 @@ public class LoginController {
          * addAttribute : URL에 파라미터가 노출
          * addFlashAttribute : 리다이렉트시 세션 값에 저장 후 소멸
          */
-        redirectAttr.addFlashAttribute("resultCd", Result.FAIL.getCode());
-        redirectAttr.addFlashAttribute("resultMsg", msa.getMessage("myhub.error.login.fail", locale));
+        // redirectAttr.addFlashAttribute("resultCd", Result.FAIL.getCode());
+        // redirectAttr.addFlashAttribute("resultMsg", msa.getMessage("myhub.error.login.fail", locale));
         
         // FlashMap에 전달할 값을 저장한다.
-        /* FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
+        /*FlashMap fm = RequestContextUtils.getOutputFlashMap(request);
         fm.put("resultCd", Result.FAIL.getCode());
         fm.put("resultMsg", msa.getMessage("myhub.error.login.fail", locale));*/
         
-        return "redirect:/login";
+        model.addAttribute("resultCd", Security.AuthenticationFail.getCode());
+        model.addAttribute("resultMsg", msa.getMessage("myhub.error.login.fail", locale));
+        
+        return "/common/login/loginResult";  
     }
     
     /**

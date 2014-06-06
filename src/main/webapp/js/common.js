@@ -201,7 +201,7 @@ var commBootObj = {
 	},
 	
 	// 모달 팝업
-	alertModalMsg: function(msg, btnFn) {
+	alertModalMsg: function(msg, buttonOpts) {
 		// 메세지 세팅
 	    $('#notiMsg').html(msg);
 	    $("#notiModal").modal({
@@ -210,16 +210,35 @@ var commBootObj = {
 	        show: true
 	    });
 	    
-	    if(btnFn) {
-	        $('#selectYes').on('click', buttons.yes);
-	        $('#selectNo').on('click', buttons.no);
-	        
-	        // 버튼 변경
-	        $('#defaultButton').hide();
-	        $('#changeButton').show();
-	    }  else {
-	        $('#changeButton').hide();
-	        $('#defaultButton').show();
+	    if (!buttonOpts) {
+	    	$('#btnThird').show();
+	    	return false;
+	    }
+	    
+	    $('#btnFirst').hide();
+	    $('#btnSecond').hide();
+	    $('#btnThird').hide();
+	    
+	    /* 버튼 옵션 설정*/
+	    if(buttonOpts.first) {
+	    	$('#btnFirst').show();
+	    	
+	    	if (buttonOpts.first.text) $('#btnFirst').text(buttonOpts.first.text);
+	    	if (buttonOpts.first.fn) $('#btnFirst').on('click', buttonOpts.first.fn);
+	    }
+	    
+	    if(buttonOpts.second) {
+	    	$('#btnSecond').show();
+	    	
+	    	if (buttonOpts.second.text) $('#btnSecond').text(buttonOpts.second.text);
+	    	if (buttonOpts.second.fn) $('#btnSecond').on('click', buttonOpts.second.fn);
+	    }
+	    
+	    if(buttonOpts.third) {
+	    	$('#btnThird').show();
+	    	
+	    	if (buttonOpts.third.text) $('#btnThird').text(buttonOpts.third.text);
+	    	if (buttonOpts.third.fn) $('#btnThird').on('click', buttonOpts.third.fn);
 	    }
 	},
 	

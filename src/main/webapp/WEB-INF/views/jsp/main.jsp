@@ -56,11 +56,7 @@
                 
                 data: {
                     init: function() {
-                        this.loginResult();
-                    },
-                    
-                    loginResult: function() {
-                    	
+                        
                     }
                 },
                 

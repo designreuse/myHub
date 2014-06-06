@@ -69,7 +69,7 @@
         disable-url-rewriting="true" >
         
         <!-- Authorization(권한정보) -->
-        <security:intercept-url pattern="/" access="permitAll" />
+        <!-- <security:intercept-url pattern="/" access="permitAll" /> -->
         <security:intercept-url pattern="/user/**" access="permitAll" />
         <security:intercept-url pattern="/main" access="isAuthenticated()" />
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />

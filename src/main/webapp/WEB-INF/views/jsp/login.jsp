@@ -60,7 +60,10 @@
                 data: {
                     init: function() {
                         this.getCookie();
-                        this.loginResult();
+                        this.isSecurityExpired();
+                        
+                        // locale
+                        //$('#locale').val('${sessionScope["org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE"]}');
                     },
                     
                     // 저장된 쿠키 가져오기
@@ -73,7 +76,7 @@
                         }
                     },
                     
-                    // 쿠키에 E-mail  저장
+                    // 쿠키에  저장
                     saveCookie: function() {
                         var email = $('#email').val();
                         
@@ -84,16 +87,17 @@
                         }
                     },
                     
+                    // 로그인
                     login: function() {
                     	var email = $('#email').val();
                         if($.trim(email).length === 0) {
-                            alert('<spring:message code="myhub.label.input.email.address"/>');
+                        	commBootObj.alertModalMsg('<spring:message code="myhub.label.input.email.address"/>');
                             $('#email').focus();
                             return false;
                         }
                         var password = $('#password').val();
                         if($.trim(password).length === 0) {
-                            alert('<spring:message code="myhub.label.input.password"/>');
+                        	commBootObj.alertModalMsg('<spring:message code="myhub.label.input.password"/>');
                             $('#password').focus();
                             return false;
                         }
@@ -105,29 +109,59 @@
                         commonObj.data.ajax(url, {pars: pars, async: false, 
                             onsucc: function(res) {
                             	if (res.resultCd === commonObj.constants.result.FAIL) {
-                            		alert(res.resultMsg);
+                            		commBootObj.alertModalMsg(res.resultMsg);
                             		return false;	
                             	}
                             	
+                            	// 락이 걸린 경우가 아닌 경우 로그인 시도
                             	$('form[name=frmLogin]').attr('onsubmit', 'return true;');
+                            	$('form[name=frmLogin]').attr('target', 'loginTarget');
                             	$('form[name=frmLogin]').attr('action', '<c:url value="/j_spring_security_check" />');
                                 $('form[name=frmLogin]').attr('method', 'POST');
                                 $('form[name=frmLogin]').submit();
                             },
                             onerr: function(res) {
-                            	commBootObj.alertModalMsg('로그인이 실패하였습니다.');
+                            	commBootObj.alertModalMsg('<spring:message code="myhub.error.common.fail"/>');
                             }
                         });
-                        
                     },
                     
-                    // 로그인 결과
-                    loginResult: function() {
+                    // 인증(토큰)만료 여부 체크
+                    isSecurityExpired: function() {
                     	if ('${resultCd}' === commonObj.constants.result.FAIL) {
                     		commBootObj.alertModalMsg('${resultMsg}');
                     	}
-                    	// locale
-                    	$('#locale').val('${sessionScope["org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE"]}');
+                    },
+                    
+                    // 스프링 시큐리티 인증 통과 후 결과
+                    loginSuccessResult: function(result) {
+                        if (result === null) return false;
+                        
+                        var resultCd = result.resultCd;
+                        var resultMsg = result.resultMsg;
+                        
+                        switch(resultCd) {
+                        case '9001': // 계정만료, 비밀번호 변경
+                        	commBootObj.alertModalMsg(resultMsg);
+                            break;
+                        case '9002': // 계정만료 날짜 알림 -> 메인페이지
+                            var buttonOpts = {
+                          		first: {
+                          		    text: '<spring:message code="myhub.label.ok"/>',
+                          		    fn: function() {
+                          		      location.href = '<c:url value="/main"/>';              
+                          		    }
+                                }
+                            };
+                            commBootObj.alertModalMsg(resultMsg, buttonOpts);
+                            break;
+                        case '9003': // 로그인 실패
+                            commBootObj.alertModalMsg(resultMsg);
+                            break;
+                        case '9999': // 서버 오류
+                            commBootObj.alertModalMsg(resultMsg);
+                            break;
+                        }
                     },
                     
                     // 계정 변경(임시)
@@ -202,6 +236,8 @@
         
 	</head>
 	<body>
+	   <iframe name="loginTarget" id="loginTarget" src="about:blank" width="0" height="0" allowtransparency="true" frameborder="0"></iframe>
+	   
 	   <!-- container -->
         <div class="container">
             <form class="form-signin" id="frmLogin" name="frmLogin" onsubmit="return false;">
