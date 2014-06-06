@@ -45,28 +45,28 @@
             <div class="modal-body">
                 <form class="form-horizontal" onsubmit="return false;">
                     <div class="form-group">
-                        <label for="password" class="col-sm-3 control-label"><spring:message code="myhub.label.password"/></label>
+                        <label for="password" class="col-sm-3 control-label"><spring:message code="myhub.label.before.password"/></label>
                         <div class="col-sm-5">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="12" value="">
+                            <input type="password" class="form-control" id="beforePassword" name="beforePassword" maxlength="12" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="password" class="col-sm-3 control-label"><spring:message code="myhub.label.password"/></label>
                         <div class="col-sm-5">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="12" value="">
+                            <input type="password" class="form-control" id="password" name="password" maxlength="12" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cfPassword" class="col-sm-3 control-label"><spring:message code="myhub.label.confirm.password"/></label>
                         <div class="col-sm-5">
-                            <input type="password" class="form-control" id="cfPassword" name="cfPassword" placeholder="Password" maxlength="12" value="">
+                            <input type="password" class="form-control" id="cfPassword" name="cfPassword" maxlength="12" value="">
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                        수정
+                <button type="button" class="btn btn-default" id="btnPasswordUpdate">
+                    <spring:message code="myhub.label.update"/>
                 </button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">
                     <spring:message code="myhub.label.close"/>

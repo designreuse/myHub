@@ -180,10 +180,13 @@ public class LoginController {
             /* 암호만료여부 체크 */
             int isAccountExpired = loginService.isAccountExpired(email, scPolicy);
             
+            // 비밀번호 만료
             if (isAccountExpired == AccountExpiredEnum.expired.getValue()) {
                 resultMsg = msa.getMessage("myhub.label.login.msg.passwordExpired", locale);
                 resultCd = Security.TokenExpired.getCode();
             } else {
+                
+                // 비밀번호 만료 진행
                 if (isAccountExpired == AccountExpiredEnum.expiring.getValue()) {
                     String args1 = scPolicy.get("ExpiryDate").toString();
                     
@@ -207,6 +210,8 @@ public class LoginController {
                 loginLog.setUser(user);
                 
                 loginService.create(loginLog);
+                
+                resultCd = Result.SUCCESS.getCode();
             }
         } catch (Exception e) {
             e.printStackTrace();

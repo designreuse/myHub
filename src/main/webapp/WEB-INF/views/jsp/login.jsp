@@ -110,6 +110,7 @@
                             onsucc: function(res) {
                             	if (res.resultCd === commonObj.constants.result.FAIL) {
                             		commBootObj.alertModalMsg(res.resultMsg);
+                            		$('form[name=frmLogin]').attr('onsubmit', 'return false;');
                             		return false;	
                             	}
                             	
@@ -141,23 +142,47 @@
                         var resultMsg = result.resultMsg;
                         
                         switch(resultCd) {
-                        case '9001': // 계정만료, 비밀번호 변경
-                        	commBootObj.alertModalMsg(resultMsg);
+                        case '0000':
+                        	location.href = '<c:url value="/main"/>';
                             break;
+                        case '9001': // 계정만료, 비밀번호 변경
+                        	var buttonOpts = {
+                                first: {
+                                    fn: function() {
+                                    	$("#passwordEditModal").modal({
+                                            backdrop: 'static',
+                                            keyboard: true,
+                                            show: true
+                                        });
+                                    	$('#beforePassword').focus();
+                                    }
+                                },
+                                
+                                second: {
+                                	fn: function() {                                                    
+                                    }
+                                }
+                            };
+                        
+                        	commBootObj.alertModalMsg(resultMsg, buttonOpts);
+                            break;
+                            
                         case '9002': // 계정만료 날짜 알림 -> 메인페이지
                             var buttonOpts = {
                           		first: {
                           		    text: '<spring:message code="myhub.label.ok"/>',
                           		    fn: function() {
-                          		      location.href = '<c:url value="/main"/>';              
+                          		        location.href = '<c:url value="/main"/>';              
                           		    }
                                 }
                             };
                             commBootObj.alertModalMsg(resultMsg, buttonOpts);
                             break;
+                            
                         case '9003': // 로그인 실패
                             commBootObj.alertModalMsg(resultMsg);
                             break;
+                            
                         case '9999': // 서버 오류
                             commBootObj.alertModalMsg(resultMsg);
                             break;
@@ -196,6 +221,11 @@
                         }
 
                         location.href = '<c:url value="/login?lang="/>'.concat(locale);
+                    },
+                    
+                    // 비밀번호 수정
+                    updatePassword: function() {
+                    	$('#passwordEditModal').modal('hide');
                     }
                 },
                 
@@ -219,6 +249,11 @@
                         // 언어변경
                         $('#locale').on('change', function() {
                             MyHubApp.data.localeChange();
+                        });
+                        
+                        // 비밀번호 수정
+                        $('#btnPasswordUpdate').on('click', function() {
+                            MyHubApp.data.updatePassword();
                         });
                     }
                 }
