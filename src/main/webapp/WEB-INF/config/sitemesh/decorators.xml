@@ -3,7 +3,8 @@
 
     <!-- 유저 페이지 -->
     <decorator name="layoutUser" page="layoutUser.jsp">
-        <pattern>*/user/*</pattern>
+        <pattern>/user/userAdd</pattern>
+        <pattern>/user/userSearch</pattern>
     </decorator>
     
     

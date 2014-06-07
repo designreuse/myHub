@@ -39,6 +39,8 @@
         <script src="<c:url value='/js/bootstrap/bootstrap.js'/>"></script>
         <!-- jquery cookie -->
         <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
+        <!-- jquery validate -->
+        <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
         <!--  =========================================================== -->
         
         <!-- application -->
@@ -142,32 +144,27 @@
                         var resultMsg = result.resultMsg;
                         
                         switch(resultCd) {
-                        case '0000':
+                        case '0000':    //로그인 성공
                         	location.href = '<c:url value="/main"/>';
                             break;
-                        case '9001': // 계정만료, 비밀번호 변경
+                        case '9001':    // 계정만료, 비밀번호 변경
                         	var buttonOpts = {
                                 first: {
                                     fn: function() {
-                                    	$("#passwordEditModal").modal({
-                                            backdrop: 'static',
-                                            keyboard: true,
-                                            show: true
-                                        });
-                                    	$('#beforePassword').focus();
+                                    	// 비밀번호 수정 팝업창 오픈
+                                    	MyHubApp.popup.userPasswordEdit();
                                     }
                                 },
                                 
                                 second: {
-                                	fn: function() {                                                    
-                                    }
+                                	fn: function() {}
                                 }
                             };
                         
                         	commBootObj.alertModalMsg(resultMsg, buttonOpts);
                             break;
                             
-                        case '9002': // 계정만료 날짜 알림 -> 메인페이지
+                        case '9002':    // 계정만료 날짜 알림 -> 메인페이지
                             var buttonOpts = {
                           		first: {
                           		    text: '<spring:message code="myhub.label.ok"/>',
@@ -179,11 +176,11 @@
                             commBootObj.alertModalMsg(resultMsg, buttonOpts);
                             break;
                             
-                        case '9003': // 로그인 실패
+                        case '9003':    // 로그인 실패
                             commBootObj.alertModalMsg(resultMsg);
                             break;
                             
-                        case '9999': // 서버 오류
+                        case '9999':    // 서버 오류
                             commBootObj.alertModalMsg(resultMsg);
                             break;
                         }
@@ -221,11 +218,6 @@
                         }
 
                         location.href = '<c:url value="/login?lang="/>'.concat(locale);
-                    },
-                    
-                    // 비밀번호 수정
-                    updatePassword: function() {
-                    	$('#passwordEditModal').modal('hide');
                     }
                 },
                 
@@ -250,12 +242,19 @@
                         $('#locale').on('change', function() {
                             MyHubApp.data.localeChange();
                         });
-                        
-                        // 비밀번호 수정
-                        $('#btnPasswordUpdate').on('click', function() {
-                            MyHubApp.data.updatePassword();
-                        });
                     }
+                },
+                
+                popup: {
+                	userPasswordEdit: function() {
+                		commonObj.popup.open({
+                            url : '<c:url value="/user/userPasswordEdit"/>',
+                            pars : 'email='.concat($('#email').val()),
+                            title: 'userPasswordEdit',
+                            width : '420',
+                            height : '400'
+                        });
+                	}
                 }
             };
         
@@ -274,7 +273,7 @@
 	   <iframe name="loginTarget" id="loginTarget" src="about:blank" width="0" height="0" allowtransparency="true" frameborder="0"></iframe>
 	   
 	   <!-- container -->
-        <div class="container">
+       <div class="container">
             <form class="form-signin" id="frmLogin" name="frmLogin" onsubmit="return false;">
                 <h4 class="form-signin-heading"><spring:message code="myhub.label.signin"/></h4>
                 <input type="text" id="email" name="email" class="form-control" placeholder="Email address">

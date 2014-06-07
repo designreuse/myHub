@@ -83,7 +83,7 @@
             </div>
         </div>
         
-         <!-- common html include -->
+        <!-- common html include -->
         <%@ include file="/WEB-INF/views/jsp/common/include/commonHtml.jsp" %>
         
         <!-- common js include -->

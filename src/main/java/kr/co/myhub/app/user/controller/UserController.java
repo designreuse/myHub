@@ -127,6 +127,21 @@ public class UserController {
         return "/user/userEdit";         
     }
     
+    /**
+     * 유저 비밀번호 수정 화면
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userPasswordEdit", method = RequestMethod.GET)
+    public String userPasswordEdit(Model model,
+            @RequestParam(value = "email", required = false) String email) throws Exception {
+        
+        model.addAttribute("email", email);
+        
+        return "/user/userPasswordEdit";         
+    }
+    
     // ===================================================================================
     // Data 처리
     // ===================================================================================

@@ -26,6 +26,9 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
         
+        <!--  =========================================================== -->
+        <!-- js lib -->
+        <!--  =========================================================== -->
         <!-- jquery -->
         <script src="<c:url value='/js/jquery/jquery.js'/>"></script>
         <!-- angularJS -->
@@ -36,10 +39,13 @@
         <script src="<c:url value='/js/bootstrap/bootstrap.js'/>"></script>
         <!-- jquery cookie -->
         <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
-        <!-- holder -->
-        <script src="<c:url value='/js/holder.js'/>"></script>
-        <!-- common -->
+        <!-- jquery validate -->
+        <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
+        <!--  =========================================================== -->
+        
+        <!-- application -->
         <script src="<c:url value='/js/common.js'/>"></script>
+        <script src="<c:url value='/js/holder.js'/>"></script>
         
         <script type="text/javascript">
         

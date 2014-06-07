@@ -130,6 +130,49 @@ var commonObj = {
 		
 	},
 	
+	// 팝업 관련
+	popup: {
+		open : function(_config){
+			
+			if (!_config.url) throw new ("commonObj.poup.open url not defined !");
+			if (!_config.title) _config.title = mppsObj.conf.sitename + "_popup";
+			if (!_config.method) _config.method = "get";
+			if (!_config.resizeable) _config.resizeable = "no";
+			if (!_config.scrollbars) _config.scrollbars = "yes";
+			if (!_config.toolbars) _config.toolbars = "no";
+			if (!_config.pars) _config.pars = '';
+			
+			var options = {top: 0, left: 0, width: 800, height: screen.availHeight - 60, title: "", resizeable: "no", scrollbars: "yes", toolbars: "no", status: "no", menu: "no", mode: "center"};
+			
+			if (_config.width != undefined && ("" + _config.width).indexOf('%') < 1) {
+				options.left = (screen.availWidth - _config.width) / 2;
+			}
+			
+			if (_config.height != undefined && ("" + _config.height).indexOf('%') < 1) {
+				options.top = (screen.height - _config.height) / 2;
+			}
+			
+            var opt = 'top=' + options.top + ',left=' + options.left + ',resizable=' + _config.resizeable + ',scrollbars=' + _config.scrollbars;
+            	opt += ',toolbars=' + _config.toolbars + ',status=' + options.status + ',menu=' + options.menu;
+
+            if (_config.width ) {
+            	opt += ',width=' + _config.width;
+            }
+            
+            if (_config.height ) {
+            	opt += ',height=' + _config.height;
+            }
+            var pars = _config.pars.length != 0 ? '?' + _config.pars : '';
+            var url = _config.url + pars;
+                        
+            var win = window.open(url, _config.title, opt);
+            
+            if (parseInt(navigator.appVersion) >= 4) {
+                win.focus();
+            }
+		}
+	},
+	
 	// 상수모음(클라이언트에서의 하드 코딩 방지)
 	constants : {
 		result : {

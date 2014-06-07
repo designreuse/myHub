@@ -7,6 +7,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
+<!-- 알림 공통 HTML -->
 <div class="modal fade" id="notiModal">
     <div class="modal-dialog" style="width: 25%;">
         <div class="modal-content">
@@ -34,16 +35,15 @@
     </div>
 </div>
 
-<!-- 비밀번호 수정창 -->
-<div class="modal fade" id="passwordEditModal">
+<%-- <div class="modal fade" id="passwordEditModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">비밀번호 수정</h4>
+                <h4 class="modal-title"><spring:message code="myhub.label.password"/>&nbsp;<spring:message code="myhub.label.update"/></h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" onsubmit="return false;">
+                <form class="form-horizontal" id="frmPassword" name="frmPassword" onsubmit="return false;">
                     <div class="form-group">
                         <label for="password" class="col-sm-3 control-label"><spring:message code="myhub.label.before.password"/></label>
                         <div class="col-sm-5">
@@ -53,13 +53,13 @@
                     <div class="form-group">
                         <label for="password" class="col-sm-3 control-label"><spring:message code="myhub.label.password"/></label>
                         <div class="col-sm-5">
-                            <input type="password" class="form-control" id="password" name="password" maxlength="12" value="">
+                            <input type="password" class="form-control" id="afterPassword" name="afterPassword" maxlength="12" value="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cfPassword" class="col-sm-3 control-label"><spring:message code="myhub.label.confirm.password"/></label>
                         <div class="col-sm-5">
-                            <input type="password" class="form-control" id="cfPassword" name="cfPassword" maxlength="12" value="">
+                            <input type="password" class="form-control" id="cfafterPassword" name="cfafterPassword" maxlength="12" value="">
                         </div>
                     </div>
                 </form>
@@ -74,5 +74,6 @@
             </div>
         </div>
     </div>
-</div>
+</div> --%>
+
 
