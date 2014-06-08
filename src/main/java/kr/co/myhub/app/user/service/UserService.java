@@ -102,10 +102,11 @@ public interface UserService {
      * 비밀번호 수정
      * @param password
      * @param lastPassword
+     * @param passwordModDt
      * @param email
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
-    public int updatePassword(String password, String lastPassword, String email);
+    //@PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
+    public int updatePassword(String password, String lastPassword, Date passwordModDt, String email);
     
 }

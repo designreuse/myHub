@@ -50,7 +50,10 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
      */
     @Modifying
     @Query("update User set loginFailCount = loginFailCount + 1, loginFailDt = :loginFailDt where email = :email")
-    public int updateUserFailLogin(@Param("loginFailDt")Date loginFailDt, @Param("email")String email);
+    public int updateUserFailLogin(
+            @Param("loginFailDt")Date loginFailDt, 
+            @Param("email")String email
+            );
     
     /**
      * 로그인 성공시 수정
@@ -59,7 +62,10 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
      */
     @Modifying
     @Query("update User set loginFailCount = 0, loginFailDt = :loginFailDt where email = :email")
-    public int updateUserSuccessLogin(@Param("loginFailDt")Date loginFailDt, @Param("email")String email);
+    public int updateUserSuccessLogin(
+            @Param("loginFailDt")Date loginFailDt, 
+            @Param("email")String email
+            );
     
     /**
      * 비밀번호 수정
@@ -68,8 +74,13 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
      * @return
      */
     @Modifying
-    @Query("update User set password = :password, lastPassword = :lastPassword where email = :email")
-    public int updatePassword(@Param("password")String password, @Param("lastPassword")String lastPassword, @Param("email")String email);
+    @Query("update User set password = :password, lastPassword = :lastPassword, passwordModDt = :passwordModDt where email = :email")
+    public int updatePassword(
+            @Param("password")String password, 
+            @Param("lastPassword")String lastPassword, 
+            @Param("passwordModDt")Date passwordModDt, 
+            @Param("email")String email
+            );
     
     /**
      * 이메일 검색

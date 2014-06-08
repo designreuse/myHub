@@ -122,14 +122,21 @@
                     // 비밀번호 수정
                     updatePassword: function() {
                     	var url = commonObj.config.contextPath.concat('/user/changePassword');
-                        var pars = 'email='.concat(email);
+                        var pars = $('#frmPwdUpdate').serialize();
                             
                         commonObj.data.ajax(url, {pars: pars, async: false, 
                             onsucc: function(res) {
-                                        
+                            	var resultCd = res.resultCd;
+                                if (resultCd === commonObj.constants.result.FAIL) {
+                                    alert(res.resultMsg);
+                                    return false;
+                                } else {
+                                	alert(res.resultMsg);
+                                	window.close();
+                                }
                             },
                             onerr: function(res) {
-                                commBootObj.alertModalMsg('<spring:message code="myhub.error.common.fail"/>');
+                                alert('<spring:message code="myhub.error.common.fail"/>');
                             }
                         });
                     }

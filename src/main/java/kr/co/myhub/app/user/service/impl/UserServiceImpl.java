@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService  {
      * @return
      */
     @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public int updatePassword(String password, String lastPassword, String email) {
-        return userRepasitory.updatePassword(password, lastPassword, email);
+    public int updatePassword(String password, String lastPassword, Date passwordModDt, String email) {
+        return userRepasitory.updatePassword(password, lastPassword, passwordModDt, email);
     }
 }

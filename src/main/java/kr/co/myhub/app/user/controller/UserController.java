@@ -517,7 +517,7 @@ public class UserController {
             String password = EncryptionUtil.getEncryptPassword(tmpPassword);
             
             /* 유저 비밀번호 수정 */
-            int ret = userService.updatePassword(password, password, email);
+            int ret = userService.updatePassword(password, password, new Date(), email);
             if (ret == 0) {
                 throw new Exception(msa.getMessage("myhub.error.update.error", locale));
             }
@@ -537,6 +537,69 @@ public class UserController {
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", "임시 비밀번호가 가입한 이메일로 전송되었습니다. 확인하세요.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 비밀번호 변경
+     * @param model
+     * @param beforePassword
+     * @param afterPassword
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> changePassword(Model model, 
+            @RequestParam(value = "email", required = true) String email,
+            @RequestParam(value = "beforePassword", required = true) String beforePassword,
+            @RequestParam(value = "afterPassword", required = true) String afterPassword,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            // 비교할때는 암호화 
+            String encBeforePassword = EncryptionUtil.getEncryptPassword(beforePassword);
+            String encafterPassword = EncryptionUtil.getEncryptPassword(afterPassword);
+            
+            /* 유저정보 조회 */
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                throw new Exception(msa.getMessage("myhub.label.list.null", locale));
+            }
+            
+            /* 유저의 현재 비밀번호 일치여부 체크 */
+            if (!user.getPassword().equals(encBeforePassword)) {
+                throw new Exception(msa.getMessage("myhub.error.befor.password1", locale));
+            }
+            
+            /* 변경 할 비밀번호가 현재 비밀번호와 일치하는지 체크 */
+            if (beforePassword.equals(afterPassword)) {
+                throw new Exception(msa.getMessage("myhub.error.befor.password2", locale));
+            }
+            
+            /* 변경 할 비밀번호가 이전에 사용한 비밀번호와 동일한지 체크 */
+            if (encafterPassword.equals(user.getLastPassword())) {
+                throw new Exception(msa.getMessage("myhub.error.befor.password3", locale));
+            }
+            
+            /* 유저 비밀번호 수정 */
+            int ret = userService.updatePassword(encafterPassword, encBeforePassword, new Date(), email);
+            if (ret == 0) {
+                throw new Exception(msa.getMessage("myhub.error.update.error", locale));
+            }
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", msa.getMessage("myhub.error.befor.password4", locale));
+            
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
