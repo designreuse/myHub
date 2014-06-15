@@ -1,12 +1,133 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>Insert title here</title>
-</head>
-<body>
+<%@ include file="/WEB-INF/views/jsp/common/include/taglibs.jsp" %>
 
-</body>
+<%@ page pageEncoding="utf-8" contentType="text/html;charset=utf-8"%>
+
+<!doctype html>
+<html>
+    <head>
+        <title><spring:message code="myhub.label.userInfo"/></title>
+        
+        <script type="text/javascript">
+        
+            var MyHubApp = {
+                pageInit: function() {
+                    'use strict';
+                    
+                    // data init
+                    this.data.init();
+                    
+                    // event init
+                    this.event.init();
+                },
+                
+                data: {
+                    init: function() {
+                        this.getUserInfo();
+                    },
+                    
+                    getUserInfo: function() {
+                    	var url = commonObj.config.contextPath.concat('/user/getUserInfo');
+                        var pars = '';
+                            
+                        commonObj.data.ajax(url, {pars: pars, async: false, 
+                            onsucc: function(res) {
+                            	if (res.resultCd === commonObj.constants.result.FAIL) {
+                                    commBootObj.alertModalMsg(res.resultMsg);
+                                    return false;   
+                                }
+                            	
+                            	MyHubApp.data.setUserInfo(res.resultData);
+                            },
+                            onerr: function(res) {
+                                commBootObj.alertModalMsg('<spring:message code="myhub.error.common.fail"/>');
+                            }
+                        });
+                    },
+                    
+                    setUserInfo: function(data) {
+                    	if (!data) return false;
+                    	
+                    	$('#email').text(data.email);
+                    	$('#userName').text(data.userName);
+                    	$('#birthday').text(commonObj.data.util.getBirthDay(data.birthday, '.'));
+                    	$('#phoneNo').text(commonObj.data.util.getMoblPhoneNo(data.phoneNo, '-'));
+                    	$('#gender').text(data.gender === 'M' ? '<spring:message code="myhub.label.gender.male"/>' : '<spring:message code="myhub.label.gender.female"/>');
+                    }
+                },
+                
+                event: {
+                    init: function() {
+                        // 수정
+                        $('#btnEdit').on('click', function() {
+                        	location.href = '<c:url value="/user/userEdit"/>';
+                        });
+                        
+                        // 회원탈퇴
+                        $('#btnEdit').on('click', function() {
+                            
+                        });
+                    }
+                }
+            };
+        
+            $(document).ready(function() {
+                try {
+                    MyHubApp.pageInit();
+                } catch (e){
+                    log('Error : ' + e.toString());
+                }
+            });
+        
+        </script>
+        
+    </head>
+    <body>
+                <!-- label -->
+                <blockquote>
+                    <p><spring:message code="myhub.label.userInfo"/></p>
+                </blockquote>
+                <!-- /label -->
+                
+                <!-- form -->
+                <form class="form-horizontal" id="frmCreate" name="frmCreate" onsubmit="return false;">
+                    <input type="hidden" name="userId" id="userId" value="">
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
+                        <div class="col-sm-3">
+                            <p class="form-control-static" id="email"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userName" class="col-sm-2 control-label"><spring:message code="myhub.label.name"/></label>
+                        <div class="col-sm-3">
+                            <p class="form-control-static" id="userName"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.birthday"/></label>
+                        <div class="col-sm-3">
+                            <p class="form-control-static" id="birthday"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.phone"/></label>
+                        <div class="col-sm-3">
+                            <p class="form-control-static" id="phoneNo"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday" class="col-sm-2 control-label"><spring:message code="myhub.label.gender"/></label>
+                        <div class="col-sm-3">
+                            <p class="form-control-static" id="gender"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-primary" id="btnEdit"><spring:message code="myhub.label.update"/></button>
+                            <button class="btn btn-danger" id="btnDelete"><spring:message code="myhub.label.delete.user"/></button>
+                        </div>
+                    </div>
+                </form>
+                <!-- /form -->
+    </body>
 </html>

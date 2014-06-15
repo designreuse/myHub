@@ -20,6 +20,9 @@ import com.mysema.query.types.path.StringPath;
  * date   : 2014. 5. 18.
  * author : jmpark
  * content: QUser is a Querydsl query type for User
+ * https://github.com/sathya2013/EBootstrap/blob/master/src/main/java/com/me/bootstrap/querydsl/QUser.java
+ * http://netframework.tistory.com/entry/13-queryDSL-Spring-Data-JPA
+ * 
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
@@ -49,7 +52,19 @@ public class QUser extends EntityPathBase<User> {
     
     public final StringPath gender = createString("gender");
     
+    public final StringPath phoneNo = createString("phoneNo");
+    
     public final DateTimePath<java.util.Date> crtDt = createDateTime("crtDt", java.util.Date.class);
+    
+    public final DateTimePath<java.util.Date> modDt = createDateTime("modDt", java.util.Date.class);
+    
+    public final DateTimePath<java.util.Date> passwordModDt = createDateTime("passwordModDt", java.util.Date.class);
+    
+    public final StringPath lastPassword = createString("lastPassword");
+    
+    public final NumberPath<Long> loginFailCount = createNumber("loginFailCount", Long.class);
+    
+    public final DateTimePath<java.util.Date> loginFailDt = createDateTime("loginFailDt", java.util.Date.class);
     
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);
@@ -71,5 +86,4 @@ public class QUser extends EntityPathBase<User> {
     private QUser(Class<? extends User> type, String variable) {
         super(type, variable);
     }
-
 }

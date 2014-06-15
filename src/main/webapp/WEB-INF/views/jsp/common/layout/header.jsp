@@ -36,7 +36,7 @@
 	                            <!-- 로그인한 사용자 정보 -->
 	                            <security:authorize access="fullyAuthenticated">
                                 <li>
-	                               <a href="#">
+	                               <a href="<c:url value='/user/userInfo' />">
 	                                   <security:authentication property="principal.username"/>
 	                               </a>
                                 </li>
@@ -52,14 +52,17 @@
                                 <!-- 로그인 인증 권한 -->
                                 <security:authorize access="fullyAuthenticated">
                                 <li>
-                                    <a href="<c:url value='/j_spring_security_logout' />">Logout</a>
+                                    <a href="javascript:MyHubHeaderApp.popup.userPasswordEdit('<security:authentication property="principal.username"/>');"><spring:message code="myhub.label.change.password"/></a>
+                                </li>
+                                <li>
+                                    <a href="<c:url value='/j_spring_security_logout' />"><spring:message code="myhub.label.logout"/></a>
                                 </li>
                                 </security:authorize>
 
                                 <!-- 로그인을 안한 상태는 로그인 버튼 활성화 -->
                                 <security:authorize ifNotGranted="ROLE_ADMIN, ROLE_MANAGER, ROLE_USER" >
                                 <li>
-                                    <a href="<c:url value='/' />">Login</a>
+                                    <a href="<c:url value='/' />"><spring:message code="myhub.label.login"/></a>
                                 </li>
                                 </security:authorize>
                                 
@@ -70,24 +73,40 @@
 
 <!-- 페이지 공통 함수 -->                
 <script type="text/javascript">
-	var headerFn = {
-		getActiveUserList : function() {
-			var url = commonObj.config.contextPath.concat('/user/getActiveUserList');
-            var pars = '';
-            
-            commonObj.data.ajax(url, {pars: pars, async: true, 
-                onsucc: function(res) {
-                    var resultCd = res.resultCd;
-                    if (resultCd === commonObj.constants.result.SUCCESS) {
-                    	var resultData = res.resultData;
-                    	
-                    }
-                },
-                onerr: function(res) {
-                    alert(res);
-                }
-            });
-		}
+	var MyHubHeaderApp = {
+		pageInit: function() {
+		    'use strict';
+               
+            // data init
+            this.data.init();
+               
+            // event init
+            this.event.init();
+        },
+           
+        data: {
+            init: function() {
+            	
+            }
+        },
+        
+        event: {
+        	init: function() {
+        		// init
+        	}
+        },
+		
+		popup: {
+            userPasswordEdit: function(email) {
+                commonObj.popup.open({
+                    url : '<c:url value="/user/userPasswordEdit"/>',
+                    pars : 'email='.concat(email),
+                    title: 'userPasswordEdit',
+                    width : '420',
+                    height : '400'
+                });
+            }
+        }
 	};
 
 </script>

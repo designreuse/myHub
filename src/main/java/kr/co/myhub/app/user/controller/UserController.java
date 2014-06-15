@@ -1,11 +1,14 @@
 package kr.co.myhub.app.user.controller;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.servlet.http.HttpSession;
 
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
  * 
@@ -191,10 +195,7 @@ public class UserController {
             if (bindResult.hasErrors()) {
                 FieldError fe = bindResult.getFieldError();
                 
-                resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", msa.getMessage(fe.getCode(), locale));
-                
-                return resultMap;
+                throw new Exception(msa.getMessage(fe.getCode(), locale));
             }
             
             /* 비밀번호 암호화(SHA-256) */
@@ -229,53 +230,32 @@ public class UserController {
      * @param userKey
      * @return
      */
-    @RequestMapping(value = "/getUserByUserKey/{userKey}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult getUserByUserKey(Model model, 
-            @PathVariable("userKey") Long userKey) {
-        ApiResult result = new ApiResult();
-        User retuser = null;
+    public Map<String, Object> getUserInfo(Model model, 
+            Principal principal, 
+            HttpSession session,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            retuser = userService.findByUserKey(userKey);
+            User user = (User) session.getAttribute("sUser");
+            if (user == null) {
+                throw new Exception(msa.getMessage("myhub.label.list.null", locale));
+            }
             
-            result.setStatus(StatusEnum.SUCCESS);
-            result.setData(retuser);
-            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            resultMap.put("resultData", user);
         } catch (Exception e) {
             e.printStackTrace();
-            
-            // Exception result
-            result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            log.error("Exception : {}", e.getMessage());
+        
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
         }
         
-        return result;
-    }
-    
-    /**
-     * 이메일로 유저정보 조회(중복체크)
-     * @param model
-     * @param email
-     * @return
-     */
-    @RequestMapping(value = "/getUserByEmail", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public Boolean getUserByEmail(Model model, 
-            @RequestParam("email") String email,
-            Locale locole) {
-        boolean ret = false;
-        
-        try {
-            User user = userService.findByEmail(email);
-            if (user != null) {
-                ret = true;    
-            } 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return ret;
+        return resultMap;
     }
     
     /**
@@ -307,38 +287,6 @@ public class UserController {
     }
     
     /**
-     * 유저목록(ContentNegotiatingViewResolver)
-     * .json, .xml호출하면 json, xml로 데이터 반환
-     * @param modelMap
-     * @return JSON/XML 데이터 반환
-     */
-    @RequestMapping(value = "/getUserListToXmlToJson", method = RequestMethod.GET)
-    public String getUserListToXmlToJson(ModelMap modelMap) {
-        ApiResponse response = new ApiResponse();
-        List<User> list = null;
-        
-        try {
-            list = userService.findAllUser();
-            
-            response.setStatus(StatusEnum.SUCCESS);
-            response.setList(list);
-            
-            modelMap.addAttribute("result", response);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            
-            // Exception result
-            response.setStatus(StatusEnum.FAIL);
-            response.setMessage(e.getMessage());
-            
-            modelMap.addAttribute("result", response);
-        }
-        
-        return null;
-    }
-    
-    /**
      * 유저 수정
      * @param model
      * @param user
@@ -348,58 +296,48 @@ public class UserController {
      */
     @RequestMapping(value = "/userUpdate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult userUpdate(Model model, 
+    public Map<String, Object> userUpdate(Model model, 
             @ModelAttribute User user,
             BindingResult bindResult,
-            Locale locole) {
+            Locale locale,
+            HttpSession session) {
         
-        ApiResult result = new ApiResult();
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            /* Data Vaildation Check */
             UserValidator userValidator = new UserValidator(TypeEnum.UPDATE.getCode());
             userValidator.validate(user, bindResult);
             
             if (bindResult.hasErrors()) {
-                if (bindResult.getErrorCount() > 0) {
-                    FieldError fe = bindResult.getFieldError();
-                    
-                    result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(msa.getMessage(fe.getCode(), new Object[] {SecurityPoliciesEnum.MinimumPasswordLength.getValue()}, locole));    
-                } else {
-                    //ObjectError oe = bindResult.getGlobalError();
-                    
-                    result.setStatus(StatusEnum.FAIL);
-                    result.setMessage(msa.getMessage(bindResult.getGlobalError().getCode(), locole));
-                }
+                FieldError fe = bindResult.getFieldError();
                 
-                return result;
+                throw new Exception(msa.getMessage(fe.getCode(), locale));
             }
-            
-            // password encrypt
-            String encryptPassword = EncryptionUtil.getEncryptPassword(user.getPassword());
-            user.setPassword(encryptPassword);
             
             user.setModDt(new Date());
+            Long result = userService.updateUser(user);
             
-            User retUser = userService.update(user);
-            
-            // result
-            if (retUser != null) {
-                result.setStatus(StatusEnum.SUCCESS);
+            if (result != 0) {
+                // 세션에 정보 저장
+                User sUser = userService.findByEmail(user.getEmail());
+                session.setAttribute("sUser", sUser);
+                session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
+                
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", msa.getMessage("myhub.label.result.success", locale));
             } else {
-                result.setStatus(StatusEnum.FAIL);    
+                resultMap.put("resultCd", Result.FAIL.getCode());
+                resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
             }
-            
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
         
-            // Exception result
-            result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
         }
         
-        return result;
+        return resultMap;
     }
     
     /**
@@ -609,6 +547,42 @@ public class UserController {
         }
         
         return resultMap;
+    }
+    
+    // ===================================================================================
+    // temp(테스트, 임시)
+    // ===================================================================================
+    
+    /**
+     * 유저목록(ContentNegotiatingViewResolver)
+     * .json, .xml호출하면 json, xml로 데이터 반환
+     * @param modelMap
+     * @return JSON/XML 데이터 반환
+     */
+    @RequestMapping(value = "/getUserListToXmlToJson", method = RequestMethod.GET)
+    public String getUserListToXmlToJson(ModelMap modelMap) {
+        ApiResponse response = new ApiResponse();
+        List<User> list = null;
+        
+        try {
+            list = userService.findAllUser();
+            
+            response.setStatus(StatusEnum.SUCCESS);
+            response.setList(list);
+            
+            modelMap.addAttribute("result", response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            // Exception result
+            response.setStatus(StatusEnum.FAIL);
+            response.setMessage(e.getMessage());
+            
+            modelMap.addAttribute("result", response);
+        }
+        
+        return null;
     }
     
     /**

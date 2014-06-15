@@ -65,7 +65,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public User update(User user) throws Exception;
+    public Long updateUser(User user) throws Exception;
     
     /**
      * 유저 삭제

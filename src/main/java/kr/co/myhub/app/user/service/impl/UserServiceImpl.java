@@ -7,9 +7,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import kr.co.myhub.app.user.domain.QUser;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.UserAuth;
 import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
+import kr.co.myhub.app.user.repasitory.UserDao;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
@@ -17,6 +19,7 @@ import kr.co.myhub.appframework.util.MailUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +46,10 @@ public class UserServiceImpl implements UserService  {
     
     @Resource
     UserAuthRepasitory userAuthRepasitory;
-
+    
+    @Resource
+    UserDao userDao;
+    
     /**
      * 유저 등록
      * @param user
@@ -124,8 +130,9 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
-    public User update(User user) throws Exception {
-        return userRepasitory.saveAndFlush(user);
+    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public Long updateUser(User user) throws Exception {
+        return userDao.updateUser(user);
     }
 
     /**

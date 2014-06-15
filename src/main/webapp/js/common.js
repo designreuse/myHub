@@ -122,6 +122,48 @@ var commonObj = {
 				
 				return true;
 			}
+		},
+		
+		// 유틸
+		util: {
+			getBirthDay: function(_val, delimeter) {
+				if (!_val || _val.length !== 8) return '';
+				
+				var year = _val.substring(0, 4);
+				var month = _val.substring(4, 6);
+				var day = _val.substring(6, 8);
+				
+				var retVal = year.concat(delimeter).concat(month).concat(delimeter).concat(day);
+				
+				return retVal;
+			},
+			
+			getMoblPhoneNo: function(_val, delimeter) {
+				if (!_val) return '';
+				
+				var phone, no1, no2, no3;
+				
+				switch(_val.length) {
+				case 10:
+					no1 = _val.substring(0, 3);
+					no2 = _val.substring(3, 6);
+					no3 = _val.substring(6, 10);
+					
+					phone = no1.concat(delimeter).concat(no2).concat(delimeter).concat(no3);
+					break;
+				case 11:
+					no1 = _val.substring(0, 3);
+					no2 = _val.substring(3, 7);
+					no3 = _val.substring(7, 11);
+					
+					phone = no1.concat(delimeter).concat(no2).concat(delimeter).concat(no3);
+					break;
+				default:
+					phone = _val;
+				}
+				
+				return phone;
+			}
 		}
 	},
 	

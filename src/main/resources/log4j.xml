@@ -27,12 +27,17 @@
         <appender-ref ref="console" />
     </logger>
     
-    <!-- 3rdparty Loggers -->
+    <!-- 3rdparty(framework) Loggers -->
     <logger name="org.springframework">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     
-    <!-- Application Loggers --> 
+    <!-- 
+    Application Loggers 
+    DEV : debug
+    STG : info
+    PROD : info
+    --> 
     <category name="kr.co.myhub" additivity="false">
         <level value="debug" />
         <appender-ref ref="console" />

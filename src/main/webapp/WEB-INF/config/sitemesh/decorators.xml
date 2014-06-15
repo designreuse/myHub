@@ -5,6 +5,8 @@
     <decorator name="layoutUser" page="layoutUser.jsp">
         <pattern>/user/userAdd</pattern>
         <pattern>/user/userSearch</pattern>
+        <pattern>/user/userInfo</pattern>
+        <pattern>/user/userEdit</pattern>
     </decorator>
     
     
