@@ -66,21 +66,7 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
             @Param("loginFailDt")Date loginFailDt, 
             @Param("email")String email
             );
-    
-    /**
-     * 비밀번호 수정
-     * @param password
-     * @param email
-     * @return
-     */
-    @Modifying
-    @Query("update User set password = :password, lastPassword = :lastPassword, passwordModDt = :passwordModDt where email = :email")
-    public int updatePassword(
-            @Param("password")String password, 
-            @Param("lastPassword")String lastPassword, 
-            @Param("passwordModDt")Date passwordModDt, 
-            @Param("email")String email
-            );
+
     
     /**
      * 이메일 검색
@@ -88,5 +74,19 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
      * @return
      */
     public List<User> findByPhoneNo(String phoneNo);
+    
+    
+    // ===================================================================================
+    // temp(테스트, 임시)
+    // ===================================================================================
+   
+    /*@Modifying
+    @Query("update User set password = :password, lastPassword = :lastPassword, passwordModDt = :passwordModDt where email = :email")
+    public int updatePassword(
+            @Param("password")String password, 
+            @Param("lastPassword")String lastPassword, 
+            @Param("passwordModDt")Date passwordModDt, 
+            @Param("email")String email
+            );*/
     
 }

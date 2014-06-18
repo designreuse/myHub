@@ -7,19 +7,20 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import kr.co.myhub.app.user.domain.QUser;
+import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.UserAuth;
 import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
-import kr.co.myhub.app.user.repasitory.UserDao;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
+import kr.co.myhub.app.user.repasitory.support.UserAuthDao;
+import kr.co.myhub.app.user.repasitory.support.UserDao;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.util.MailUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,13 @@ public class UserServiceImpl implements UserService  {
     UserAuthRepasitory userAuthRepasitory;
     
     @Resource
+    LoginRepasitory loginRepasitory;
+    
+    @Resource
     UserDao userDao;
+    
+    @Resource
+    UserAuthDao userAuthDao;
     
     /**
      * 유저 등록
@@ -56,32 +63,18 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
-    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public User insertUser(User user) throws Exception {
         UserAuth userAuth = new UserAuth();
         userAuth.setEmail(user.getEmail());
+        userAuth.setPriv(UserPrivEnum.Guests.getCode());
         
-        // 권한 설정
-        if (user.getUserId().equals("admin")) {
-            userAuth.setPriv(UserPrivEnum.SuperUser.getCode());
-        } else {
-            userAuth.setPriv(UserPrivEnum.Operators.getCode());
-        }
         userAuth.setUser(user);
-         
+        user.setUserAuth(userAuth);
+        
         /* 유저 등록  */
         User retUser = userRepasitory.save(user);
-        
-        /* 유저 권한 등록 */
-        userAuthRepasitory.save(userAuth);
-        
-        /* 회원가입 이메일 전송 */
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("to", user.getEmail());
-        params.put("subject", "회원가입을 축하드립니다.");
-        params.put("content", "회원가입을 축하드립니다.");
-        
-        MailUtil.mailsend(params);
+        //userAuthRepasitory.save(userAuth);
         
         return retUser;
     }
@@ -130,19 +123,57 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
-    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Long updateUser(User user) throws Exception {
-        return userDao.updateUser(user);
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public long updateUser(User user) throws Exception {
+        return userDao.updateUserByUserKey(user);
     }
 
     /**
      * 유저 삭제
+     * 1) Spring Data JPA api 사용
+     * 2) queryDsl api 사용
+     * 
      * @param user
      * @return
      * @throws Exception
      */
-    public void delete(User user) throws Exception {
-        userRepasitory.delete(user);
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public long deleteUser(User user) throws Exception {
+        long result = 0;
+        
+        // 유저키(키값만 필요하지만 validation 체크를 위해서는 엔티티 객체를 사용)
+        long userKey = user.getUserKey();
+        
+        /* 유저권한 삭제 */
+        //result = userAuthDao.deleteUserAuthByUserKey(user.getUserKey());
+        //log.debug("유저권한 삭제  : {}", result);
+        
+        /* 유저 삭제 */
+        //result = userDao.deleteUserByUserKey(user.getUserKey());
+        //log.debug("유저 삭제  : {}", result);
+        
+        /* 삭제 할 유저 정보 조회 */
+        User deleteUser = userRepasitory.findByUserKey(userKey);
+        
+        log.debug("getLoginLog : {} ", deleteUser.getLoginLog().size());
+        log.debug("getUserAuth : {} ", deleteUser.getUserAuth());
+        
+        // 로그인 로그 삭제
+        for(LoginLog loginLog : deleteUser.getLoginLog()) {
+            if (loginLog == null) continue;
+            
+            log.debug("loginLog : {} ", loginLog);
+            
+            loginRepasitory.delete(loginLog);
+        }
+        
+        // 유저 권한 정보 삭제
+        userAuthRepasitory.delete(deleteUser.getUserAuth());
+        
+        // 유저 정보 삭제
+        userRepasitory.delete(deleteUser);
+        
+        return result;
     }
 
     /**
@@ -152,7 +183,7 @@ public class UserServiceImpl implements UserService  {
      * @param userId
      * @return
      */
-    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public int updateUserFailLogin(Date loginFailDt, String email) throws Exception {
         return userRepasitory.updateUserFailLogin(loginFailDt, email);
     }
@@ -183,8 +214,8 @@ public class UserServiceImpl implements UserService  {
      * @param email
      * @return
      */
-    @Transactional(readOnly = true, propagation=Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public int updatePassword(String password, String lastPassword, Date passwordModDt, String email) {
-        return userRepasitory.updatePassword(password, lastPassword, passwordModDt, email);
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public long updatePasswordByEmail(String password, String lastPassword, String email) throws Exception {
+        return userDao.updatePasswordByEmail(password, lastPassword, email);
     }
 }

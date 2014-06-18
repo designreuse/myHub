@@ -120,10 +120,6 @@ public class LoginController {
         
         try {
             boolean result = loginService.isAccountLocked(email, scPolicy);
-            if (log.isDebugEnabled()) {
-                log.debug("isAccountLocked : {} ", result);    
-            }
-            
             if (result) {
                 String args1 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutDurationValue.getText()).toString();
                 String args2 = scPolicy.get(SecurityPoliciesEnum.AccountLockoutThresholdValue.getText()).toString();
@@ -198,16 +194,17 @@ public class LoginController {
                 userService.updateUserSuccessLogin(null, email);
                 
                 /* 로그인 정보는 필요한 정보만 세팅 */
-                User user = userService.findByEmail(email);
-                session.setAttribute("sUser", user);
+                User sUser = userService.findByEmail(email);
+                
+                session.setAttribute("sUser", sUser);
                 session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
                 
                 /* 로그인 이력 추가 */
                 LoginLog loginLog = new LoginLog();
-                loginLog.setEmail(user.getEmail());
+                loginLog.setEmail(sUser.getEmail());
                 loginLog.setIpAddress(request.getRemoteAddr());
                 loginLog.setLoginDate(new Date());
-                loginLog.setUser(user);
+                loginLog.setUser(sUser);
                 
                 loginService.create(loginLog);
                 

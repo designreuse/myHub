@@ -7,16 +7,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -38,16 +39,11 @@ public class UserAuth implements Serializable {
 
     private static final long serialVersionUID = 1150248750560957540L;
     
-//    @Id
-//    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
-//    @GeneratedValue(generator = "generator")
-//    @Column(name = "userAuthKey", nullable = false, unique = true)
-//    private Long userAuthKey;
-    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "userAuthKey", nullable = false)
-    private Long userAuthKey;
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
+    @Column(name = "userkey", nullable = false, unique = true)
+    private Long userkey;
     
     @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
@@ -60,25 +56,20 @@ public class UserAuth implements Serializable {
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date crtDt;
     
-//    @OneToOne(fetch = FetchType.LAZY, optional = false)
-//    @PrimaryKeyJoinColumn
-//    private User user;
-    
-    /* 유저 정보 */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userKey", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private User user;
-
-    public Long getUserAuthKey() {
-        return userAuthKey;
-    }
-
-    public void setUserAuthKey(Long userAuthKey) {
-        this.userAuthKey = userAuthKey;
-    }
-
+    
     public String getEmail() {
         return email;
+    }
+
+    public Long getUserkey() {
+        return userkey;
+    }
+
+    public void setUserkey(Long userkey) {
+        this.userkey = userkey;
     }
 
     public void setEmail(String email) {

@@ -14,7 +14,6 @@ import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
-import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
 import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
 import kr.co.myhub.appframework.util.CommonUtil;
@@ -35,7 +34,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -177,9 +175,11 @@ public class UserController {
     }
     
     /**
-     * 유저 등록처리
+     * 유저 등록
      * @param model
      * @param user
+     * @param bindResult
+     * @param locale
      * @return
      */
     @RequestMapping(value = "/userCreate", method = RequestMethod.POST, produces = "application/json")
@@ -209,6 +209,14 @@ public class UserController {
             if (retUser != null) {
                 resultMap.put("resultCd", Result.SUCCESS.getCode());
                 resultMap.put("resultMsg", msa.getMessage("myhub.error.register.success", locale));
+                
+                /* 회원가입 이메일 전송 */ // TODO: 비동기로 처리 로직 추가
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("to", user.getEmail());
+                params.put("subject", "회원가입을 축하드립니다.");
+                params.put("content", "회원가입을 축하드립니다.");
+                
+                MailUtil.mailsend(params);
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
                 resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
@@ -227,7 +235,9 @@ public class UserController {
     /**
      * 유저정보 조회 
      * @param model
-     * @param userKey
+     * @param principal
+     * @param session
+     * @param locale
      * @return
      */
     @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST, produces = "application/json")
@@ -239,14 +249,14 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            User user = (User) session.getAttribute("sUser");
-            if (user == null) {
+            User sUser = (User) session.getAttribute("sUser");
+            if (sUser == null) {
                 throw new Exception(msa.getMessage("myhub.label.list.null", locale));
             }
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", user);
+            resultMap.put("resultData", sUser);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
@@ -291,7 +301,8 @@ public class UserController {
      * @param model
      * @param user
      * @param bindResult
-     * @param locole
+     * @param locale
+     * @param session
      * @return
      */
     @RequestMapping(value = "/userUpdate", method = RequestMethod.POST, produces = "application/json")
@@ -305,6 +316,7 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
+            /* Data Vaildation Check */
             UserValidator userValidator = new UserValidator(TypeEnum.UPDATE.getCode());
             userValidator.validate(user, bindResult);
             
@@ -314,8 +326,9 @@ public class UserController {
                 throw new Exception(msa.getMessage(fe.getCode(), locale));
             }
             
+            /* 유저 수정 */
             user.setModDt(new Date());
-            Long result = userService.updateUser(user);
+            long result = userService.updateUser(user);
             
             if (result != 0) {
                 // 세션에 정보 저장
@@ -327,7 +340,7 @@ public class UserController {
                 resultMap.put("resultMsg", msa.getMessage("myhub.label.result.success", locale));
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
+                resultMap.put("resultMsg", msa.getMessage("myhub.error.common.fail", locale));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,12 +363,13 @@ public class UserController {
      */
     @RequestMapping(value = "/userDelete", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ApiResult userDelete(Model model, 
+    public Map<String, Object> userDelete(Model model, 
             @ModelAttribute User user,
             BindingResult bindResult,
-            Locale locole) {
+            Locale locale,
+            HttpSession session) {
         
-        ApiResult result = new ApiResult();
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
             /* Data Vaildation Check */
@@ -365,26 +379,28 @@ public class UserController {
             if (bindResult.hasErrors()) {
                 FieldError fe = bindResult.getFieldError();
                 
-                result.setStatus(StatusEnum.FAIL);
-                result.setMessage(msa.getMessage(fe.getCode(), locole));
-                
-                return result;
+                throw new Exception(msa.getMessage(fe.getCode(), locale));
             }
+    
+            /* 유저 삭제  */
+            long result = userService.deleteUser(user);
             
-            // Spring Data Jpa에서 Delete는 void형만 존재
-            userService.delete(user);
-            
-            result.setStatus(StatusEnum.SUCCESS);
-            
+            if (result != 0) {
+                resultMap.put("resultCd", Result.SUCCESS.getCode());
+                resultMap.put("resultMsg", msa.getMessage("myhub.label.result.success", locale));
+            } else {
+                resultMap.put("resultCd", Result.FAIL.getCode());
+                resultMap.put("resultMsg", msa.getMessage("myhub.error.common.fail", locale));
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
         
-            // Exception result
-            result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", e.getMessage());
         }
         
-        return result;
+        return resultMap;
     }
     
     /**
@@ -451,30 +467,28 @@ public class UserController {
             /* 임시비밀번호 생성 */
             String tmpPassword = CommonUtil.getTmpPassword();
             
-            /* 비밀번호 암호화 */
+            /* 변경 할 비밀번호 암호화 */
             String password = EncryptionUtil.getEncryptPassword(tmpPassword);
             
             /* 유저 비밀번호 수정 */
-            int ret = userService.updatePassword(password, password, new Date(), email);
+            long ret = userService.updatePasswordByEmail(password, user.getLastPassword(), email);
             if (ret == 0) {
                 throw new Exception(msa.getMessage("myhub.error.update.error", locale));
             }
             
-            // TODO: queryDSl로 변경 필요 (http://whiteship.me/?p=13230)
-            
             /* email 전송 */
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("to", email);
-            params.put("subject", "임시 비밀번호 안내입니다.");
-            params.put("content", "고객님의 임시 비밀번호는  [".concat(tmpPassword).concat("] 입니다."));
+            params.put("subject", msa.getMessage("myhub.label.password.temp.info", locale));
+            params.put("content", msa.getMessage("myhub.label.password.temp.send", new Object[]{tmpPassword}, locale));
             
             boolean result = MailUtil.mailsend(params);
             if (!result) {
-                throw new Exception("임시 비밀번호 안내 메일 발송이 실패하였습니다. ");
+                throw new Exception(msa.getMessage("myhub.label.password.fail.info", locale));
             }
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
-            resultMap.put("resultMsg", "임시 비밀번호가 가입한 이메일로 전송되었습니다. 확인하세요.");
+            resultMap.put("resultMsg", msa.getMessage("myhub.label.password.success.info", locale));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
@@ -500,6 +514,7 @@ public class UserController {
             @RequestParam(value = "email", required = true) String email,
             @RequestParam(value = "beforePassword", required = true) String beforePassword,
             @RequestParam(value = "afterPassword", required = true) String afterPassword,
+            @ModelAttribute User checkUser, BindingResult bindResult, 
             Locale locale) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
@@ -529,8 +544,20 @@ public class UserController {
                 throw new Exception(msa.getMessage("myhub.error.befor.password3", locale));
             }
             
+            /* 변경 할 비밀번호 비밀번호 변경 규칙 체크  */
+            checkUser.setUserId(user.getUserId());
+            checkUser.setPassword(afterPassword);
+            UserValidator userValidator = new UserValidator(5);
+            userValidator.validate(checkUser, bindResult);
+            
+            if (bindResult.hasErrors()) {
+                FieldError fe = bindResult.getFieldError();
+                
+                throw new Exception(msa.getMessage(fe.getCode(), locale));
+            }
+            
             /* 유저 비밀번호 수정 */
-            int ret = userService.updatePassword(encafterPassword, encBeforePassword, new Date(), email);
+            long ret = userService.updatePasswordByEmail(encafterPassword, encBeforePassword, email);
             if (ret == 0) {
                 throw new Exception(msa.getMessage("myhub.error.update.error", locale));
             }

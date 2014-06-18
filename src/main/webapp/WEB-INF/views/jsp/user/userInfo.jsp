@@ -47,11 +47,32 @@
                     setUserInfo: function(data) {
                     	if (!data) return false;
                     	
+                    	$('#userKey').val(data.userKey);
                     	$('#email').text(data.email);
                     	$('#userName').text(data.userName);
                     	$('#birthday').text(commonObj.data.util.getBirthDay(data.birthday, '.'));
                     	$('#phoneNo').text(commonObj.data.util.getMoblPhoneNo(data.phoneNo, '-'));
                     	$('#gender').text(data.gender === 'M' ? '<spring:message code="myhub.label.gender.male"/>' : '<spring:message code="myhub.label.gender.female"/>');
+                    },
+                    
+                    deleteUser: function() {
+                    	var url = commonObj.config.contextPath.concat('/user/userDelete');
+                        var pars = 'userKey='.concat($('#userKey').val());
+                        
+                        commonObj.data.ajax(url, {pars: pars, async: false, 
+                            onsucc: function(res) {
+                                if (res.resultCd === commonObj.constants.result.FAIL) {
+                                    alert(res.resultMsg);
+                                    return false;   
+                                }
+                                
+                                alert(res.resultMsg);
+                                location.href = '<c:url value="/j_spring_security_logout" />';
+                            },
+                            onerr: function(res) {
+                                alert('<spring:message code="myhub.error.common.fail"/>');
+                            }
+                        });
                     }
                 },
                 
@@ -63,8 +84,20 @@
                         });
                         
                         // 회원탈퇴
-                        $('#btnEdit').on('click', function() {
-                            
+                        $('#btnDelete').on('click', function() {
+                            var buttonOpts = {
+                            	first: {
+                            	    fn: function() {
+                                        MyHubApp.data.deleteUser();
+                                    }
+                                },
+                                 
+                                second: {
+                                    fn: function() {}
+                                }
+                            };
+                         
+                            commBootObj.alertModalMsg('<spring:message code="myhub.label.members.reave"/>', buttonOpts);
                         });
                     }
                 }
@@ -89,8 +122,8 @@
                 <!-- /label -->
                 
                 <!-- form -->
-                <form class="form-horizontal" id="frmCreate" name="frmCreate" onsubmit="return false;">
-                    <input type="hidden" name="userId" id="userId" value="">
+                <form class="form-horizontal" id="frmInfo" name="frmInfo" onsubmit="return false;">
+                    <input type="hidden" name="userKey" id="userKey" value="">
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
                         <div class="col-sm-3">

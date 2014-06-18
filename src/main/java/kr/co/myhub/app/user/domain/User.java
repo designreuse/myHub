@@ -13,7 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import kr.co.myhub.app.common.login.domain.LoginLog;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -43,8 +46,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = -4189088277865932249L;
     
     /* 사용자 key */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userkey", nullable = false)
     private Long userKey; 
     
@@ -111,24 +113,24 @@ public class User implements Serializable {
     /**
      * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-//    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnore
+    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
     
-    /**
-     * UserAuth와 1:N
-     */
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+//    /**
+//     * UserAuth와 1:N
+//     */
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 //    private Set<UserAuth> userAuth = new HashSet<UserAuth>();
     
     /**
      * 유저권한관의 1:1 관계 정보 로딩
      * optional false: 결코 Null일 수 없다는 뜻
-     * 
      */
-//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, mappedBy = "user")
-//    @PrimaryKeyJoinColumn
-//    private UserAuth userAuth;
-   
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @JsonIgnore
+    private UserAuth userAuth;
+
     public Long getUserKey() {
         return userKey;
     }
@@ -198,7 +200,7 @@ public class User implements Serializable {
     }
 
     public Date getCrtDt() {
-        return crtDt;
+        return this.crtDt;
     }
 
     public void setCrtDt(Date crtDt) {
@@ -206,7 +208,7 @@ public class User implements Serializable {
     }
     
     public Date getModDt() {
-        return modDt;
+        return this.modDt;
     }
 
     public void setModDt(Date modDt) {
@@ -214,7 +216,7 @@ public class User implements Serializable {
     }
 
     public Date getPasswordModDt() {
-        return passwordModDt;
+        return this.passwordModDt;
     }
 
     public void setPasswordModDt(Date passwordModDt) {
@@ -222,7 +224,7 @@ public class User implements Serializable {
     }
 
     public String getLastPassword() {
-        return lastPassword;
+        return this.lastPassword;
     }
 
     public void setLastPassword(String lastPassword) {
@@ -230,7 +232,7 @@ public class User implements Serializable {
     }
 
     public int getLoginFailCount() {
-        return loginFailCount;
+        return this.loginFailCount;
     }
 
     public void setLoginFailCount(int loginFailCount) {
@@ -238,30 +240,30 @@ public class User implements Serializable {
     }
 
     public Date getLoginFailDt() {
-        return loginFailDt;
+        return this.loginFailDt;
     }
 
     public void setLoginFailDt(Date loginFailDt) {
         this.loginFailDt = loginFailDt;
     }
 
-//    public Set<LoginLog> getLoginLog() {
-//        return loginLog;
-//    }
-//
-//    public void setLoginLog(Set<LoginLog> loginLog) {
-//        this.loginLog = loginLog;
-//    }
-//
-//    public UserAuth getUserAuth() {
-//        return userAuth;
-//    }
-//
-//    public void setUserAuth(UserAuth userAuth) {
-//        this.userAuth = userAuth;
-//        this.userAuth.setUser(this);
-//    }
-//
+    public Set<LoginLog> getLoginLog() {
+        return this.loginLog;
+    }
+
+    public void setLoginLog(Set<LoginLog> loginLog) {
+        this.loginLog = loginLog;
+    }
+
+    public UserAuth getUserAuth() {
+        return this.userAuth;
+    }
+
+    public void setUserAuth(UserAuth userAuth) {
+        this.userAuth = userAuth;
+        this.userAuth.setUser(this);
+    }
+
 //    public Set<UserAuth> getUserAuth() {
 //        return userAuth;
 //    }

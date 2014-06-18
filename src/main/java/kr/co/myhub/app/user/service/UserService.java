@@ -50,6 +50,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
     public List<User> findAllUser() throws Exception;
     
     /**
@@ -65,7 +66,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public Long updateUser(User user) throws Exception;
+    public long updateUser(User user) throws Exception;
     
     /**
      * 유저 삭제
@@ -73,7 +74,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public void delete(User user) throws Exception;
+    public long deleteUser(User user) throws Exception;
     
     /**
      * 로그인 결과 수정
@@ -102,11 +103,9 @@ public interface UserService {
      * 비밀번호 수정
      * @param password
      * @param lastPassword
-     * @param passwordModDt
      * @param email
      * @return
      */
-    //@PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
-    public int updatePassword(String password, String lastPassword, Date passwordModDt, String email);
+    public long updatePasswordByEmail(String password, String lastPassword, String email) throws Exception;
     
 }

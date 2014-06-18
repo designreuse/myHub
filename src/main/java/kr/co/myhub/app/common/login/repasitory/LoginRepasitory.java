@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 2013. 11. 28.   kbtapjm     최초생성
  */
 @Repository
-@Transactional(readOnly = true) 
+//@Transactional(readOnly = true) 
 // Repasitory의 기본적인 설정, 확장하는 케이스는 메서드에 선언해서 사용, 단 서비스단에서 트랜잭셔널이 사용이 되면 서비스 트랜잭셔널이 적용
 public interface LoginRepasitory extends JpaRepository<LoginLog, Long>{
 

@@ -1,4 +1,6 @@
-package kr.co.myhub.app.user.repasitory;
+package kr.co.myhub.app.user.repasitory.support;
+
+import java.util.Date;
 
 import kr.co.myhub.app.user.domain.QUser;
 import kr.co.myhub.app.user.domain.User;
@@ -35,7 +37,7 @@ public class UserDao extends QueryDslRepositorySupport {
      * @return
      * @throws Exception
      */
-    public long updateUser(User user) throws Exception {
+    public long updateUserByUserKey(User user) throws Exception {
         QUser qUser = QUser.user;
         long result = update(qUser)
             .where(qUser.userKey.eq(user.getUserKey()))
@@ -45,6 +47,37 @@ public class UserDao extends QueryDslRepositorySupport {
             .set(qUser.gender, user.getGender())
             .execute();
         
+        return result;
+    }
+    
+    /**
+     * 비밀번호 수정
+     * @param password
+     * @param email
+     * @return
+     * @throws Exception
+     */
+    public long updatePasswordByEmail(String password, String lastPassword, String email) throws Exception {
+        QUser qUser = QUser.user;
+        long result = update(qUser)
+            .where(qUser.email.eq(email))
+            .set(qUser.password, password)
+            .set(qUser.lastPassword, lastPassword)
+            .set(qUser.passwordModDt, new Date())
+            .execute();
+        
+        return result;
+    }
+    
+    /**
+     * 유저 삭제
+     * @param userKey
+     * @return
+     */
+    public long deleteUserByUserKey(long userKey) throws Exception {
+        QUser qUser = QUser.user;
+        long result = delete(qUser).where(qUser.userKey.eq(userKey)).execute();
+                
         return result;
     }
 

@@ -110,7 +110,7 @@
                         
                         // email 중복체크
                         $.validator.addMethod('emailDuplicateCheck', function(email) {
-                        	var url = commonObj.config.contextPath.concat('/user/getUserByEmail');
+                        	var url = commonObj.config.contextPath.concat('/user/getUserDuplicateCheck');
                         	var pars = 'email='.concat(email);
                         	
                             var ret = true;

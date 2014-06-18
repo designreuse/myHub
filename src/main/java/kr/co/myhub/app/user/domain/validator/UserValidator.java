@@ -68,6 +68,9 @@ public class UserValidator extends MyHubValidator implements Validator {
         case 3: // Delete
             this.validateDelete();
             break;
+        case 5: // 비밀번호 수정
+            this.validateUpdatePassword();
+            break;
         }
     }
     
@@ -88,7 +91,7 @@ public class UserValidator extends MyHubValidator implements Validator {
         
         // 비밀번호 검증
         if (StringUtils.isNotEmpty(user.getPassword())) {
-            //this.validatePassword();
+            this.validatePassword();
         }
     }
     
@@ -108,6 +111,17 @@ public class UserValidator extends MyHubValidator implements Validator {
      */
     public void validateDelete() {
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "userKey", "myhub.label.input.key");
+    }
+    
+    /**
+     * 비밀번호 수정 체크
+     */
+    public void validateUpdatePassword() {
+        MyHubValidator.rejectIfEmptyOrWhitespace(errors, "email", "myhub.label.input.email.address");
+        
+        if (StringUtils.isNotEmpty(user.getPassword())) {
+            this.validatePassword();
+        }
     }
     
     /**

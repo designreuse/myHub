@@ -128,7 +128,7 @@
                                 } 
                                 
                                 alert(res.resultMsg);
-                                location.reload();
+                                location.href = '<c:url value="/user/userInfo"/>';
                             },
                             onerr: function(res) {
                                 alert(res);

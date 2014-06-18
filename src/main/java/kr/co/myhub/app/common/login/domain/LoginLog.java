@@ -21,6 +21,20 @@ import kr.co.myhub.app.user.domain.User;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+/**
+ * 
+ * file   : LoginLog.java
+ * date   : 2014. 6. 17.
+ * author : jmpark
+ * content: 로그인 이력 domain
+ * ref: https://groups.google.com/forum/#!topic/ksug/oXVcsoJgOCc
+ *
+ * 수정내용
+ * ----------------------------------------------
+ * 수정일                   수정자                  수정내용
+ * ----------------------------------------------
+ * 2014. 6. 17.   kbtapjm     최초생성
+ */
 @Entity
 @Table(name = "loginLog")
 @XmlRootElement
