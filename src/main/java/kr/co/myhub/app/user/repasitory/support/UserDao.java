@@ -5,8 +5,12 @@ import java.util.Date;
 import kr.co.myhub.app.user.domain.QUser;
 import kr.co.myhub.app.user.domain.User;
 
+import org.hibernate.Session;
 import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport;
 import org.springframework.stereotype.Repository;
+
+import com.mysema.query.jpa.JPQLQuery;
+import com.mysema.query.jpa.impl.JPAQuery;
 
 /**
  * 
@@ -32,6 +36,24 @@ public class UserDao extends QueryDslRepositorySupport {
     }
     
     /**
+     * 유저 정보 조회
+     * @param email
+     * @return
+     * @throws Exception
+     */
+    public User selectUserByEmail(String email) throws Exception {
+        JPQLQuery query = new JPAQuery(getEntityManager());
+        
+        QUser qUser = QUser.user;
+        
+        User user = query.from(qUser)
+            .where(qUser.email.eq(email))
+            .uniqueResult(qUser);
+        
+        return user;
+    }
+    
+    /**
      * 유저 수정
      * @param user
      * @return
@@ -53,11 +75,13 @@ public class UserDao extends QueryDslRepositorySupport {
     
     /**
      * 유저 로그인 정보 수정
-     * @param user
+     * @param isLoginSuccess    
+     * @param loginFailCount
+     * @param email
      * @return
      * @throws Exception
      */
-    public long updateUserLoginByEmail(boolean isLoginSuccess, String email) throws Exception {
+    public long updateUserLoginByEmail(boolean isLoginSuccess, int loginFailCount, String email) throws Exception {
         QUser qUser = QUser.user;
         
         long result = 0;
@@ -66,13 +90,13 @@ public class UserDao extends QueryDslRepositorySupport {
             result = update(qUser)
                     .where(qUser.email.eq(email))
                     .set(qUser.loginFailDt, null)
-                    .set(qUser.loginFailCount, 0)
+                    .set(qUser.loginFailCount, loginFailCount)
                     .execute();    
         } else {
             result = update(qUser)
                     .where(qUser.email.eq(email))
                     .set(qUser.loginFailDt, new Date())
-                    .set(qUser.loginFailCount, 0)
+                    .set(qUser.loginFailCount, loginFailCount)
                     .execute();
         }
         
@@ -108,6 +132,14 @@ public class UserDao extends QueryDslRepositorySupport {
         long result = delete(qUser).where(qUser.userKey.eq(userKey)).execute();
                 
         return result;
+    }
+    
+    /**
+     * 하이버네이트 세션 가져오기
+     * @return
+     */
+    public Session getSession() {
+        return (Session) getEntityManager().getDelegate();
     }
 
 }

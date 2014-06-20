@@ -45,13 +45,13 @@ public enum SecurityPoliciesEnum {
     MaximumPasswordAgeAdmin(10, "Maximum Password Age(Admin)", "1"),
     
     /* 최대 암호 사용기간(관리자) 값 */
-    MaximumPasswordAgeValueAdmin(11, "Maximum Password Age Value(Admin)", "30"),
+    MaximumPasswordAgeValueAdmin(11, "Maximum Password Age Value(Admin)", "5"),
     
     /* 최대 암호 사용기간(일반) (0 : 미적용, 1 : 적용)  */
     MaximumPasswordAgeRegular(12, "Maximum Password Age(Regular)", "1"),
     
     /* 최대 암호 사용기간(일반) 값*/
-    MaximumPasswordAgeValueRegular(13, "Maximum Password Age Value(Regular)", "90"),
+    MaximumPasswordAgeValueRegular(13, "Maximum Password Age Value(Regular)", "10"),
     
     /* 계정 락 */
     AccountLockout(14, "Account Lockout", "0"),

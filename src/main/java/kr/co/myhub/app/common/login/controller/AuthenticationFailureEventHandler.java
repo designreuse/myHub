@@ -1,8 +1,7 @@
 package kr.co.myhub.app.common.login.controller;
 
-import java.util.Date;
-
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.util.DateUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +32,18 @@ public class AuthenticationFailureEventHandler implements ApplicationListener<Au
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
-        log.debug(" ----------------------------------------------------  ");
-        log.debug(" getTimestamp : {}", event.getTimestamp());                          // 로그인 실패시간
-        log.debug(" getException : {}", event.getException());                          // 로그인 에러내용
-        log.debug(" getCredentials : {}", event.getAuthentication().getCredentials());  // 로그인시 패스워드
-        log.debug(" getDetails : {}", event.getAuthentication().getDetails());          // 로그인실패 세션 아이디          
-        log.debug(" getPrincipal : {}", event.getAuthentication().getPrincipal());      // 로그인 아이디
-        log.debug(" getAuthorities : {}", event.getAuthentication().getAuthorities());
-        log.debug(" getName : {}", event.getAuthentication().getName());                // 로그인 아이디
-        log.debug(" ----------------------------------------------------  ");
+        if (log.isDebugEnabled()) {
+            log.debug(" ----------------------------------------------------  ");
+            log.debug(" getTimestamp : {}", event.getTimestamp());                              // 로그인 실패시간
+            log.debug(" getTimestamp : {}", DateUtil.getTimestampToDate(event.getTimestamp())); // 로그인 실패시간
+            log.debug(" getException : {}", event.getException());                              // 로그인 에러내용
+            log.debug(" getCredentials : {}", event.getAuthentication().getCredentials());      // 로그인시 패스워드
+            log.debug(" getDetails : {}", event.getAuthentication().getDetails());              // 로그인실패 세션 아이디          
+            log.debug(" getPrincipal : {}", event.getAuthentication().getPrincipal());          // 로그인 아이디
+            log.debug(" getAuthorities : {}", event.getAuthentication().getAuthorities());
+            log.debug(" getName : {}", event.getAuthentication().getName());                    // 로그인 아이디
+            log.debug(" ----------------------------------------------------  ");
+        }
         
         /* 로그인 실패시 실패카운트를 업데이트  */
         Object userId = event.getAuthentication().getPrincipal();

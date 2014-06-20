@@ -146,7 +146,15 @@ public class UserServiceImpl implements UserService  {
      */
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public long updateUserLogin(boolean isLoginSuccess, String email) throws Exception {
-         return userDao.updateUserLoginByEmail(isLoginSuccess, email);
+        int loginFailCount = 0;
+        
+        // 로그인 실패 인경우
+        if (!isLoginSuccess) {
+            User user = userDao.selectUserByEmail(email);
+            loginFailCount = user.getLoginFailCount() + 1;     // 실패카운트 증가
+        }
+         
+        return userDao.updateUserLoginByEmail(isLoginSuccess, loginFailCount, email);
     }
     
     /**

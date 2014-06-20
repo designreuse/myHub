@@ -2,10 +2,7 @@ package kr.co.myhub.app.user.domain;
 
 import static com.mysema.query.types.PathMetadataFactory.forVariable;
 
-import javax.annotation.Generated;
 import javax.annotation.Nullable;
-
-import kr.co.myhub.app.user.domain.User;
 
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.path.DateTimePath;

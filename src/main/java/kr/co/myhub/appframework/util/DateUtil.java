@@ -26,11 +26,26 @@ public class DateUtil {
      * @return
      */
     public static Timestamp getCurrentDateTimeStamp() {
-        SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         String today = formatter.format(cal.getTime());
         Timestamp ts = Timestamp.valueOf(today);
         
         return ts;
+    }
+    
+    /**
+     * timestamp값을 문자열로 변환
+     * @param ts
+     * @return
+     */
+    public static String getTimestampToDate(long time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        
+        Timestamp currentTime = new Timestamp(time); 
+        String dateStr = formatter.format(currentTime); 
+        
+        return dateStr;
+        
     }
 }

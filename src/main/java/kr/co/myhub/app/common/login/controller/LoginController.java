@@ -176,30 +176,32 @@ public class LoginController {
             /* 암호만료여부 체크 */
             int isAccountExpired = loginService.isAccountExpired(email, scPolicy);
             
-            // 비밀번호 만료
+            // 비밀번호 만료 => 로그인 하지 못함
             if (isAccountExpired == AccountExpiredEnum.expired.getValue()) {
                 resultMsg = msa.getMessage("myhub.label.login.msg.passwordExpired", locale);
                 resultCd = Security.TokenExpired.getCode();
             } else {
                 
-                // 비밀번호 만료 진행
+                // 비밀번호 만료 진행 => 경고로 알림
                 if (isAccountExpired == AccountExpiredEnum.expiring.getValue()) {
                     String args1 = scPolicy.get("ExpiryDate").toString();
                     
                     resultMsg = msa.getMessage("myhub.label.login.msg.passwordExpiryWarning", new Object[] {args1}, locale);
                     resultCd = Security.TokenExpiring.getCode();
+                } else {
+                    resultCd = Result.SUCCESS.getCode();
                 }
                 
-                /* 로그인 상태 처리 추가 */
+                /* 로그인 상태 처리 변경  */
                 userService.updateUserLogin(true, email);
                 
-                /* 로그인 정보는 필요한 정보만 세팅 */
+                /* 세션에 로그인 정보 저장  */
                 User sUser = userService.findByEmail(email);
                 
                 session.setAttribute("sUser", sUser);
                 session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
                 
-                /* 로그인 이력 추가 */
+                /* 로그인 이력 추가  */
                 LoginLog loginLog = new LoginLog();
                 loginLog.setEmail(sUser.getEmail());
                 loginLog.setIpAddress(request.getRemoteAddr());
@@ -207,8 +209,6 @@ public class LoginController {
                 loginLog.setUser(sUser);
                 
                 loginService.create(loginLog);
-                
-                resultCd = Result.SUCCESS.getCode();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,6 +216,12 @@ public class LoginController {
             
             resultCd = Security.AuthenticationFail.getCode();
             resultMsg =  msa.getMessage("myhub.error.common.fail", locale);            
+        }
+        
+        // 로그인 결과 확인
+        if (log.isDebugEnabled()) {
+            log.debug("resultCd : {}", resultCd);
+            log.debug("resultMsg : {}", resultMsg);    
         }
         
         model.addAttribute("resultCd", resultCd);
