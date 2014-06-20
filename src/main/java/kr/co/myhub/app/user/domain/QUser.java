@@ -29,7 +29,6 @@ import com.mysema.query.types.path.StringPath;
  * ----------------------------------------------
  * 2014. 5. 18.   kbtapjm     최초생성
  */
-@Generated("com.mysema.query.codegen.EntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
     private static final long serialVersionUID = 2344533619527000777L;
@@ -62,7 +61,7 @@ public class QUser extends EntityPathBase<User> {
     
     public final StringPath lastPassword = createString("lastPassword");
     
-    public final NumberPath<Long> loginFailCount = createNumber("loginFailCount", Long.class);
+    public final NumberPath<java.lang.Integer> loginFailCount = createNumber("loginFailCount", Integer.class);
     
     public final DateTimePath<java.util.Date> loginFailDt = createDateTime("loginFailDt", java.util.Date.class);
     

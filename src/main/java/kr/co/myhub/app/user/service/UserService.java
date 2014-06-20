@@ -1,6 +1,5 @@
 package kr.co.myhub.app.user.service;
 
-import java.util.Date;
 import java.util.List;
 
 import kr.co.myhub.app.user.domain.User;
@@ -71,26 +70,18 @@ public interface UserService {
     /**
      * 유저 삭제
      * @param user
+     * @throws Exception
+     */
+    public void deleteUser(User user) throws Exception;
+    
+    /**
+     * 유저 로그인 정보 수정
+     * @param isLoginSuccess
+     * @param email
      * @return
      * @throws Exception
      */
-    public long deleteUser(User user) throws Exception;
-    
-    /**
-     * 로그인 결과 수정
-     * @param loginFailCount
-     * @param loginFailDt
-     * @param userId
-     * @return
-     */
-    public int updateUserFailLogin(Date loginFailDt, String email) throws Exception;
-    
-    /**
-     * 로그인성공시 수정
-     * @param email
-     * @return
-     */
-    public int updateUserSuccessLogin(Date loginFailDt, String email) throws Exception;
+    public long updateUserLogin(boolean isLoginSuccess, String email) throws Exception;
     
     /**
      * 이메일 검색

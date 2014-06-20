@@ -213,8 +213,8 @@ public class UserController {
                 /* 회원가입 이메일 전송 */ // TODO: 비동기로 처리 로직 추가
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("to", user.getEmail());
-                params.put("subject", "회원가입을 축하드립니다.");
-                params.put("content", "회원가입을 축하드립니다.");
+                params.put("subject", msa.getMessage("myhub.error.register.success", locale));
+                params.put("content", retUser.getUserName().concat(msa.getMessage("myhub.error.register.success", locale)));
                 
                 MailUtil.mailsend(params);
             } else {
@@ -250,8 +250,14 @@ public class UserController {
         
         try {
             User sUser = (User) session.getAttribute("sUser");
+            
             if (sUser == null) {
                 throw new Exception(msa.getMessage("myhub.label.list.null", locale));
+            }
+            
+            // 유저권한과의 1:1 관계일때 유저정보 조회시 권한정보도 같이 조회처리
+            if (log.isDebugEnabled()) {
+                log.debug("priv : {}", sUser.getUserAuth().getPriv());    
             }
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
@@ -382,16 +388,11 @@ public class UserController {
                 throw new Exception(msa.getMessage(fe.getCode(), locale));
             }
     
-            /* 유저 삭제  */
-            long result = userService.deleteUser(user);
+            /* 유저 삭제  (Spring Data Jpa에서 삭제는 void형만 존재) */
+            userService.deleteUser(user);
             
-            if (result != 0) {
-                resultMap.put("resultCd", Result.SUCCESS.getCode());
-                resultMap.put("resultMsg", msa.getMessage("myhub.label.result.success", locale));
-            } else {
-                resultMap.put("resultCd", Result.FAIL.getCode());
-                resultMap.put("resultMsg", msa.getMessage("myhub.error.common.fail", locale));
-            }
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", msa.getMessage("myhub.label.result.success", locale));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());

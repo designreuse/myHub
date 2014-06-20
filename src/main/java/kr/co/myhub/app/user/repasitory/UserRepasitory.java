@@ -1,15 +1,11 @@
 package kr.co.myhub.app.user.repasitory;
 
-import java.util.Date;
 import java.util.List;
 
 import kr.co.myhub.app.user.domain.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -40,33 +36,6 @@ public interface UserRepasitory extends JpaRepository<User, Long>, QueryDslPredi
      * @return
      */
     public User findByEmail(String email);
-    
-    /**
-     * 로그인실패 업데이트
-     * @param loginFailCount
-     * @param loginFailDt
-     * @param userId
-     * @return
-     */
-    @Modifying
-    @Query("update User set loginFailCount = loginFailCount + 1, loginFailDt = :loginFailDt where email = :email")
-    public int updateUserFailLogin(
-            @Param("loginFailDt")Date loginFailDt, 
-            @Param("email")String email
-            );
-    
-    /**
-     * 로그인 성공시 수정
-     * @param email
-     * @return
-     */
-    @Modifying
-    @Query("update User set loginFailCount = 0, loginFailDt = :loginFailDt where email = :email")
-    public int updateUserSuccessLogin(
-            @Param("loginFailDt")Date loginFailDt, 
-            @Param("email")String email
-            );
-
     
     /**
      * 이메일 검색

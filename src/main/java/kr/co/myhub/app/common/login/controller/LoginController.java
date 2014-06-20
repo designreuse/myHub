@@ -137,7 +137,7 @@ public class LoginController {
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", msa.getMessage("myhub.error.common.fail", locale));
+            resultMap.put("resultMsg", msa.getMessage("myhub.error.login.fail", locale));
         }
         
         return resultMap;
@@ -191,7 +191,7 @@ public class LoginController {
                 }
                 
                 /* 로그인 상태 처리 추가 */
-                userService.updateUserSuccessLogin(null, email);
+                userService.updateUserLogin(true, email);
                 
                 /* 로그인 정보는 필요한 정보만 세팅 */
                 User sUser = userService.findByEmail(email);

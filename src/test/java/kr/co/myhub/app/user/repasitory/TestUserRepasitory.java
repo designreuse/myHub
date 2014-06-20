@@ -56,15 +56,15 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 삭제
      */
-    //@Test
+    @Test
     public void delete() {
         
         // 1) 해당리스트만 삭제
         List<User> list = userRepository.findAll();
-        userRepository.delete(list);
+        //userRepository.delete(list);
         
         // 2) 엔티티 데이터 전체 삭제
-        userRepository.deleteAll();
+        //userRepository.deleteAll();
         
         // 3) 단건 삭제
         for (User user : list) {
@@ -77,7 +77,7 @@ public class TestUserRepasitory extends TestConfig {
     /**
      * 유저 등록
      */
-    @Test
+    //@Test
     public void save() {
         user.setUserId("tapjm");
         user.setEmail("tapjm@naver.com");

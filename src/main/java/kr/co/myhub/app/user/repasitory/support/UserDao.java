@@ -45,7 +45,36 @@ public class UserDao extends QueryDslRepositorySupport {
             .set(qUser.birthday, user.getBirthday())
             .set(qUser.phoneNo, user.getPhoneNo())
             .set(qUser.gender, user.getGender())
+            .set(qUser.modDt, new Date())
             .execute();
+        
+        return result;
+    }
+    
+    /**
+     * 유저 로그인 정보 수정
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    public long updateUserLoginByEmail(boolean isLoginSuccess, String email) throws Exception {
+        QUser qUser = QUser.user;
+        
+        long result = 0;
+        
+        if (isLoginSuccess) {
+            result = update(qUser)
+                    .where(qUser.email.eq(email))
+                    .set(qUser.loginFailDt, null)
+                    .set(qUser.loginFailCount, 0)
+                    .execute();    
+        } else {
+            result = update(qUser)
+                    .where(qUser.email.eq(email))
+                    .set(qUser.loginFailDt, new Date())
+                    .set(qUser.loginFailCount, 0)
+                    .execute();
+        }
         
         return result;
     }
@@ -80,8 +109,5 @@ public class UserDao extends QueryDslRepositorySupport {
                 
         return result;
     }
-
-    
-    
 
 }

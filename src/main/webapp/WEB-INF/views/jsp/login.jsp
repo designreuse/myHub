@@ -197,7 +197,7 @@
                     		break;
                     	case 2:
                     		$('#email').val('tapjm@naver.com');
-                            $('#password').val('qwer1234');
+                            $('#password').val('111222');
                             break;
                     	case 3:
                     		$('#email').val('tapjm@hanmail.net');

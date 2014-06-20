@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -116,12 +116,6 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     @JsonIgnore
     private Set<LoginLog> loginLog = new HashSet<LoginLog>();
-    
-//    /**
-//     * UserAuth와 1:N
-//     */
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-//    private Set<UserAuth> userAuth = new HashSet<UserAuth>();
     
     /**
      * 유저권한관의 1:1 관계 정보 로딩
@@ -263,14 +257,6 @@ public class User implements Serializable {
         this.userAuth = userAuth;
         this.userAuth.setUser(this);
     }
-
-//    public Set<UserAuth> getUserAuth() {
-//        return userAuth;
-//    }
-//
-//    public void setUserAuth(Set<UserAuth> userAuth) {
-//        this.userAuth = userAuth;
-//    }
     
     /**
      * default 날짜 설정
@@ -278,7 +264,11 @@ public class User implements Serializable {
     @PrePersist
     public void prePersist() {
         this.crtDt = new Date();
-        this.modDt = new Date();
         this.passwordModDt = new Date();
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        this.modDt = new Date();
     }
 }
