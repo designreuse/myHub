@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,45 +22,43 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 
- * file   : LoginLog.java
- * date   : 2014. 6. 17.
+ * file   : LogHistory.java
+ * date   : 2014. 6. 23.
  * author : jmpark
- * content: 로그인 이력 domain
+ * content: 로그 엔티티(로그인, 로그아웃)
  * ref: https://groups.google.com/forum/#!topic/ksug/oXVcsoJgOCc
  *
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
  * ----------------------------------------------
- * 2014. 6. 17.   kbtapjm     최초생성
+ * 2014. 6. 23.   kbtapjm     최초생성
  */
 @Entity
-@Table(name = "loginLog")
+@Table(name = "logHistory")
 @XmlRootElement
-public class LoginLog implements Serializable {
+public class LogHistory implements Serializable {
 
     private static final long serialVersionUID = -8484482196544565101L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "loginlogkey", nullable = false)
-    private Long loginLogKey;
+    @Column(name = "logHistoryKey", nullable = false)
+    private Long logHistoryKey;
     
     @Column(name = "email", nullable = false, length = 50)
     private String email;
     
-    @Column(name = "ipaddress", nullable = false, length = 100)
+    @Column(name = "ipAddress", nullable = false, length = 100)
     private String ipAddress;
     
-    @Column(name = "logindate", nullable = true, insertable = true, updatable = false)
+    @Column(name = "logDate", nullable = true, insertable = true, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
-    private Date loginDate;
+    private Date logDate;
     
-    @Column(name = "logoutdate", nullable = true, insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
-    private Date logoutDate;
+    @Column(name = "logType", nullable = false, length = 2)
+    private String logType;
     
     /**
      * User-LoginLog(1:N) 관계 - 로그인이력을 가져올때는 N정보에서 조인컬럼을 설정한다.
@@ -74,19 +71,13 @@ public class LoginLog implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userKey", nullable = false)
     private User user;
-    
-    @PrePersist
-    public void prePersist() {
-        this.loginDate = new Date();
-        this.logoutDate = new Date();
+
+    public Long getLogHistoryKey() {
+        return logHistoryKey;
     }
 
-    public Long getLoginLogKey() {
-        return loginLogKey;
-    }
-
-    public void setLoginLogKey(Long loginLogKey) {
-        this.loginLogKey = loginLogKey;
+    public void setLogHistoryKey(Long logHistoryKey) {
+        this.logHistoryKey = logHistoryKey;
     }
 
     public String getEmail() {
@@ -105,20 +96,20 @@ public class LoginLog implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public Date getLoginDate() {
-        return loginDate;
+    public Date getLogDate() {
+        return logDate;
     }
 
-    public void setLoginDate(Date loginDate) {
-        this.loginDate = loginDate;
+    public void setLogDate(Date logDate) {
+        this.logDate = logDate;
     }
 
-    public Date getLogoutDate() {
-        return logoutDate;
+    public String getLogType() {
+        return logType;
     }
 
-    public void setLogoutDate(Date logoutDate) {
-        this.logoutDate = logoutDate;
+    public void setLogType(String logType) {
+        this.logType = logType;
     }
 
     public User getUser() {
@@ -128,4 +119,5 @@ public class LoginLog implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+    
 }

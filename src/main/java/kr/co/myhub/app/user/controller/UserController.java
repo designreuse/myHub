@@ -14,7 +14,6 @@ import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
-import kr.co.myhub.appframework.constant.StatusEnum;
 import kr.co.myhub.appframework.constant.TypeEnum;
 import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
@@ -46,6 +45,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
  * date   : 2013. 11. 17.
  * author : jmpark
  * content: 유저 웹 요청 처리 (URL Mapping, Data Response)
+ * ref : http://www.ilhwan.com/spring-security-example/(회원가입후 자동 로그인)
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
@@ -217,6 +217,8 @@ public class UserController {
                 params.put("content", retUser.getUserName().concat(msa.getMessage("myhub.error.register.success", locale)));
                 
                 MailUtil.mailsend(params);
+                
+                // 
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
                 resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
@@ -288,14 +290,14 @@ public class UserController {
         try {
             list = userService.findAllUser();
             
-            result.setStatus(StatusEnum.SUCCESS);
+            //result.setStatus(StatusEnum.SUCCESS);
             result.setData(list);
             
         } catch (Exception e) {
             e.printStackTrace();
             
             // Exception result
-            result.setStatus(StatusEnum.FAIL);
+            //result.setStatus(StatusEnum.FAIL);
             result.setMessage(e.getMessage());
         }
         
@@ -595,7 +597,7 @@ public class UserController {
         try {
             list = userService.findAllUser();
             
-            response.setStatus(StatusEnum.SUCCESS);
+            //response.setStatus(StatusEnum.SUCCESS);
             response.setList(list);
             
             modelMap.addAttribute("result", response);
@@ -604,7 +606,7 @@ public class UserController {
             e.printStackTrace();
             
             // Exception result
-            response.setStatus(StatusEnum.FAIL);
+            //response.setStatus(StatusEnum.FAIL);
             response.setMessage(e.getMessage());
             
             modelMap.addAttribute("result", response);

@@ -1,14 +1,12 @@
 package kr.co.myhub.app.common.login.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.domain.LogHistory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * 
@@ -30,7 +28,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog create(LoginLog loginLog) throws Exception;
+    public LogHistory create(LogHistory loginLog) throws Exception;
     
     /**
      * 로그인 이력 조회(by email)
@@ -38,7 +36,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
-    public List<LoginLog> findByEmail(String email) throws Exception;
+    public List<LogHistory> findByEmail(String email) throws Exception;
     
     /**
      * 로그인 이력 조회(by loginLogKey)
@@ -46,21 +44,21 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog findByLoginLogKey(Long loginLogKey) throws Exception;
+    public LogHistory findByLoginLogKey(Long loginLogKey) throws Exception;
     
     /**
      * 로그인 이력 목록(페이징)
      * @return
      * @throws Exception
      */
-    public Page<LoginLog> findAllLoginLog(PageRequest pageRequest) throws Exception;
+    public Page<LogHistory> findAllLoginLog(PageRequest pageRequest) throws Exception;
     
     /**
      * 로그인 로그 총 목록
      * @return
      * @throws Exception
      */
-    public List<LoginLog> findAll() throws Exception;
+    public List<LogHistory> findAll() throws Exception;
     
     /**
      * 로그인 이력 총카운트
@@ -75,28 +73,20 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog update(LoginLog loginLog) throws Exception;
+    public LogHistory update(LogHistory loginLog) throws Exception;
     
     /**
      * 로그인 이력 삭제
      * @param loginLog
      * @throws Exception
      */
-    public void delete(LoginLog loginLog) throws Exception;
+    public void delete(LogHistory loginLog) throws Exception;
     
     /**
      * 로그인 이력 전체 삭제
      * @throws Exception
      */
     public void deleteAll() throws Exception;
-    
-    /**
-     * 로그아웃 일자 수정
-     * @param logoutDate
-     * @param loginLogKey
-     * @return
-     */
-    public int setLogoutDateFor(Date logoutDate, Long loginLogKey) throws Exception;
     
     /**
      * 계정 락 여부 체크(true : locked, false : unlocked)

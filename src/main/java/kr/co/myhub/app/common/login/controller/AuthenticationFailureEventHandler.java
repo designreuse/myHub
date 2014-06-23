@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationFailureEventHandler implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
     
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationFailureEventHandler.class);
     
     @Autowired
     UserService userService;

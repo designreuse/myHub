@@ -2,7 +2,7 @@ package kr.co.myhub.appframework.vo;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import kr.co.myhub.appframework.constant.StatusEnum;
+import kr.co.myhub.appframework.constant.Result;
 
 /**
  * 
@@ -20,7 +20,7 @@ import kr.co.myhub.appframework.constant.StatusEnum;
 public class ApiResult {
     
     /* 상태  */
-    private StatusEnum status;
+    private Result result;
     
     /* 메시지 */
     private String message;
@@ -28,12 +28,12 @@ public class ApiResult {
     /* 결과 */
     private Object data;
 
-    public StatusEnum getStatus() {
-        return status;
+    public Result getResult() {
+        return result;
     }
 
-    public void setStatus(StatusEnum status) {
-        this.status = status;
+    public void setResult(Result result) {
+        this.result = result;
     }
 
     public String getMessage() {

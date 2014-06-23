@@ -9,11 +9,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.domain.LogHistory;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.AccountExpiredEnum;
+import kr.co.myhub.appframework.constant.LogTypeEnum;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.Security;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
@@ -202,10 +203,11 @@ public class LoginController {
                 session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
                 
                 /* 로그인 이력 추가  */
-                LoginLog loginLog = new LoginLog();
+                LogHistory loginLog = new LogHistory();
                 loginLog.setEmail(sUser.getEmail());
                 loginLog.setIpAddress(request.getRemoteAddr());
-                loginLog.setLoginDate(new Date());
+                loginLog.setLogDate(new Date());
+                loginLog.setLogType(LogTypeEnum.logIn.getText());
                 loginLog.setUser(sUser);
                 
                 loginService.create(loginLog);

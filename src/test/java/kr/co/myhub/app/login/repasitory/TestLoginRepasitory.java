@@ -4,7 +4,7 @@ package kr.co.myhub.app.login.repasitory;
 import java.util.List;
 
 import kr.co.myhub.app.common.TestConfig;
-import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.domain.LogHistory;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
 
 import org.junit.After;
@@ -57,7 +57,7 @@ public class TestLoginRepasitory extends TestConfig {
     @Autowired
     LoginRepasitory loginRepasitory;
     
-    private LoginLog loginLog;
+    private LogHistory loginLog;
     
     @BeforeClass
     public static void start() {
@@ -68,30 +68,30 @@ public class TestLoginRepasitory extends TestConfig {
     
     @Before
     public void setup() {
-        loginLog = new LoginLog();
+        loginLog = new LogHistory();
     }
     
     @Test
     public void findAll() {
         String email = "kbtapjm@gmail.com";
-        List<LoginLog> list = null;
+        List<LogHistory> list = null;
         
-        list = loginRepasitory.findByEmailOrderByLoginDateDesc(email);
+        list = loginRepasitory.findByEmailOrderByLogDateDesc(email);
         
         log.debug(" =============================================== ");
         log.debug(" list : " + list.size());
         log.debug(" =============================================== ");
         
-        for (LoginLog loginLog : list) {
-            log.debug("loginLog : {}", loginLog.getLoginLogKey());
+        for (LogHistory loginLog : list) {
+            log.debug("loginLog : {}", loginLog.getLogHistoryKey());
         }
         
         log.debug(" =============================================== ");
         Sort sort = new Sort(Sort.Direction.ASC, "loginDate");
         list = loginRepasitory.findByEmail(email, sort);
         
-        for (LoginLog loginLog : list) {
-            log.debug("loginLog : {}", loginLog.getLoginLogKey());
+        for (LogHistory loginLog : list) {
+            log.debug("loginLog : {}", loginLog.getLogHistoryKey());
         }
     }
     

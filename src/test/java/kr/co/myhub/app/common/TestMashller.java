@@ -1,6 +1,5 @@
 package kr.co.myhub.app.common;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -9,7 +8,7 @@ import javax.xml.bind.Marshaller;
 
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.repasitory.UserRepasitory;
-import kr.co.myhub.appframework.constant.StatusEnum;
+import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.vo.ApiResponse;
 
 import org.junit.After;
@@ -61,7 +60,7 @@ public class TestMashller extends TestConfig {
         
         ApiResponse response = new ApiResponse();
         response.setMessage("list");
-        response.setStatus(StatusEnum.SUCCESS);
+        response.setResult(Result.SUCCESS);
         response.setList(list);
         
         JAXBContext jaxbContext = JAXBContext.newInstance(ApiResponse.class);

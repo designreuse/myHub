@@ -21,7 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.domain.LogHistory;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -111,11 +111,11 @@ public class User implements Serializable {
     private Date loginFailDt;
     
     /**
-     * 로그인 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
+     * 로그 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     @JsonIgnore
-    private Set<LoginLog> loginLog = new HashSet<LoginLog>();
+    private Set<LogHistory> logHistory = new HashSet<LogHistory>();
     
     /**
      * 유저권한관의 1:1 관계 정보 로딩
@@ -241,12 +241,12 @@ public class User implements Serializable {
         this.loginFailDt = loginFailDt;
     }
 
-    public Set<LoginLog> getLoginLog() {
-        return this.loginLog;
+    public Set<LogHistory> getLogHistory() {
+        return logHistory;
     }
 
-    public void setLoginLog(Set<LoginLog> loginLog) {
-        this.loginLog = loginLog;
+    public void setLogHistory(Set<LogHistory> logHistory) {
+        this.logHistory = logHistory;
     }
 
     public UserAuth getUserAuth() {

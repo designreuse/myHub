@@ -62,7 +62,7 @@
     <!-- ============================================================================================ -->
     <oxm:jaxb2-marshaller id="marshaller">
         <oxm:class-to-be-bound name="kr.co.myhub.app.user.domain.User" />
-        <oxm:class-to-be-bound name="kr.co.myhub.app.common.login.domain.LoginLog" />
+        <oxm:class-to-be-bound name="kr.co.myhub.app.common.login.domain.LogHistory" />
         <oxm:class-to-be-bound name="kr.co.myhub.appframework.vo.ApiResult" />
         <oxm:class-to-be-bound name="kr.co.myhub.appframework.vo.ApiResponse" />
     </oxm:jaxb2-marshaller>

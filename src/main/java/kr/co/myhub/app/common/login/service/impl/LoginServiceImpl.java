@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import kr.co.myhub.app.common.login.domain.LoginLog;
+import kr.co.myhub.app.common.login.domain.LogHistory;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
@@ -60,7 +60,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog create(LoginLog loginLog) throws Exception {
+    public LogHistory create(LogHistory loginLog) throws Exception {
         return loginRepasitory.save(loginLog);
     }
 
@@ -70,8 +70,8 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public List<LoginLog> findByEmail(String email) throws Exception {
-        return loginRepasitory.findByEmailOrderByLoginDateDesc(email);
+    public List<LogHistory> findByEmail(String email) throws Exception {
+        return loginRepasitory.findByEmailOrderByLogDateDesc(email);
     }
 
     /**
@@ -80,7 +80,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog findByLoginLogKey(Long loginLogKey) throws Exception {
+    public LogHistory findByLoginLogKey(Long loginLogKey) throws Exception {
         return loginRepasitory.findOne(loginLogKey);
     }
 
@@ -89,7 +89,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public Page<LoginLog> findAllLoginLog(PageRequest pageRequest) throws Exception {
+    public Page<LogHistory> findAllLoginLog(PageRequest pageRequest) throws Exception {
         return loginRepasitory.findAll(pageRequest);
     }
     
@@ -98,7 +98,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public List<LoginLog> findAll() throws Exception {
+    public List<LogHistory> findAll() throws Exception {
         return loginRepasitory.findAll();
     }
 
@@ -117,7 +117,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
-    public LoginLog update(LoginLog loginLog) throws Exception {
+    public LogHistory update(LogHistory loginLog) throws Exception {
         return loginRepasitory.saveAndFlush(loginLog);
     }
 
@@ -126,7 +126,7 @@ public class LoginServiceImpl implements LoginService {
      * @param loginLog
      * @throws Exception
      */
-    public void delete(LoginLog loginLog) throws Exception {
+    public void delete(LogHistory loginLog) throws Exception {
         loginRepasitory.delete(loginLog);
     }
 
@@ -136,16 +136,6 @@ public class LoginServiceImpl implements LoginService {
      */
     public void deleteAll() throws Exception {
         loginRepasitory.deleteAll();
-    }
-
-    /**
-     * 로그아웃 일자 수정
-     * @param logoutDate
-     * @param loginLogKey
-     * @return
-     */
-    public int setLogoutDateFor(Date logoutDate, Long loginLogKey) throws Exception {
-        return loginRepasitory.setLogoutDateFor(logoutDate, loginLogKey);
     }
 
     /**
