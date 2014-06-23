@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +45,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * 
  * http://www.java-school.net/spring/spring-security.php
  * http://blog.naver.com/alucard99?Redirect=Log&logNo=192570650
- * http://antop.tistory.com/151(로그아웃시 로그 기록)
  * 
  * 수정내용
  * ----------------------------------------------
@@ -202,12 +204,17 @@ public class LoginController {
                 session.setAttribute("sUser", sUser);
                 session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
                 
+                // 시큐리티 인증상세 정보
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                WebAuthenticationDetails wad = (WebAuthenticationDetails) auth.getDetails();
+                
                 /* 로그인 이력 추가  */
                 LogHistory loginLog = new LogHistory();
                 loginLog.setEmail(sUser.getEmail());
-                loginLog.setIpAddress(request.getRemoteAddr());
+                loginLog.setIpAddress(wad.getRemoteAddress());
                 loginLog.setLogDate(new Date());
                 loginLog.setLogType(LogTypeEnum.logIn.getText());
+                loginLog.setSessionId(wad.getSessionId());
                 loginLog.setUser(sUser);
                 
                 loginService.create(loginLog);

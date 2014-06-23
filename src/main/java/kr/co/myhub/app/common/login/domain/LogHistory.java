@@ -41,24 +41,33 @@ public class LogHistory implements Serializable {
 
     private static final long serialVersionUID = -8484482196544565101L;
 
+    /* 로그이력 key */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "logHistoryKey", nullable = false)
     private Long logHistoryKey;
     
+    /* 이메일 */
     @Column(name = "email", nullable = false, length = 50)
     private String email;
     
+    /* ip주소 */
     @Column(name = "ipAddress", nullable = false, length = 100)
     private String ipAddress;
     
+    /* 로그 일자 */
     @Column(name = "logDate", nullable = true, insertable = true, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date logDate;
     
+    /* 로그 타입(I : 로그인, O : 로그아웃) */
     @Column(name = "logType", nullable = false, length = 2)
     private String logType;
+    
+    /* 시큐리티 세션 아이디 */
+    @Column(name = "sessionId", nullable = false, length = 50)
+    private String sessionId;
     
     /**
      * User-LoginLog(1:N) 관계 - 로그인이력을 가져올때는 N정보에서 조인컬럼을 설정한다.
@@ -112,6 +121,14 @@ public class LogHistory implements Serializable {
         this.logType = logType;
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
     public User getUser() {
         return user;
     }
@@ -119,5 +136,4 @@ public class LogHistory implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-    
 }

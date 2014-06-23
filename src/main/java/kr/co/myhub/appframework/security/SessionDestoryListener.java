@@ -112,6 +112,7 @@ public class SessionDestoryListener implements ApplicationListener<SessionDestro
                     loginLog.setIpAddress(wad.getRemoteAddress());
                     loginLog.setLogDate(new Date());
                     loginLog.setLogType(LogTypeEnum.logOut.getText());
+                    loginLog.setSessionId(wad.getSessionId());
                     loginLog.setUser(user);
                     
                     loginService.create(loginLog);

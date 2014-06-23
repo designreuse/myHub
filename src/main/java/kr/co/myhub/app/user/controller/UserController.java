@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import kr.co.myhub.app.user.domain.User;
@@ -25,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
@@ -74,6 +77,12 @@ public class UserController {
      */
     @Autowired
     SessionRegistry sessionRegistry;
+    
+    /**
+     * AuthenticationManager
+     */
+    @Autowired
+    protected AuthenticationManager authenticationManager;
     
     /**
      *  Service DI
@@ -184,7 +193,11 @@ public class UserController {
      */
     @RequestMapping(value = "/userCreate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> userCreate(Model model, @ModelAttribute User user, BindingResult bindResult, Locale locale) {
+    public Map<String, Object> userCreate(Model model, 
+            @ModelAttribute User user, 
+            BindingResult bindResult, 
+            Locale locale,
+            HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
@@ -210,15 +223,17 @@ public class UserController {
                 resultMap.put("resultCd", Result.SUCCESS.getCode());
                 resultMap.put("resultMsg", msa.getMessage("myhub.error.register.success", locale));
                 
-                /* 회원가입 이메일 전송 */ // TODO: 비동기로 처리 로직 추가
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("to", user.getEmail());
-                params.put("subject", msa.getMessage("myhub.error.register.success", locale));
-                params.put("content", retUser.getUserName().concat(msa.getMessage("myhub.error.register.success", locale)));
+                /* 회원가입 이메일 전송 */ 
+                this.asyncSendMail(retUser, locale);
                 
-                MailUtil.mailsend(params);
+                /* 회원가입 성공 후 시큐리티 인증 처리 */
+                /*UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+                 
+                token.setDetails(new WebAuthenticationDetails(request));
+                Authentication authenticatedUser = authenticationManager.authenticate(token);
+                 
+                SecurityContextHolder.getContext().setAuthentication(authenticatedUser);*/
                 
-                // 
             } else {
                 resultMap.put("resultCd", Result.FAIL.getCode());
                 resultMap.put("resultMsg", msa.getMessage("myhub.error.register.failed", locale));
@@ -233,7 +248,7 @@ public class UserController {
         
         return resultMap;
     }
-  
+    
     /**
      * 유저정보 조회 
      * @param model
@@ -577,6 +592,27 @@ public class UserController {
         }
         
         return resultMap;
+    }
+    
+    /**
+     * 이메일 전송
+     * @param user
+     * @param locale
+     */
+    @Async
+    public void asyncSendMail(final User user, final Locale locale) {
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("to", user.getEmail());
+                params.put("subject", msa.getMessage("myhub.error.register.success", locale));
+                params.put("content", user.getUserName().concat(msa.getMessage("myhub.error.register.success", locale)));
+                
+                MailUtil.mailsend(params);
+            }
+        };
+        new Thread(task).start();
     }
     
     // ===================================================================================
