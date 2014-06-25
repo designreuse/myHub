@@ -5,7 +5,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>메인</title>
+        <title><spring:message code="myhub.label.main"/></title>
         <meta charset="utf-8">
         <!-- IE쿼크모드(호환성보기) 설정, 최신버젼으로 렌더링  -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

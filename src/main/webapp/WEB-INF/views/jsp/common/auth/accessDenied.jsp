@@ -5,7 +5,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Expired</title>
+        <title>Access is Denied</title>
         <meta charset="utf-8">
         <!-- IE쿼크모드(호환성보기) 설정, 최신버젼으로 렌더링  -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,6 +16,8 @@
         
         <!-- Bootstrap -->
         <link href="<c:url value='/css/bootstrap/bootstrap.min.css'/>" rel="stylesheet" media="screen">
+        <!-- carousel -->
+        <link href="<c:url value='/css/carousel.css'/>" rel="stylesheet">
         
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,6 +39,8 @@
         <script src="<c:url value='/js/bootstrap/bootstrap.js'/>"></script>
         <!-- jquery cookie -->
         <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
+        <!-- jquery validate -->
+        <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
         <!--  =========================================================== -->
         
         <!-- application -->
@@ -63,7 +67,7 @@
                 
                 event: {
                     init: function() {
-                        
+                       
                     }
                 }
             };
@@ -80,10 +84,27 @@
         
     </head>
     <body>
-       <!-- container -->
-        <div class="container">
-            접근거부
+        <div class="navbar-wrapper">
+            <div class="container">
+                <!-- header -->
+                <%@ include file="/WEB-INF/views/jsp/common/layout/header.jsp" %>
+                <!-- /header -->
+                
+                <div class="jumbotron">
+                    <h1>Error!</h1>
+                    <p><spring:message code="myhub.error.security.accessdenied"/></p>
+                </div>
+                
+                <!-- footer -->
+                
+                <!-- /footer -->
+            </div>
         </div>
-        <!-- /container -->
+        
+        <!-- common html include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/commonHtml.jsp" %>
+        
+        <!-- common js include -->
+        <%@ include file="/WEB-INF/views/jsp/common/include/bootstrapJs.jsp" %>
     </body>
 </html>

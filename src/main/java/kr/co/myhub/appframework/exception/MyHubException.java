@@ -1,5 +1,9 @@
 package kr.co.myhub.appframework.exception;
 
+import java.util.Locale;
+
+import org.springframework.context.support.MessageSourceAccessor;
+
 /**
  * 
  * file   : MyHubException.java
@@ -13,8 +17,11 @@ package kr.co.myhub.appframework.exception;
  * 2014. 5. 16.   kbtapjm     최초생성
  */
 public class MyHubException extends Exception {
-
+    
     private static final long serialVersionUID = 6655460570753239940L;
+    
+    /* 접근 거부 에러 */ 
+    public static final String ACCESS_DENIED = "Access is denied";
     
     /* 에러코드 */
     private String errCd;
@@ -82,6 +89,27 @@ public class MyHubException extends Exception {
 
     public void setArguments(Object[] arguments) {
         this.arguments = arguments;
+    }
+    
+    /**
+     * 에러 메시지 처리
+     * @param e
+     * @param msa
+     * @param locale
+     * @return
+     */
+    public static String getExceptionMsg(Exception e, MessageSourceAccessor msa, Locale locale) {
+        if (e == null) return ""; 
+        
+        String msg = "";
+        
+        if (e.getMessage().indexOf(MyHubException.ACCESS_DENIED) != -1) {
+            msg = msa.getMessage("myhub.error.security.accessdenied", locale);
+        } else {
+            msg  = e.getMessage();
+        }
+        
+        return msg;
     }
 
 }

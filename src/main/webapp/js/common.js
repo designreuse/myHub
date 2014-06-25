@@ -3,7 +3,7 @@
  */
 var commonObj = {
 	config: {
-		siteName: 'MyHub',
+		siteName: 'myhub',
 		version: '1.0',
 		contextPath: '/myhub'
 	},
@@ -79,19 +79,29 @@ var commonObj = {
                     async: _config.async,
                     contentType: _config.contentType,
                     dataType: _config.data,
+                    beforeSend: function(xhr) {
+                    	xhr.setRequestHeader("X-AjaxRequest", true);	// ajax요청인지 구분하기 위한 헤더값 설정
+                    },
                     success: function (res) {
                     	var result = res;
-                    	
-                    	
 	                    _config.onsucc( result );
                     },
-                    error: function (res) {
+                    error: function (xhr, status, err) {
                     	
-                    	if ( _config.onerr != undefined ){
-                    		_config.onerr ( res.responseText );	
-                    	} else {
-                    		alert("onError : " + res.responseText);
-                    		
+                    	// 에러처리
+                    	switch(xhr.status) {
+                    	case 401:	// 인증실패
+                    		location.href = commonObj.config.contextPath.concat('/login?error=invaild');
+                    		break;
+                    	case 403:	// 사용권한 없음
+                    		location.href = commonObj.config.contextPath.concat('/login?error=invaild');
+                    		break;
+                    	default:
+                    		if (_config.onerr != undefined) {
+                        		_config.onerr(xhr.responseText);	
+                        	} else {
+                        		alert("onError : " + xhr.responseText);
+                        	}
                     	}
                     },
                     timeout: function (res) {

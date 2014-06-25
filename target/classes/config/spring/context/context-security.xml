@@ -41,6 +41,20 @@
     <beans:bean id="sessionDestoryListener" class="kr.co.myhub.appframework.security.SessionDestoryListener" />
     
     <!-- ============================================================================================ -->
+    <!--  엔트리포인트로 세션체크 --> 
+    <!-- ============================================================================================ -->
+    <!-- <beans:bean id="authenticationEntryPoint" class="kr.co.myhub.appframework.security.AjaxAwareAuthenticationEntryPoint" >
+        <beans:constructor-arg name="loginUrl" value="/login" />
+    </beans:bean> -->
+    
+    <!-- ============================================================================================ -->
+    <!--  커스텀 필터로 세션체크 --> 
+    <!-- ============================================================================================ -->
+    <beans:bean id="ajaxSessionTimeoutFilter" class="kr.co.myhub.appframework.security.AjaxSessionTimeoutFilter" >
+        
+    </beans:bean>
+    
+    <!-- ============================================================================================ -->
     <!-- channel  --> 
     <!-- ============================================================================================ -->
     <beans:bean class="org.springframework.security.web.access.channel.ChannelDecisionManagerImpl">
@@ -66,16 +80,36 @@
     <!-- ============================================================================================ -->
     <!-- 
         보안  HTTP url 인증처리
-        use-expressions="true" : 스프링 표현식 언어(SpEl)를 사용한 접근 설정  
+        use-expressions="true" : 스프링 표현식 언어(SpEl)를 사용한 접근 설정
+        entry-point-ref="authenticationEntryPoint" : 엔트리포인트 설정  
     -->
     <!-- ============================================================================================ -->
     <security:http use-expressions="true" auto-config="true"
         access-denied-page="/accessDenied"
-        disable-url-rewriting="true" >
+        disable-url-rewriting="true"
+        >
         
         <!-- Authorization(권한정보) -->
-        <!-- <security:intercept-url pattern="/" access="permitAll" /> -->
-        <security:intercept-url pattern="/user/**" access="permitAll" />
+        
+        <!-- 로그인 -->
+        <security:intercept-url pattern="/login" access="permitAll" />  <!-- 로그인 페이지 -->
+        <security:intercept-url pattern="/isAccountLocked" access="permitAll" />    <!-- 계정 락 체크 처리 -->
+        <security:intercept-url pattern="/loginSuccess" access="isAuthenticated()" />   <!-- 로그인 성공 처리 -->
+        <security:intercept-url pattern="/loginFailed" access="permitAll" />    <!-- 로그인 실패 -->
+        
+        <!-- 유저 정보(권한 없이 접근 가능)-->
+        <security:intercept-url pattern="/user/userAdd" access="permitAll" />   <!-- 회원가입(유저 등록) 페이지 -->
+        <security:intercept-url pattern="/user/userSearch" access="permitAll" />    <!-- 사용자 찾기 페이지-->
+        <security:intercept-url pattern="/user/userPasswordEdit" access="permitAll" />  <!-- 비밀번호 변경 페이지-->
+        <security:intercept-url pattern="/user/getUserDuplicateCheck" access="permitAll" /> <!-- 이메일 중복 체크 처리 -->
+        <security:intercept-url pattern="/user/userCreate" access="permitAll" /> <!-- 회원가입(유저등록) 처리 -->
+        <security:intercept-url pattern="/user/emailSearch" access="permitAll" /> <!-- 이메일찾기 처리 -->
+        <security:intercept-url pattern="/user/passwordSearch" access="permitAll" /> <!-- 비밀번호 찾기 처리 -->
+        <security:intercept-url pattern="/user/changePassword" access="permitAll" /> <!-- 비밀번호 변경 처리 -->
+        
+        <!-- 유저  정보(인증  필요)-->
+        <security:intercept-url pattern="/user/**" access="isAuthenticated()" />
+        
         <security:intercept-url pattern="/main" access="isAuthenticated()" />
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
         
@@ -130,6 +164,9 @@
             <security:port-mapping http="80" https="443" />
             <security:port-mapping http="8080" https="8443" />
         </security:port-mappings>
+        
+        <!-- check session time out with ajax -->
+        <security:custom-filter after="EXCEPTION_TRANSLATION_FILTER" ref="ajaxSessionTimeoutFilter"/>
         
     </security:http>
     

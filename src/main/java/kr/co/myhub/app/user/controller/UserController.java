@@ -16,6 +16,7 @@ import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.TypeEnum;
+import kr.co.myhub.appframework.exception.MyHubException;
 import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
 import kr.co.myhub.appframework.util.MailUtil;
@@ -243,7 +244,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
         
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -285,7 +286,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
         
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -370,7 +371,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
         
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -415,7 +416,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
         
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -456,7 +457,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -512,7 +513,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;
@@ -588,7 +589,7 @@ public class UserController {
             log.error("Exception : {}", e.getMessage());
             
             resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
         }
         
         return resultMap;

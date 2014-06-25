@@ -38,40 +38,49 @@ public interface UserService {
     
     /**
      * 유저 정보 조회
+     * (사용자 인증 : 관리자, 매니져, 일반 사용자)
      * @param userKey
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
     public User findByUserKey(Long userKey) throws Exception;
     
     /**
      * 유저 목록
+     * (사용자 인증 : 관리자)
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')") // 유효한 인증된 사용자만이 접근
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAllUser() throws Exception;
     
     /**
      * 유저 카운트
+     * (사용자 인증 : 관리자, 매니져, 일반 사용자)
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
     public Long findAllCount() throws Exception;
     
     /**
      * 유저 수정
+     * (사용자 인증 : 작성자, 관리자)
      * @param user
      * @return
      * @throws Exception
      */
+    @PreAuthorize("#user.email == principal.username or hasRole('ROLE_ADMIN')")
     public long updateUser(User user) throws Exception;
     
     /**
      * 유저 삭제
+     * (사용자 인증 : 작성자, 관리자)
      * @param user
      * @throws Exception
      */
+    @PreAuthorize("#user.email == principal.username or hasRole('ROLE_ADMIN')")
     public void deleteUser(User user) throws Exception;
     
     /**

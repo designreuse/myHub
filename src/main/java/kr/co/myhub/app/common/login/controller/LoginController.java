@@ -18,6 +18,7 @@ import kr.co.myhub.appframework.constant.LogTypeEnum;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.Security;
 import kr.co.myhub.appframework.constant.SecurityPoliciesEnum;
+import kr.co.myhub.appframework.exception.MyHubException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,10 +86,15 @@ public class LoginController {
     public String login(Model model, Locale locale,
             @RequestParam(value = "error", required = false, defaultValue = "none") String error) throws Exception {
         
-        // 토큰만료시 에러 내용  TODO: 세션만료에 대한 처리도 추가 필요
-        if (error.equals("expired")) {
+        switch(error) {
+        case "invaild":  // 세션만료
+            model.addAttribute("resultCd", Result.FAIL.getCode());
+            model.addAttribute("resultMsg", msa.getMessage("myhub.error.login.invalid", locale));
+            break;
+        case "expired": // 이중 장치 로그인으로 세션만료
             model.addAttribute("resultCd", Result.FAIL.getCode());
             model.addAttribute("resultMsg", msa.getMessage("myhub.error.login.expired", locale));
+            break;
         }
         
         return "/login";         
@@ -224,7 +230,7 @@ public class LoginController {
             session.invalidate();
             
             resultCd = Security.AuthenticationFail.getCode();
-            resultMsg =  msa.getMessage("myhub.error.common.fail", locale);            
+            resultMsg =  MyHubException.getExceptionMsg(e, msa, locale);  
         }
         
         // 로그인 결과 확인
