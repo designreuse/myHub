@@ -96,6 +96,7 @@
         <security:intercept-url pattern="/isAccountLocked" access="permitAll" />    <!-- 계정 락 체크 처리 -->
         <security:intercept-url pattern="/loginSuccess" access="isAuthenticated()" />   <!-- 로그인 성공 처리 -->
         <security:intercept-url pattern="/loginFailed" access="permitAll" />    <!-- 로그인 실패 -->
+        <security:intercept-url pattern="/sessionCheck" access="isAuthenticated()" />   <!-- 세션체크 -->
         
         <!-- 유저 정보(권한 없이 접근 가능)-->
         <security:intercept-url pattern="/user/userAdd" access="permitAll" />   <!-- 회원가입(유저 등록) 페이지 -->

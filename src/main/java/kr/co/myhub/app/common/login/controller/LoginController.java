@@ -325,4 +325,20 @@ public class LoginController {
         
         return "/common/auth/timeout";
     }
+    
+    /**
+     * 세션체크
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/sessionCheck", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> sessionCheck(Model model) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        resultMap.put("resultCd", Result.SUCCESS.getCode());
+        resultMap.put("resultMsg", Result.SUCCESS.getText());
+        
+        return resultMap;
+    }
 }

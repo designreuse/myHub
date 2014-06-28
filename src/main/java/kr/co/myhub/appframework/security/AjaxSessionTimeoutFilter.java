@@ -22,7 +22,7 @@ import org.springframework.security.core.AuthenticationException;
  * date   : 2014. 6. 25.
  * author : jmpark
  * content: ajax통신에 대한 세션 타임아웃 체크
- * ref:
+ * ref: http://lng1982.tistory.com/170
  *
  * 수정내용
  * ----------------------------------------------

@@ -44,16 +44,23 @@
                                 
                                 <!-- 관리자 메뉴 -->
                                 <security:authorize access="fullyAuthenticated and hasRole('ROLE_ADMIN')" >
-                                <li>
-                                   <a href="#"><spring:message code="myhub.label.admin"/></a>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="myhub.label.admin"/></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="<c:url value='/admin/userManage/userList'/>"><spring:message code="myhub.label.user.list"/></a></li>
+                                        <li><a href="#"><spring:message code="myhub.label.userauth.list"/></a></li>
+                                        <li><a href="#"><spring:message code="myhub.label.loghistory.list"/></a></li>
+                                    </ul>
                                 </li>
                                 </security:authorize>
                                 
                                 <!-- 로그인 인증 권한 -->
                                 <security:authorize access="fullyAuthenticated">
+                                <!-- 
                                 <li>
                                     <a href="javascript:MyHubHeaderApp.popup.userPasswordEdit('<security:authentication property="principal.username"/>');"><spring:message code="myhub.label.change.password"/></a>
                                 </li>
+                                 -->
                                 <li>
                                     <a href="<c:url value='/j_spring_security_logout' />"><spring:message code="myhub.label.logout"/></a>
                                 </li>
@@ -87,12 +94,30 @@
         data: {
             init: function() {
             	
+            },
+            
+            setIntervalSessionCheck: function() {
+            	var url = commonObj.config.contextPath.concat('/sessionCheck');
+                var pars = '';
+                
+                commonObj.data.ajax(url, {pars: pars, async: true, 
+                    onsucc: function(res) {
+                        log(res);
+                    },
+                    onerr: function(res) {
+                        alert(res);
+                    }
+                });
             }
         },
         
         event: {
         	init: function() {
-        		// init
+        		// 세션체크 호출
+        		<security:authorize access="fullyAuthenticated">;
+        		//var intervalTime = 1;    // 1분
+                //window.setInterval('MyHubHeaderApp.data.setIntervalSessionCheck();', (intervalTime * 60 * 1000));
+        		</security:authorize>;
         	}
         },
 		
@@ -108,5 +133,13 @@
             }
         }
 	};
+	
+	$(document).ready(function() {
+        try {
+        	MyHubHeaderApp.pageInit();
+        } catch (e){
+            log('Error : ' + e.toString());
+        }
+    });
 
 </script>

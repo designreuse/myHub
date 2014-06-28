@@ -48,7 +48,8 @@
                     	if (!data) return false;
                     	
                     	$('#userKey').val(data.userKey);
-                    	$('#email').text(data.email);
+                    	$('#email').val(data.email);
+                    	$('#emailText').text(data.email);
                     	$('#userName').text(data.userName);
                     	$('#birthday').text(commonObj.data.util.getBirthDay(data.birthday, '.'));
                     	$('#phoneNo').text(commonObj.data.util.getMoblPhoneNo(data.phoneNo, '-'));
@@ -81,6 +82,11 @@
                         // 수정
                         $('#btnEdit').on('click', function() {
                         	location.href = '<c:url value="/user/userEdit"/>';
+                        });
+                        
+                        // 비밀번호 수정
+                        $('#btnPwdUpdate').on('click', function() {
+                        	MyHubHeaderApp.popup.userPasswordEdit($('#email').val());
                         });
                         
                         // 회원탈퇴
@@ -124,10 +130,12 @@
                 <!-- form -->
                 <form class="form-horizontal" id="frmInfo" name="frmInfo" onsubmit="return false;">
                     <input type="hidden" name="userKey" id="userKey" value="">
+                    <input type="hidden" name="email" id="email" value="">
+                    
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label"><spring:message code="myhub.label.email"/></label>
                         <div class="col-sm-3">
-                            <p class="form-control-static" id="email"></p>
+                            <p class="form-control-static" id="emailText"></p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -157,6 +165,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <button class="btn btn-primary" id="btnEdit"><spring:message code="myhub.label.update"/></button>
+                            <button class="btn btn-info" id="btnPwdUpdate"><spring:message code="myhub.label.change.password"/></button>
                             <button class="btn btn-danger" id="btnDelete"><spring:message code="myhub.label.delete.user"/></button>
                         </div>
                     </div>
