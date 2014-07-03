@@ -61,7 +61,26 @@
                 
                 data: {
                     init: function() {
+                        this.getUserList();
+                    },
+                    
+                    getUserList: function() {
+                    	var url = commonObj.config.contextPath.concat('/admin/userManage/getUserList');
+                        var pars = $('#frmSearch').serialize();
                         
+                        commonObj.data.ajax(url, {pars: pars, async: true, 
+                            onsucc: function(res) {
+                                var resultCd = res.resultCd;
+                                if (resultCd === commonObj.constants.result.FAIL) {
+                                    alert(res.resultMsg);
+                                    return false;
+                                } 
+                                
+                            },
+                            onerr: function(res) {
+                                alert(res);
+                            }
+                        });
                     }
                 },
                 
@@ -96,6 +115,34 @@
                 </blockquote>
                 <!-- /label -->
                 
+                <!-- search area -->
+                <div align="right">
+                    <form name="frmSearch" id="frmSearch" class="form-inline" role="form">
+                        <div class="form-group">
+                            <select class="form-control" id="gender" name="gender">
+                                <option value=""><spring:message code="myhub.label.select"/></option>
+                                <option value="M"><spring:message code="myhub.label.gender.male"/></option>
+                                <option value="F"><spring:message code="myhub.label.gender.female"/></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" id="searchType" name="searchType">
+                                <option value="name">이름</option>
+                                <option value="email">이메일</option>
+                                <option value="birthday">생년월일</option>
+                                <option value="phoneNo">전화번호</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="searchWord" id="searchWord" placeholder="검색어를 입력 하세요.">
+                        </div>
+                        <button type="submit" class="btn btn-primary">검색</button>
+                    </form>
+                </div>
+                <!-- /search area -->
+                <br>
+                
+                <!-- list area -->
                 <table class="table table-striped">
                 <thead>
                     <tr>
@@ -126,8 +173,7 @@
                     </tr>
                 </tbody>
                 </table>
-                
-               
+                <!-- /list area -->
                 
                 <!-- footer -->
                 

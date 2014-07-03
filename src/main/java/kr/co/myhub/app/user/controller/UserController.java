@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
@@ -290,34 +291,6 @@ public class UserController {
         }
         
         return resultMap;
-    }
-    
-    /**
-     * 유저목록
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/getUserList", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public ApiResult getUserList(Model model) {
-        ApiResult result = new ApiResult();
-        List<User> list = null;
-        
-        try {
-            list = userService.findAllUser();
-            
-            //result.setStatus(StatusEnum.SUCCESS);
-            result.setData(list);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            
-            // Exception result
-            //result.setStatus(StatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
-        
-        return result;
     }
     
     /**
@@ -627,12 +600,12 @@ public class UserController {
      * @return JSON/XML 데이터 반환
      */
     @RequestMapping(value = "/getUserListToXmlToJson", method = RequestMethod.GET)
-    public String getUserListToXmlToJson(ModelMap modelMap) {
+    public String getUserListToXmlToJson(ModelMap modelMap, @ModelAttribute UserDto UserDto) {
         ApiResponse response = new ApiResponse();
         List<User> list = null;
         
         try {
-            list = userService.findAllUser();
+            list = userService.findAllUser(UserDto);
             
             //response.setStatus(StatusEnum.SUCCESS);
             response.setList(list);

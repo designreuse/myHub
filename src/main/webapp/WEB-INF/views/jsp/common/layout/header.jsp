@@ -48,7 +48,6 @@
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="myhub.label.admin"/></a>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="<c:url value='/admin/userManage/userList'/>"><spring:message code="myhub.label.user.list"/></a></li>
-                                        <li><a href="#"><spring:message code="myhub.label.userauth.list"/></a></li>
                                         <li><a href="#"><spring:message code="myhub.label.loghistory.list"/></a></li>
                                     </ul>
                                 </li>

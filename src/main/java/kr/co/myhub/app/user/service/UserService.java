@@ -2,8 +2,10 @@ package kr.co.myhub.app.user.service;
 
 import java.util.List;
 
+import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.user.domain.User;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
@@ -53,7 +55,7 @@ public interface UserService {
      * @throws Exception
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<User> findAllUser() throws Exception;
+    public Page<User> findAllUser(UserDto userDto) throws Exception;
     
     /**
      * 유저 카운트

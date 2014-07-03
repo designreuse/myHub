@@ -120,7 +120,7 @@ public class UserValidator extends MyHubValidator implements Validator {
         MyHubValidator.rejectIfEmptyOrWhitespace(errors, "email", "myhub.label.input.email.address");
         
         if (StringUtils.isNotEmpty(user.getPassword())) {
-            this.validatePassword();
+            //this.validatePassword();
         }
     }
     

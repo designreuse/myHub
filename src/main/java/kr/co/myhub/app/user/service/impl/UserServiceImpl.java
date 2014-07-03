@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
+import kr.co.myhub.app.user.domain.QUser;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.UserAuth;
 import kr.co.myhub.app.user.repasitory.UserAuthRepasitory;
@@ -13,11 +15,17 @@ import kr.co.myhub.app.user.repasitory.support.UserDao;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.mysema.query.types.Predicate;
 
 /**
  * 
@@ -94,9 +102,66 @@ public class UserServiceImpl implements UserService  {
      * 유저 목록
      * @return
      * @throws Exception
+     * ref 
+     * http://whiteship.me/?cat=3078
+     * http://i-proving.com/2014/05/06/spring-data-jparepository-and-querydsl/
+     * http://netframework.tistory.com/entry/12-queryDSL-Spring-Data-JPA
+     * 
      */
-    public List<User> findAllUser() throws Exception {
-        return userRepasitory.findAll();
+    public Page<User> findAllUser(UserDto userDto) throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("getGender : {}", userDto.getGender());
+            log.debug("getSearchType : {}", userDto.getSearchType());
+            log.debug("getSearchWord : {}", userDto.getSearchWord());
+        }
+        
+        Predicate predicate = null;
+        
+        QUser qUser = QUser.user;
+        
+        // 검색어 세팅
+        if (!StringUtils.isEmpty(userDto.getSearchWord())) {
+            String searchWord = userDto.getSearchWord();
+            
+            switch(userDto.getSearchType()) {
+            case "name":
+                predicate = qUser.userName.like("%".concat(searchWord).concat("%"));
+                break;
+            case "email":
+                predicate = qUser.email.eq(searchWord);
+                break;
+            case "birthday":
+                predicate = qUser.birthday.eq(searchWord);
+                break;
+            case "phoneNo":
+                predicate = qUser.phoneNo.eq(searchWord);
+                break;
+            }
+        }
+        
+        int page = 1;   // 페이지
+        int size = 10;  // 목록 카운트
+        
+        // 페이지 설정
+        Sort sort = new Sort(Sort.Direction.DESC, "crtDt");
+        PageRequest pageRequest = new PageRequest(page - 1, size, sort);
+        
+        Page<User> users = userRepasitory.findAll(predicate, pageRequest);
+        
+        int current = users.getNumber() + 1;
+        int begin = Math.max(1, current - 5);
+        int end = Math.min(begin + 10, users.getTotalPages());
+        
+        log.debug(" ======================================================================== ");
+        log.debug("size : {}", users.getSize());
+        log.debug("current : {}", current);
+        log.debug("begin : {}", begin);
+        log.debug("end : {}", end);
+        log.debug("sort : {}", users.getSort());
+        log.debug("List : {}", users.getContent());
+        log.debug(" ======================================================================== ");
+        
+        return users;
     }
 
     /**
