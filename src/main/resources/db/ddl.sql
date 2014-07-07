@@ -25,6 +25,7 @@ CREATE TABLE `user` (
     `modDt` DATETIME NULL DEFAULT NULL,
     `password` VARCHAR(100) NOT NULL,
     `passwordModDt` DATETIME NULL DEFAULT NULL,
+    `phoneNo` VARCHAR(11) NOT NULL,
     `userid` VARCHAR(50) NOT NULL,
     `username` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`userkey`),
@@ -32,36 +33,33 @@ CREATE TABLE `user` (
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=2;
+AUTO_INCREMENT=13;
 
 CREATE TABLE `userauth` (
-    `userAuthKey` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `userkey` BIGINT(20) NOT NULL,
     `crtDt` DATETIME NULL DEFAULT NULL,
     `email` VARCHAR(50) NOT NULL,
     `priv` INT(11) NOT NULL,
-    `userKey` BIGINT(20) NOT NULL,
-    PRIMARY KEY (`userAuthKey`),
-    UNIQUE INDEX `email` (`email`),
-    INDEX `FKF3EFC433BE330993` (`userKey`),
-    CONSTRAINT `FKF3EFC433BE330993` FOREIGN KEY (`userKey`) REFERENCES `user` (`userkey`)
+    PRIMARY KEY (`userkey`),
+    UNIQUE INDEX `userkey` (`userkey`),
+    UNIQUE INDEX `email` (`email`)
 )
 COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=2;
+ENGINE=InnoDB;
 
-
-/* 로그인 이력 */
-CREATE TABLE `loginlog` (
-    `loginlogkey` BIGINT(20) NOT NULL AUTO_INCREMENT,
+/* 로그 이력 */
+CREATE TABLE `loghistory` (
+    `logHistoryKey` BIGINT(20) NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(50) NOT NULL,
-    `ipaddress` VARCHAR(100) NOT NULL,
-    `logindate` DATETIME NULL DEFAULT NULL,
-    `logoutdate` DATETIME NULL DEFAULT NULL,
+    `ipAddress` VARCHAR(100) NOT NULL,
+    `logDate` DATETIME NULL DEFAULT NULL,
+    `logType` VARCHAR(255) NOT NULL,
     `userKey` BIGINT(20) NOT NULL,
-    PRIMARY KEY (`loginlogkey`),
-    INDEX `FK7890971BBE330993` (`userKey`),
-    CONSTRAINT `FK7890971BBE330993` FOREIGN KEY (`userKey`) REFERENCES `user` (`userkey`)
+    `sessionId` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`logHistoryKey`),
+    INDEX `FKBEB964B0BE330993` (`userKey`),
+    CONSTRAINT `FKBEB964B0BE330993` FOREIGN KEY (`userKey`) REFERENCES `user` (`userkey`)
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=4;
+AUTO_INCREMENT=136;

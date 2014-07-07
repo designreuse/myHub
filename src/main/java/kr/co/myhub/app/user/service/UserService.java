@@ -51,6 +51,7 @@ public interface UserService {
     /**
      * 유저 목록
      * (사용자 인증 : 관리자)
+     * @param userDto
      * @return
      * @throws Exception
      */
@@ -59,12 +60,13 @@ public interface UserService {
     
     /**
      * 유저 카운트
-     * (사용자 인증 : 관리자, 매니져, 일반 사용자)
+     * (사용자 인증 : 관리자)
+     * @param userDto
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
-    public Long findAllCount() throws Exception;
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Long findAllUserCount(UserDto userDto) throws Exception;
     
     /**
      * 유저 수정

@@ -18,6 +18,10 @@
         <link href="<c:url value='/css/bootstrap/bootstrap.min.css'/>" rel="stylesheet" media="screen">
         <!-- carousel -->
         <link href="<c:url value='/css/carousel.css'/>" rel="stylesheet">
+        <!-- jquery -->
+        <link href="<c:url value='/css/jquery/jquery-ui.css'/>" rel="stylesheet">
+        <link href="<c:url value='/css/jquery/ui.jqgrid.css'/>" rel="stylesheet">
+        <link href="<c:url value='/css/jquery/ui.multiselect.css'/>" rel="stylesheet">
         
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,6 +45,11 @@
         <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
         <!-- jquery validate -->
         <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
+        <!-- jquery grid -->
+        <script src="<c:url value='/js/jquery/jquery-ui.js'/>"></script>
+        <script src="<c:url value='/js/jquery/grid/grid.locale-kr.js'/>"></script>
+        <script src="<c:url value='/js/jquery/grid/jquery.jqGrid.src.js'/>"></script>
+        
         <!--  =========================================================== -->
         
         <!-- application -->
@@ -52,6 +61,9 @@
                 pageInit: function() {
                     'use strict';
                     
+                    // jqgrid init
+                    this.jqgrid.init();
+                    
                     // data init
                     this.data.init();
                     
@@ -59,28 +71,134 @@
                     this.event.init();
                 },
                 
-                data: {
-                    init: function() {
-                        this.getUserList();
-                    },
-                    
-                    getUserList: function() {
-                    	var url = commonObj.config.contextPath.concat('/admin/userManage/getUserList');
-                        var pars = $('#frmSearch').serialize();
-                        
-                        commonObj.data.ajax(url, {pars: pars, async: true, 
-                            onsucc: function(res) {
-                                var resultCd = res.resultCd;
-                                if (resultCd === commonObj.constants.result.FAIL) {
-                                    alert(res.resultMsg);
+                jqgrid: {
+                	gridXhr: null,
+                	
+                	init: function() {
+                	    $('#gridList').jqGrid({
+                	        mtype: "POST",
+                	        datatype: '',
+                	        colNames: [
+                                '', 
+                                '<spring:message code="myhub.label.name"/>',
+                                '<spring:message code="myhub.label.email"/>',
+                                '<spring:message code="myhub.label.gender"/>',
+                                '<spring:message code="myhub.label.birthday"/>',
+                                '<spring:message code="myhub.label.phone"/>',
+                                '권한정보',
+                                '<spring:message code="myhub.label.crtDt"/>'
+                            ],
+                            colModel: [
+                                {name:'userKey', index:'userKey', hidden:true, key:true},
+                                {name:'userName', index:'userName', width:10, align:'left'},
+                                {name:'email', index:'email', align:'left', width:20},
+                                {name:'gender', index:'gender', width:10, align:'center'},
+                                {name:'birthday', index:'birthday', width:10, align:'center'},
+                                {name:'phoneNo', index:'phoneNo', width:10, align:'center'},     
+                                {name:'agentVersion', index:'agentVersion', width:10, align:'center'},
+                                {name:'crtDt', index:'crtDt', width:10, align:'center'}
+                            ],
+                            //width: 1140,
+                            height: 500,            // 세로높이
+                            sortname: 'crtDt',       // 정렬컬럼
+                            sortorder: 'asc',       // 정렬순서
+                            sortable: true,     // 컬럼 순서 변경
+                            multiselect: true,  // 로우 다중 선택
+                            shrinkToFit: true,  // 컬럼 넓이로만 width 설정
+                            scrollOffset: 0,    // 우측 스크롤 여부
+                            autowidth: true,           // width와 동시에 사용 안됨
+                            viewrecords: true,  // records의 View여부
+                            gridview: false,     // 처리속도 향상 ==> treeGrid, subGrid, afterInsertRow(event)와 동시 사용불가
+                            scroll: 0,      // 휠 페이징 사용 1
+                            recordpos: "right",     // 우측좌측 기준변경 records 카운트의 위치 설정
+                            pager: "gridPager",             // 하단 페이지처리 selector
+                            rowList: [10, 20, 30],           // 한번에 가져오는 row개수
+                            loadtext: 'Data Loading From Server',     // 로드 되는 Text 문구
+                            rowNum: 10,         // 최초 가져올 row 수
+                            emptyrecords: '조회된 데이터가 존재하지 않습니다.',     // 데이터 없을시 표시 
+                            jsonReader: {     
+                                page: 'resultData.page',
+                                total: 'resultData.total',
+                                records: 'resultData.records',
+                                root: 'resultData.list',
+                                repeatitems: false,
+                                id: 'resultData.list.userKey'
+                            },
+                            loadBeforeSend: function(xhr, settings) {
+                            	MyHubApp.jqgrid.gridXhr = xhr;
+                            },
+                            loadError: function(xhr, status, err) {
+                            	if(xhr.status === 0 || xhr.statusText === 'abort') {
                                     return false;
-                                } 
+                                }
+                                alert(xhr.statusText);
+                            },
+                            loadComplete: function(data) {
+                            	// 서버 에러 발생 케이스
+                                var resultCd = data.resultCd;
+                                if (resultCd === commonObj.constants.result.FAIL) {
+                                    alert(data.resultMsg);
+                                    return false;
+                                }
+                            },
+                            afterInsertRow: function(rowid, aData) {
+                            	if (aData.gender === 'M') {
+                            		$('#gridList').setCell(rowid, 'gender', '<spring:message code="myhub.label.gender.male"/>');
+                            	} else {
+                            		$('#gridList').setCell(rowid, 'gender', '<spring:message code="myhub.label.gender.female"/>');
+                            	}
+                            	
+                            	$('#gridList').setCell(rowid, 'birthday', commonObj.data.util.getBirthDay(aData.birthday, '.'));
+                            	$('#gridList').setCell(rowid, 'phoneNo', commonObj.data.util.getMoblPhoneNo(aData.phoneNo, '-'));
+                            	$('#gridList').setCell(rowid, 'crtDt', commonObj.date.timestampToDate(aData.crtDt));
+                            },
+                            onCellSelect: function(rowid, iCol, cellcontent, e) {
                                 
                             },
-                            onerr: function(res) {
-                                alert(res);
+                            onSortCol:  function() {
+                            	MyHubApp.jqgrid.abort();
+                            	$('#gridList').setGridParam({
+                                    url: commonObj.config.contextPath.concat('/admin/userManage/getUserList'),
+                                    datatype: 'json',
+                                    page : 0,
+                                    postData: {
+                                        gender: $('#gender').val(),
+                                        searchType: $('#searchType').val(),
+                                        searchWord: $.trim($('#searchWord').val())
+                                    }
+                                }).trigger("reloadGrid");
                             }
                         });
+                	    MyHubApp.jqgrid.search();
+                	},
+                	
+                	// abort(xhr)
+                	abort: function() {
+                		if(MyHubApp.jqgrid.gridXhr) {
+                			MyHubApp.jqgrid.gridXhr.abort();
+                			MyHubApp.jqgrid.gridXhr = null;
+                        }
+                	},
+                	
+                	// 검색
+                	search: function() {
+                		this.abort();
+                        $('#gridList').setGridParam({
+                            url: commonObj.config.contextPath.concat('/admin/userManage/getUserList'),
+                            datatype: 'json',
+                            page : 0,
+                            postData: {
+                            	gender: $('#gender').val(),
+                                searchType: $('#searchType').val(),
+                                searchWord: $.trim($('#searchWord').val())
+                            }
+                        }).trigger("reloadGrid");
+                	}
+                },
+                
+                data: {
+                    init: function() {
+                        
                     }
                 },
                 
@@ -142,38 +260,12 @@
                 <!-- /search area -->
                 <br>
                 
-                <!-- list area -->
-                <table class="table table-striped">
-                <thead>
-                    <tr>
-	                    <th>#</th>
-	                    <th>First Name</th>
-	                    <th>Last Name</th>
-	                    <th>Username</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
-                </tbody>
-                </table>
-                <!-- /list area -->
+                <!-- grid area -->
+                <div>
+	                <table id="gridList"></table>
+	                <div id="gridPager"></div>
+                </div>
+                <!-- /grid area -->
                 
                 <!-- footer -->
                 
@@ -185,6 +277,6 @@
         <%@ include file="/WEB-INF/views/jsp/common/include/commonHtml.jsp" %>
         
         <!-- common js include -->
-        <%@ include file="/WEB-INF/views/jsp/common/include/bootstrapJs.jsp" %>
+        
     </body>
 </html>

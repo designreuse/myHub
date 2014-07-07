@@ -17,6 +17,7 @@ import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.TypeEnum;
+import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.exception.MyHubException;
 import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
@@ -276,7 +277,14 @@ public class UserController {
             
             // 유저권한과의 1:1 관계일때 유저정보 조회시 권한정보도 같이 조회처리
             if (log.isDebugEnabled()) {
-                log.debug("priv : {}", sUser.getUserAuth().getPriv());    
+                // 권한정보 얻기
+                String authority = "";
+                for (UserPrivEnum userPrivEnum : UserPrivEnum.values()) {
+                    if (userPrivEnum.getCode() == sUser.getUserAuth().getPriv()) {
+                        authority = userPrivEnum.getText();
+                    }
+                }
+                log.debug("authority : {}", authority);
             }
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
@@ -605,7 +613,7 @@ public class UserController {
         List<User> list = null;
         
         try {
-            list = userService.findAllUser(UserDto);
+            //list = userService.findAllUser(UserDto);
             
             //response.setStatus(StatusEnum.SUCCESS);
             response.setList(list);

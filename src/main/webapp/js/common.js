@@ -179,7 +179,29 @@ var commonObj = {
 	
 	// 날짜 처리 관련
 	date: {
+		timestampToDate: function(unixTimestamp) {
+			'user strict';
+			
+			var oDate = new Date(unixTimestamp);
+			
+			var year = oDate.getFullYear();
+			var month = oDate.getMonth() + 1;
+			var date = oDate.getDate();
+			
+			var hours = oDate.getHours();
+			var minutes = oDate.getMinutes();
+			var seconds = oDate.getSeconds() ;
+			
+			var dt = year + '-' +  this.addZero(month) + '-' + this.addZero(date) + '' + this.addZero(hours) + ':' + this.addZero(minutes) + ':' + this.addZero(seconds);
+			
+			return dt;
+		},
 		
+		addZero: function(n) {
+			if(n === null) return '00'; 
+			
+			return n < 10 ? '0'.concat(n) : n;
+		}
 	},
 	
 	// 팝업 관련
@@ -237,6 +259,7 @@ var commonObj = {
 };
 
 // String Object extendable
+
 
 
 /**

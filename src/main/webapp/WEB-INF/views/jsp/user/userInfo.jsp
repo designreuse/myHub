@@ -142,6 +142,8 @@
                         <label for="userName" class="col-sm-2 control-label"><spring:message code="myhub.label.name"/></label>
                         <div class="col-sm-3">
                             <p class="form-control-static" id="userName"></p>
+                            <!-- 권한정보 -->
+                            <security:authentication property="principal.Authorities"/>
                         </div>
                     </div>
                     <div class="form-group">

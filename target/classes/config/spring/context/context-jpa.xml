@@ -4,9 +4,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
         http://www.springframework.org/schema/data/jpa  http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
    
    <!-- ============================================================================================ -->
    <!-- properties load -->
@@ -82,5 +84,15 @@
         (Repository 인터페이스를 확장한 인터페이스를 찾아 컨벤션 규칙, 선언된 쿼리 기반으로 Data-Access 객체를 생성)-->
     <!-- ============================================================================================ -->
     <jpa:repositories base-package="kr.co.myhub.*"/>
+    
+    <!-- ============================================================================================ -->
+    <!-- 데이터베이스 인스턴스 초기화 
+        ignore-failures : NONE (기본값), DROPS (실패한 drop은 무시한다), ALL(모든 실패를 무시한다)
+     -->
+    <!-- ============================================================================================ -->
+    <jdbc:initialize-database data-source="dataSource" enabled="true" ignore-failures="ALL">
+        <!-- <jdbc:script location="classpath:db/ddl.sql" /> -->
+        <jdbc:script location="classpath:db/dml.sql" />
+    </jdbc:initialize-database>
      
 </beans:beans>

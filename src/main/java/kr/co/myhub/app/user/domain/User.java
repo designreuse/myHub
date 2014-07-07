@@ -60,6 +60,7 @@ public class User implements Serializable {
     
     /* 비밀번호 */
     @Column(name = "password", nullable = false, length = 100)
+    @JsonIgnore
     private String password;
     
     /* 이름 */
@@ -98,6 +99,7 @@ public class User implements Serializable {
     
     /* 마지막 비밀번호 */
     @Column(name = "lastPassword", nullable = false, length = 100)
+    @JsonIgnore
     private String lastPassword;
     
     /* 로그인 실패 카운트 */

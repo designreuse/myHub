@@ -1,11 +1,11 @@
 package kr.co.myhub.app.admin.user.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import kr.co.myhub.app.admin.user.domain.dto.UserDto;
+import kr.co.myhub.app.admin.user.domain.vo.UserVo;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
@@ -84,17 +84,42 @@ public class UserManageController {
     @RequestMapping(value = "/getUserList", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, Object> getUserList(Model model,
-            @ModelAttribute UserDto UserDto,
+            @ModelAttribute UserDto userDto,
             Locale locale) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            // 목록
-            Page<User> users = userService.findAllUser(UserDto);
+            // 유저 목록
+            Page<User> users = userService.findAllUser(userDto);
+            
+            // 유저 카운트
+            long count = userService.findAllUserCount(userDto);
+            
+            int current = users.getNumber() + 1;
+            int begin = Math.max(1, current - 5);
+            int end = Math.min(begin + 10, users.getTotalPages());
+            
+            log.debug(" ======================================================================== ");
+            log.debug("count : {}", count);                         // 총 카운트
+            log.debug("size : {}", users.getSize());                // 현재 페이지 카운트
+            log.debug("totalPages : {}", users.getTotalPages());    // 총페이지
+            log.debug("current : {}", current);                     // 현재 페이지 번호
+            log.debug("begin : {}", begin);                         // 시작번호
+            log.debug("end : {}", end);                             // 끝번호
+            log.debug("sort : {}", users.getSort());                // 정렬 데이터
+            log.debug("List : {}", users.getContent());             // 조회 데이터
+            log.debug(" ======================================================================== ");
+            
+            // 유저목록 결과 세팅
+            UserVo userVo = new UserVo();
+            userVo.setPage(userDto.getPage());
+            userVo.setRecords((int) count);
+            userVo.setTotal(users.getTotalPages());
+            userVo.setList(users.getContent());
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", users.getContent());
+            resultMap.put("resultData", userVo);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());

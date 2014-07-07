@@ -1,5 +1,7 @@
 package kr.co.myhub.app.admin.user.domain.dto;
 
+import kr.co.myhub.appframework.dto.CommonDto;
+
 /**
  * 
  * file   : UserDto.java
@@ -14,7 +16,7 @@ package kr.co.myhub.app.admin.user.domain.dto;
  * ----------------------------------------------
  * 2014. 7. 3.   kbtapjm     최초생성
  */
-public class UserDto {
+public class UserDto extends CommonDto {
     
     /* 성별  */
     private String gender;
