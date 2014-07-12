@@ -116,12 +116,11 @@ public class UserServiceImpl implements UserService  {
             log.debug("getRows : {}", userDto.getRows());
         }
         
+        Predicate predicate = null;
+        QUser qUser = QUser.user;
+        
         // 페이지 설정 초기화
         userDto.setPageInit();
-        
-        Predicate predicate = null;
-        
-        QUser qUser = QUser.user;
         
         // 검색어 세팅
         if (!StringUtils.isEmpty(userDto.getSearchWord())) {
@@ -129,17 +128,42 @@ public class UserServiceImpl implements UserService  {
             
             switch(userDto.getSearchType()) {
             case "name":
-                predicate = qUser.userName.like("%".concat(searchWord).concat("%"));
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.userName.like("%".concat(searchWord).concat("%")).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.userName.like("%".concat(searchWord).concat("%"));    
+                }
+                
                 break;
             case "email":
-                predicate = qUser.email.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.email.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));    
+                } else {
+                    predicate = qUser.email.eq(searchWord);
+                }
+                
                 break;
             case "birthday":
-                predicate = qUser.birthday.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.birthday.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.birthday.eq(searchWord);    
+                }
+                
                 break;
             case "phoneNo":
-                predicate = qUser.phoneNo.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.phoneNo.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.phoneNo.eq(searchWord);    
+                }
+                
                 break;
+            }
+        } else {
+            // 성별
+            if (!StringUtils.isEmpty(userDto.getGender())) {
+                predicate = qUser.gender.eq(userDto.getGender());
             }
         }
         
@@ -170,18 +194,43 @@ public class UserServiceImpl implements UserService  {
             
             switch(userDto.getSearchType()) {
             case "name":
-                predicate = qUser.userName.like("%".concat(searchWord).concat("%"));
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.userName.like("%".concat(searchWord).concat("%")).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.userName.like("%".concat(searchWord).concat("%"));    
+                }
+                
                 break;
             case "email":
-                predicate = qUser.email.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.email.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));    
+                } else {
+                    predicate = qUser.email.eq(searchWord);
+                }
+                
                 break;
             case "birthday":
-                predicate = qUser.birthday.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.birthday.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.birthday.eq(searchWord);    
+                }
+                
                 break;
             case "phoneNo":
-                predicate = qUser.phoneNo.eq(searchWord);
+                if (!StringUtils.isEmpty(userDto.getGender())) {
+                    predicate = qUser.phoneNo.eq(searchWord).and(qUser.gender.eq(userDto.getGender()));
+                } else {
+                    predicate = qUser.phoneNo.eq(searchWord);    
+                }
+                
                 break;
             }
+        } else {
+            // 성별
+            if (!StringUtils.isEmpty(userDto.getGender())) {
+                predicate = qUser.gender.eq(userDto.getGender());
+            }    
         }
         
         return userRepasitory.count(predicate);

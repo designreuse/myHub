@@ -13,7 +13,7 @@
                 <beans:value>classpath:/message/message</beans:value>
             </beans:list>
         </beans:property>
-        <beans:property name="cacheSeconds" value="60"/>
+        <!-- <beans:property name="cacheSeconds" value="60"/>  -->
     </beans:bean>
     
     <!-- ============================================================================================ -->

@@ -26,7 +26,7 @@
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>    
         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
         
@@ -35,6 +35,10 @@
         <!--  =========================================================== -->
         <!-- jquery -->
         <script src="<c:url value='/js/jquery/jquery.js'/>"></script>
+        <!-- jquery grid -->
+        <script src="<c:url value='/js/jquery/jquery-ui.js'/>"></script>
+        <script src="<c:url value='/js/jquery/grid/grid.locale-kr.js'/>"></script>
+        <script src="<c:url value='/js/jquery/grid/jquery.jqGrid.src.js'/>"></script>
         <!-- angularJS -->
         <script src="<c:url value='/js/angular/angular.js'/>"></script>
         <!-- underscore -->
@@ -45,10 +49,6 @@
         <script src="<c:url value='/js/jquery/jquery.cookie.js'/>"></script>
         <!-- jquery validate -->
         <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
-        <!-- jquery grid -->
-        <script src="<c:url value='/js/jquery/jquery-ui.js'/>"></script>
-        <script src="<c:url value='/js/jquery/grid/grid.locale-kr.js'/>"></script>
-        <script src="<c:url value='/js/jquery/grid/jquery.jqGrid.src.js'/>"></script>
         
         <!--  =========================================================== -->
         
@@ -85,18 +85,24 @@
                                 '<spring:message code="myhub.label.gender"/>',
                                 '<spring:message code="myhub.label.birthday"/>',
                                 '<spring:message code="myhub.label.phone"/>',
-                                '권한정보',
-                                '<spring:message code="myhub.label.crtDt"/>'
+                                '사용자 권한',
+                                '<spring:message code="myhub.label.crtDt"/>',
+                                '비밀번호 수정일',
+                                '로그인 실패횟수',
+                                '로그인  실패일자'
                             ],
                             colModel: [
                                 {name:'userKey', index:'userKey', hidden:true, key:true},
                                 {name:'userName', index:'userName', width:10, align:'left'},
-                                {name:'email', index:'email', align:'left', width:20},
-                                {name:'gender', index:'gender', width:10, align:'center'},
+                                {name:'email', index:'email', align:'left', width:10},
+                                {name:'gender', index:'gender', width:5, align:'center'},  
                                 {name:'birthday', index:'birthday', width:10, align:'center'},
-                                {name:'phoneNo', index:'phoneNo', width:10, align:'center'},     
-                                {name:'agentVersion', index:'agentVersion', width:10, align:'center'},
-                                {name:'crtDt', index:'crtDt', width:10, align:'center'}
+                                {name:'phoneNo', index:'phoneNo', width:10, align:'center'},
+                                {name:'priv', index:'priv', width:10, align:'center'},
+                                {name:'crtDt', index:'crtDt', width:10, align:'center'},
+                                {name:'passwordModDt', index:'passwordModDt', width:10, align:'center'},
+                                {name:'loginFailCount', index:'loginFailCount', width:10, align:'center'},
+                                {name:'loginFailDt', index:'loginFailDt', width:10, align:'center'}
                             ],
                             //width: 1140,
                             height: 500,            // 세로높이
@@ -151,6 +157,8 @@
                             	$('#gridList').setCell(rowid, 'birthday', commonObj.data.util.getBirthDay(aData.birthday, '.'));
                             	$('#gridList').setCell(rowid, 'phoneNo', commonObj.data.util.getMoblPhoneNo(aData.phoneNo, '-'));
                             	$('#gridList').setCell(rowid, 'crtDt', commonObj.date.timestampToDate(aData.crtDt));
+                            	$('#gridList').setCell(rowid, 'passwordModDt', commonObj.date.timestampToDate(aData.passwordModDt));
+                            	$('#gridList').setCell(rowid, 'loginFailDt', commonObj.date.timestampToDate(aData.loginFailDt));
                             },
                             onCellSelect: function(rowid, iCol, cellcontent, e) {
                                 
@@ -204,7 +212,21 @@
                 
                 event: {
                     init: function() {
-                       
+                        // 검색
+                    	$('#btnUserSearch').on('click', function() {
+                    	    MyHubApp.jqgrid.search();
+                        });
+                        
+                    	$('#searchWord').on('keydown', function(e) {
+                    		if (e.keyCode === 13) {
+                    			MyHubApp.jqgrid.search();	
+                    		}
+                        });
+                    	
+                    	// 성별 변경
+                    	$('#gender').on('change', function() {
+                    		MyHubApp.jqgrid.search();
+                        });
                     }
                 }
             };
@@ -235,7 +257,7 @@
                 
                 <!-- search area -->
                 <div align="right">
-                    <form name="frmSearch" id="frmSearch" class="form-inline" role="form">
+                    <form class="form-inline" role="form" onsubmit="return false;">
                         <div class="form-group">
                             <select class="form-control" id="gender" name="gender">
                                 <option value=""><spring:message code="myhub.label.select"/></option>
@@ -254,7 +276,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" name="searchWord" id="searchWord" placeholder="검색어를 입력 하세요.">
                         </div>
-                        <button type="submit" class="btn btn-primary">검색</button>
+                        <button class="btn btn-primary" id="btnUserSearch"><spring:message code="myhub.label.search"/></button>
                     </form>
                 </div>
                 <!-- /search area -->
@@ -266,6 +288,13 @@
 	                <div id="gridPager"></div>
                 </div>
                 <!-- /grid area -->
+                
+                <!-- action area -->
+                <div align="right">
+                    <button class="btn btn-info" id="btnChangeAuth">권한변경</button>
+                    <button class="btn btn-info" id="btnLockChange">계정 잠금 해제</button>
+                </div>
+                <!-- /action area -->
                 
                 <!-- footer -->
                 

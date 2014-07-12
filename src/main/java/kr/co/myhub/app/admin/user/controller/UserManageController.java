@@ -1,14 +1,18 @@
 package kr.co.myhub.app.admin.user.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.admin.user.domain.vo.UserVo;
+import kr.co.myhub.app.admin.user.domain.vo.UserVoList;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
 import kr.co.myhub.appframework.constant.Result;
+import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.exception.MyHubException;
 
 import org.slf4j.Logger;
@@ -110,16 +114,47 @@ public class UserManageController {
             log.debug("List : {}", users.getContent());             // 조회 데이터
             log.debug(" ======================================================================== ");
             
-            // 유저목록 결과 세팅
-            UserVo userVo = new UserVo();
-            userVo.setPage(userDto.getPage());
-            userVo.setRecords((int) count);
-            userVo.setTotal(users.getTotalPages());
-            userVo.setList(users.getContent());
+            // 유저목록 결과 세팅(필요한 값만 처리)
+            List<UserVo> resultList = new ArrayList<UserVo>();
+            UserVo userVo = null;
+            
+            for (User user : users.getContent()) {
+                if (user == null) continue; 
+                
+                userVo = new UserVo();
+                userVo.setUserKey(user.getUserKey());
+                userVo.setBirthday(user.getBirthday());
+                userVo.setCrtDt(user.getCrtDt());
+                userVo.setEmail(user.getEmail());
+                userVo.setGender(user.getGender());
+                userVo.setLoginFailCount(user.getLoginFailCount());
+                userVo.setLoginFailDt(user.getLoginFailDt());
+                userVo.setModDt(user.getModDt());
+                userVo.setPasswordModDt(user.getPasswordModDt());
+                userVo.setPhoneNo(user.getPhoneNo());
+                userVo.setUserId(user.getUserId());
+                userVo.setUserName(user.getUserName());
+                
+                if (user.getUserAuth().getPriv() == 0) {
+                    userVo.setPriv(UserPrivEnum.SuperUser.getText());
+                } else if (user.getUserAuth().getPriv() == 1) {
+                    userVo.setPriv(UserPrivEnum.Operators.getText());
+                } else {
+                    userVo.setPriv(UserPrivEnum.Guests.getText());
+                }
+                
+                resultList.add(userVo);
+            }
+            
+            UserVoList userVoList = new UserVoList();
+            userVoList.setPage(userDto.getPage());
+            userVoList.setRecords((int) count);
+            userVoList.setTotal(users.getTotalPages());
+            userVoList.setList(resultList);
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", userVo);
+            resultMap.put("resultData", userVoList);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());

@@ -180,7 +180,7 @@ var commonObj = {
 	// 날짜 처리 관련
 	date: {
 		timestampToDate: function(unixTimestamp) {
-			'user strict';
+			if (unixTimestamp === null || unixTimestamp.length === 0) return ''; 
 			
 			var oDate = new Date(unixTimestamp);
 			
@@ -192,7 +192,7 @@ var commonObj = {
 			var minutes = oDate.getMinutes();
 			var seconds = oDate.getSeconds() ;
 			
-			var dt = year + '-' +  this.addZero(month) + '-' + this.addZero(date) + '' + this.addZero(hours) + ':' + this.addZero(minutes) + ':' + this.addZero(seconds);
+			var dt = year + '-' +  this.addZero(month) + '-' + this.addZero(date) + '&nbsp;' + this.addZero(hours) + ':' + this.addZero(minutes) + ':' + this.addZero(seconds);
 			
 			return dt;
 		},

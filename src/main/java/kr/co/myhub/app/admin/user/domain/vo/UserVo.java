@@ -1,8 +1,6 @@
 package kr.co.myhub.app.admin.user.domain.vo;
 
-import java.util.List;
-
-import kr.co.myhub.app.user.domain.User;
+import java.util.Date;
 
 /**
  * 
@@ -19,47 +17,146 @@ import kr.co.myhub.app.user.domain.User;
  */
 public class UserVo {
     
-    /* 총페이지 */
-    private int total;
+    /* 사용자 key */
+    private Long userKey; 
     
-    /* 총카운트 */
-    private int records;
+    /* 사용자아이디 */
+    private String userId;
     
-    /* 페이지 */
-    private int page;
+    /* email */
+    private String email;
     
-    /* 유저목록 */
-    private List<User> list;
+    /* 이름 */
+    private String userName;
+    
+    /* 생일 */
+    private String birthday;
+    
+    /* 성별 */
+    private String gender;
+    
+    /* 전화번호 */
+    private String phoneNo;
+    
+    /* 등록일 */
+    private Date crtDt;
+    
+    /* 수정일 */
+    private Date modDt;
+    
+    /* 비밀번호 수정일 */
+    private Date passwordModDt;
+    
+    /* 로그인 실패 카운트 */
+    private int loginFailCount;
+    
+    /* 로그인 실패일자 */
+    private Date loginFailDt;
+    
+    /* 유저권한 정보 */
+    private String priv;
 
-    public int getTotal() {
-        return total;
+    public Long getUserKey() {
+        return userKey;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
+    public void setUserKey(Long userKey) {
+        this.userKey = userKey;
     }
 
-    public int getRecords() {
-        return records;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setRecords(int records) {
-        this.records = records;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getPage() {
-        return page;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public List<User> getList() {
-        return list;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setList(List<User> list) {
-        this.list = list;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public Date getCrtDt() {
+        return crtDt;
+    }
+
+    public void setCrtDt(Date crtDt) {
+        this.crtDt = crtDt;
+    }
+
+    public Date getModDt() {
+        return modDt;
+    }
+
+    public void setModDt(Date modDt) {
+        this.modDt = modDt;
+    }
+
+    public Date getPasswordModDt() {
+        return passwordModDt;
+    }
+
+    public void setPasswordModDt(Date passwordModDt) {
+        this.passwordModDt = passwordModDt;
+    }
+
+    public int getLoginFailCount() {
+        return loginFailCount;
+    }
+
+    public void setLoginFailCount(int loginFailCount) {
+        this.loginFailCount = loginFailCount;
+    }
+
+    public Date getLoginFailDt() {
+        return loginFailDt;
+    }
+
+    public void setLoginFailDt(Date loginFailDt) {
+        this.loginFailDt = loginFailDt;
+    }
+
+    public String getPriv() {
+        return priv;
+    }
+
+    public void setPriv(String priv) {
+        this.priv = priv;
     }
 }
