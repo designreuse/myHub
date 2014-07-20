@@ -9,7 +9,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import kr.co.myhub.app.admin.domain.dto.LogHistoryDto;
 import kr.co.myhub.app.common.login.domain.LogHistory;
+import kr.co.myhub.app.common.login.domain.QLogHistory;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
@@ -22,11 +24,16 @@ import kr.co.myhub.appframework.constant.UseEnum;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.util.DateUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+
+import com.mysema.query.types.Predicate;
 
 /**
  * 
@@ -300,6 +307,71 @@ public class LoginServiceImpl implements LoginService {
         }
         
         return AccountExpiredEnum.ok.getValue();
+    }
+    
+    /**
+     * 로그이력 목록
+     * @param logHistoryDto
+     * @return
+     * @throws Exception
+     */
+    public Page<LogHistory> findAllLogHistory(LogHistoryDto logHistoryDto) throws Exception {
+        Predicate predicate = null;
+        QLogHistory qLogHistory = QLogHistory.logHistory;
+        
+        // 페이지 설정 초기화
+        logHistoryDto.setPageInit();
+        
+        // 검색어 세팅
+        if (!StringUtils.isEmpty(logHistoryDto.getSearchWord())) {
+            String searchWord = logHistoryDto.getSearchWord();
+            
+            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));    
+            } else {
+                predicate = qLogHistory.email.eq(searchWord);
+            }
+        } else {
+            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                predicate = qLogHistory.logType.eq(logHistoryDto.getLogType());
+            }
+        }
+        
+        /* 페이지  정보 */
+        Direction Direction = logHistoryDto.getSortType().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = new Sort(Direction, logHistoryDto.getSortName());
+        
+        PageRequest pageRequest = new PageRequest(logHistoryDto.getPage() - 1, logHistoryDto.getRows(), sort);
+        
+        return loginRepasitory.findAll(predicate, pageRequest);
+    }
+    
+    /**
+     * 로그이력 카운트
+     * @param logHistoryDto
+     * @return
+     * @throws Exception
+     */
+    public Long findAllLogHistoryCount(LogHistoryDto logHistoryDto) throws Exception {
+        Predicate predicate = null;
+        QLogHistory qLogHistory = QLogHistory.logHistory;
+        
+        // 검색어 세팅
+        if (!StringUtils.isEmpty(logHistoryDto.getSearchWord())) {
+            String searchWord = logHistoryDto.getSearchWord();
+            
+            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));    
+            } else {
+                predicate = qLogHistory.email.eq(searchWord);
+            }
+        } else {
+            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                predicate = qLogHistory.logType.eq(logHistoryDto.getLogType());
+            }
+        }
+        
+        return loginRepasitory.count(predicate);
     }
     
 }

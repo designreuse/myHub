@@ -3,6 +3,7 @@ package kr.co.myhub.app.common.login.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.myhub.app.admin.domain.dto.LogHistoryDto;
 import kr.co.myhub.app.common.login.domain.LogHistory;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<LogHistory> findByEmail(String email) throws Exception;
     
     /**
@@ -45,6 +47,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public LogHistory findByLoginLogKey(Long loginLogKey) throws Exception;
     
     /**
@@ -52,6 +55,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Page<LogHistory> findAllLoginLog(PageRequest pageRequest) throws Exception;
     
     /**
@@ -59,6 +63,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<LogHistory> findAll() throws Exception;
     
     /**
@@ -66,6 +71,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Long findAllCount() throws Exception;
     
     /**
@@ -74,6 +80,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public LogHistory update(LogHistory loginLog) throws Exception;
     
     /**
@@ -81,12 +88,14 @@ public interface LoginService {
      * @param loginLog
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void delete(LogHistory loginLog) throws Exception;
     
     /**
      * 로그인 이력 전체 삭제
      * @throws Exception
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void deleteAll() throws Exception;
     
     /**
@@ -104,4 +113,22 @@ public interface LoginService {
      * @throws Exception
      */
     public int isAccountExpired(String email, Map<String, Object> scPolicy) throws Exception;
+    
+    /**
+     * 로그이력 목록
+     * @param logHistoryDto
+     * @return
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Page<LogHistory> findAllLogHistory(LogHistoryDto logHistoryDto) throws Exception;
+    
+    /**
+     * 로그이력 카운트
+     * @param logHistoryDto
+     * @return
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Long findAllLogHistoryCount(LogHistoryDto logHistoryDto) throws Exception;
 }

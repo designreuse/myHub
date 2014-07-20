@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import kr.co.myhub.app.user.domain.User;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -79,6 +80,7 @@ public class LogHistory implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userKey", nullable = false)
+    @JsonIgnore
     private User user;
 
     public Long getLogHistoryKey() {
