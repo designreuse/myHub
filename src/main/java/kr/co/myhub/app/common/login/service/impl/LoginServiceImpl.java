@@ -326,10 +326,21 @@ public class LoginServiceImpl implements LoginService {
         if (!StringUtils.isEmpty(logHistoryDto.getSearchWord())) {
             String searchWord = logHistoryDto.getSearchWord();
             
-            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
-                predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));    
-            } else {
-                predicate = qLogHistory.email.eq(searchWord);
+            switch(logHistoryDto.getSearchType()) {
+            case "email":
+                if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                    predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));   
+                } else {
+                    predicate = qLogHistory.email.eq(searchWord);    
+                }
+                break;
+            case "userKey":
+                if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                    predicate = qLogHistory.user.userKey.eq(Long.valueOf(searchWord)).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));   
+                } else {
+                    predicate = qLogHistory.user.userKey.eq(Long.valueOf(searchWord));
+                }
+                break;
             }
         } else {
             if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
@@ -360,10 +371,21 @@ public class LoginServiceImpl implements LoginService {
         if (!StringUtils.isEmpty(logHistoryDto.getSearchWord())) {
             String searchWord = logHistoryDto.getSearchWord();
             
-            if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
-                predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));    
-            } else {
-                predicate = qLogHistory.email.eq(searchWord);
+            switch(logHistoryDto.getSearchType()) {
+            case "email":
+                if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                    predicate = qLogHistory.email.eq(searchWord).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));   
+                } else {
+                    predicate = qLogHistory.email.eq(searchWord);    
+                }
+                break;
+            case "userKey":
+                if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {
+                    predicate = qLogHistory.user.userKey.eq(Long.valueOf(searchWord)).and(qLogHistory.logType.eq(logHistoryDto.getLogType()));   
+                } else {
+                    predicate = qLogHistory.user.userKey.eq(Long.valueOf(searchWord));
+                }
+                break;
             }
         } else {
             if (!StringUtils.isEmpty(logHistoryDto.getLogType())) {

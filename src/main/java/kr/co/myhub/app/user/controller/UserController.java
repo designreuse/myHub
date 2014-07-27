@@ -1,14 +1,18 @@
 package kr.co.myhub.app.user.controller;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import kr.co.myhub.app.admin.user.domain.dto.UserDto;
@@ -23,7 +27,6 @@ import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
 import kr.co.myhub.appframework.util.MailUtil;
 import kr.co.myhub.appframework.vo.ApiResponse;
-import kr.co.myhub.appframework.vo.ApiResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
@@ -154,6 +159,22 @@ public class UserController {
         model.addAttribute("email", email);
         
         return "/user/userPasswordEdit";         
+    }
+    
+    /**
+     * 유저 프로필 등록 화면
+     * @param model
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userProfileAdd", method = RequestMethod.GET)
+    public String userProfileAdd(Model model,
+            @RequestParam(value = "userKey", required = true) String userKey) throws Exception {
+        
+        model.addAttribute("userKey", userKey);
+        
+        return "/user/userProfileAdd";         
     }
     
     // ===================================================================================
@@ -670,5 +691,33 @@ public class UserController {
         }
         
         return resultMap;
+    }
+    
+    @RequestMapping(value = "/ajaxFileUpload", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String ajaxFileUpload(MultipartHttpServletRequest request, HttpServletResponse response) { 
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        //0. notice, we have used MultipartHttpServletRequest
+        
+        //1. get the files from the request object
+        Iterator<String> itr =  request.getFileNames();
+    
+        MultipartFile mpf = request.getFile(itr.next());
+        System.out.println(mpf.getOriginalFilename() +" uploaded!");
+    
+        try {
+           //just temporary save file info into ufile
+            
+            log.debug("getBytes length : {}", mpf.getBytes().length); 
+            log.debug("getBytes : {}", mpf.getBytes().length);
+            log.debug("getContentType : {}", mpf.getContentType());
+            log.debug("getOriginalFilename : {}", mpf.getOriginalFilename());   
+    
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+        
+        return "<img src='http://localhost:8080/spring-mvc-file-upload/rest/cont/get/"+Calendar.getInstance().getTimeInMillis()+"' />";
     }
 }

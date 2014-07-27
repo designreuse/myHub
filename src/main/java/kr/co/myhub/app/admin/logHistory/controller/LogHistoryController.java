@@ -1,6 +1,8 @@
 package kr.co.myhub.app.admin.logHistory.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -63,6 +66,22 @@ public class LogHistoryController {
     }
     
     /**
+     * 사용자별 로그이력 화면
+     * @param model
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/userLogHistoryListPopup", method = RequestMethod.GET)
+    public String userLogHistoryListPopup(Model model,
+            @RequestParam(value = "userKey", required = true) int userKey) throws Exception {
+        
+        model.addAttribute("userKey", userKey);
+        
+        return "/admin/logHistory/userLogHistoryListPopup";         
+    }
+    
+    /**
      * 로그이력 목록 가져오기
      * @param model
      * @param logHistoryDto
@@ -93,6 +112,65 @@ public class LogHistoryController {
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
             resultMap.put("resultData", LogHistoryVoList);
+            
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+        
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
+    
+    @RequestMapping(value = "/getDefaultData", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getDefaultData(Model model,
+            @ModelAttribute LogHistoryDto logHistoryDto,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            /* 샘플 */
+            List<HashMap<String, Object>> listMap = new ArrayList<HashMap<String, Object>>();
+            
+            HashMap<String, Object> dataMap = new HashMap<String, Object>();
+            dataMap.put("useYn", "Y");
+            dataMap.put("xPos", "462");
+            dataMap.put("yPos", "107");
+            dataMap.put("fontText", "돋움체");
+            dataMap.put("fontSize", "40");
+            dataMap.put("fontType", "Y");
+            dataMap.put("under", "N");
+            
+            listMap.add(dataMap);
+            
+            dataMap = new HashMap<String, Object>();
+            dataMap.put("useYn", "N");
+            dataMap.put("xPos", "462");
+            dataMap.put("yPos", "107");
+            dataMap.put("fontText", "바탕체");
+            dataMap.put("fontSize", "40");
+            dataMap.put("fontType", "Y");
+            dataMap.put("under", "N");
+            
+            listMap.add(dataMap);
+            
+            dataMap = new HashMap<String, Object>();
+            dataMap.put("useYn", "Y");
+            dataMap.put("xPos", "462");
+            dataMap.put("yPos", "107");
+            dataMap.put("fontText", "바탕체");
+            dataMap.put("fontSize", "20");
+            dataMap.put("fontType", "N");
+            dataMap.put("under", "N");
+            
+            listMap.add(dataMap);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            resultMap.put("resultData", listMap);
             
         } catch(Exception e) {
             e.printStackTrace();

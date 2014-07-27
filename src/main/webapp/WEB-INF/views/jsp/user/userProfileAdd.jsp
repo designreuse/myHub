@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+http://noritersand.tistory.com/230
+https://github.com/blueimp/jQuery-File-Upload/wiki
 </body>
 </html>

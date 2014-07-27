@@ -106,16 +106,6 @@ public class UserServiceImpl implements UserService  {
      * 
      */
     public Page<User> findAllUser(UserDto userDto) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("getGender : {}", userDto.getGender());
-            log.debug("getSearchType : {}", userDto.getSearchType());
-            log.debug("getSearchWord : {}", userDto.getSearchWord());
-            log.debug("getSidx : {}", userDto.getSidx());
-            log.debug("getSord : {}", userDto.getSord());
-            log.debug("getPage : {}", userDto.getPage());
-            log.debug("getRows : {}", userDto.getRows());
-        }
-        
         Predicate predicate = null;
         QUser qUser = QUser.user;
         

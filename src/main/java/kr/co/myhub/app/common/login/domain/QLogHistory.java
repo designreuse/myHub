@@ -1,9 +1,9 @@
 package kr.co.myhub.app.common.login.domain;
 
 import static com.mysema.query.types.PathMetadataFactory.forVariable;
+import kr.co.myhub.app.user.domain.QUser;
 
-import javax.annotation.Nullable;
-
+import com.mysema.query.types.Path;
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.path.DateTimePath;
 import com.mysema.query.types.path.EntityPathBase;
@@ -42,29 +42,29 @@ public class QLogHistory extends EntityPathBase<LogHistory> {
     
     public final StringPath logType = createString("logType");
     
-    public final NumberPath<Long> userKey = createNumber("userKey", Long.class);
-    
     public final StringPath sessionId = createString("sessionId");
+    
+    public final QUser user;
     
     public QLogHistory(String variable) {
         this(LogHistory.class, forVariable(variable), INITS);
     }
-
-    public QLogHistory(Class<? extends LogHistory> type, PathMetadata<?> metadata) {
-        super(type, metadata);
+    
+    public QLogHistory(Path<? extends LogHistory> path) {
+        this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);
+    }
+    
+    public QLogHistory(PathMetadata<?> metadata) {
+        this(metadata, metadata.isRoot() ? INITS : PathInits.DEFAULT);
     }
     
     public QLogHistory(PathMetadata<?> metadata, PathInits inits) {
         this(LogHistory.class, metadata, inits);
     }
 
-    private QLogHistory(Class<? extends LogHistory> type, PathMetadata<?> metadata,
-            @Nullable PathInits inits) {
+    public QLogHistory(Class<? extends LogHistory> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-    }
-
-    private QLogHistory(Class<? extends LogHistory> type, String variable) {
-        super(type, variable);
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

@@ -14,5 +14,10 @@
         <pattern>/admin/*</pattern>
     </decorator>
     
+    <!-- 관리자 페이지 팝업-->
+    <decorator name="layoutPopupAdmin" page="layoutPopupAdmin.jsp">
+        <pattern>/admin/*Popup</pattern>
+    </decorator>
+    
    
 </decorators>

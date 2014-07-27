@@ -89,6 +89,11 @@
                         	MyHubHeaderApp.popup.userPasswordEdit($('#email').val());
                         });
                         
+                        // 프로필 추가
+                        $('#btnProfileAdd').on('click', function() {
+                        	MyHubApp.popup.userProfileAdd();
+                        });
+                        
                         // 회원탈퇴
                         $('#btnDelete').on('click', function() {
                             var buttonOpts = {
@@ -104,6 +109,18 @@
                             };
                          
                             commBootObj.alertModalMsg('<spring:message code="myhub.label.members.reave"/>', buttonOpts);
+                        });
+                    }
+                },
+                
+                popup: {
+                	userProfileAdd: function() {
+                        commonObj.popup.open({
+                            url : '<c:url value="/user/userProfileAdd"/>',
+                            pars : 'userKey='.concat($('#userKey').val()),
+                            title: 'userProfileAdd',
+                            width : '600',
+                            height : '400'
                         });
                     }
                 }
@@ -128,7 +145,7 @@
                 <!-- /label -->
                 
                 <!-- form -->
-                <form class="form-horizontal" id="frmInfo" name="frmInfo" onsubmit="return false;">
+                <form class="form-horizontal" id="frmInfo" name="frmInfo" onsubmit="return false;" enctype="multipart/form-data">
                     <input type="hidden" name="userKey" id="userKey" value="">
                     <input type="hidden" name="email" id="email" value="">
                     
@@ -168,6 +185,7 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <button class="btn btn-primary" id="btnEdit"><spring:message code="myhub.label.update"/></button>
                             <button class="btn btn-info" id="btnPwdUpdate"><spring:message code="myhub.label.change.password"/></button>
+                            <button class="btn btn-info" id="btnProfileAdd">프로필 등록</button>
                             <button class="btn btn-danger" id="btnDelete"><spring:message code="myhub.label.delete.user"/></button>
                         </div>
                     </div>

@@ -45,7 +45,6 @@
                                 {name:'logType', index:'logType', width:10, align:'center'},
                                 {name:'logDate', index:'logDate', width:10, align:'center'},
                                 {name:'sessionId', index:'sessionId', width:20, align:'center'}
-                     
                             ],
                             //width: 1140,
                             height: 500,            // 세로높이
@@ -59,12 +58,13 @@
                             viewrecords: true,  // records의 View여부
                             gridview: false,     // 처리속도 향상 ==> treeGrid, subGrid, afterInsertRow(event)와 동시 사용불가
                             scroll: 0,      // 휠 페이징 사용 1
-                            recordpos: "right",     // 우측좌측 기준변경 records 카운트의 위치 설정
-                            pager: "gridPager",             // 하단 페이지처리 selector
+                            recordpos: 'right',     // 우측좌측 기준변경 records 카운트의 위치 설정
+                            pager: 'gridPager',             // 하단 페이지처리 selector
                             rowList: [100, 200, 300],           // 한번에 가져오는 row개수
                             loadtext: 'Data Loading From Server',     // 로드 되는 Text 문구
                             rowNum: 100,         // 최초 가져올 row 수
                             emptyrecords: '조회된 데이터가 존재하지 않습니다.',     // 데이터 없을시 표시 
+                            //caption: '로그이력',
                             jsonReader: {     
                                 page: 'resultData.page',
                                 total: 'resultData.total',
@@ -73,6 +73,8 @@
                                 repeatitems: false,
                                 id: 'resultData.list.userKey'
                             },
+                            rownumbers: true,   // 로우 번호
+                            pgbuttons: true,    // 하다 다음페이지 버튼 노출 여부
                             loadBeforeSend: function(xhr, settings) {
                                 MyHubApp.jqgrid.gridXhr = xhr;
                             },
@@ -99,11 +101,14 @@
                             	}
                             },
                             onCellSelect: function(rowid, iCol, cellcontent, e) {
-                                
+                            	if (iCol != 1) $('#gridList').setSelection(rowid);
                             },
                             onSortCol: MyHubApp.jqgrid.search 
                         });
                         MyHubApp.jqgrid.search();
+                        
+                        //$('#gridList').jqGrid('navGrid', '#gridPager',{edit:false, add:false, del:false});
+                        //$('#gridList').jqGrid('inlineNav','#gridPager');
                     },
                     
                     // abort(xhr)
@@ -126,7 +131,7 @@
                                 searchType: $('#searchType').val(),
                                 searchWord: $.trim($('#searchWord').val())
                             }
-                        }).trigger("reloadGrid");
+                        }).trigger('reloadGrid');
                     }
                 },
                 

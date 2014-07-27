@@ -41,7 +41,8 @@
                                 '<spring:message code="myhub.label.crtDt"/>',
                                 '<spring:message code="myhub.label.uptPwdDt"/>',
                                 '<spring:message code="myhub.label.loginFileCnt"/>',
-                                '<spring:message code="myhub.label.loginFileDt"/>'
+                                '<spring:message code="myhub.label.loginFileDt"/>',
+                                '로그이력'
                             ],
                             colModel: [
                                 {name:'userKey', index:'userKey', hidden:true, key:true},
@@ -50,11 +51,12 @@
                                 {name:'gender', index:'gender', width:5, align:'center'},  
                                 {name:'birthday', index:'birthday', width:10, align:'center'},
                                 {name:'phoneNo', index:'phoneNo', width:10, align:'center'},
-                                {name:'priv', index:'priv', width:10, align:'center'},
+                                {name:'priv', index:'priv', width:10, align:'center', sortable:false},
                                 {name:'crtDt', index:'crtDt', width:10, align:'center'},
                                 {name:'passwordModDt', index:'passwordModDt', width:10, align:'center'},
                                 {name:'loginFailCount', index:'loginFailCount', width:10, align:'center'},
-                                {name:'loginFailDt', index:'loginFailDt', width:10, align:'center'}
+                                {name:'loginFailDt', index:'loginFailDt', width:10, align:'center'},
+                                {name:'btnLogHistory', index:'btnLogHistory', width:10, align:'center', sortable:false}
                             ],
                             //width: 1140,
                             height: 250,            // 세로높이
@@ -111,9 +113,14 @@
                             	$('#gridList').setCell(rowid, 'crtDt', commonObj.date.timestampToDate(aData.crtDt));
                             	$('#gridList').setCell(rowid, 'passwordModDt', commonObj.date.timestampToDate(aData.passwordModDt));
                             	$('#gridList').setCell(rowid, 'loginFailDt', commonObj.date.timestampToDate(aData.loginFailDt));
+                            	
+                            	$('#gridList').setCell(rowid, 'btnLogHistory', '<button class="btn btn-primary">인증이력</button>');
+                            	
+                            	$('#gridList').setCell(rowid, 'btnLogHistory', '<input type="button" value="인증이력" onClick="javascript:MyHubApp.popup.userLogHistoryListPopup({userKey});">'.replace(/{userKey}/g, aData.userKey));
                             },
                             onCellSelect: function(rowid, iCol, cellcontent, e) {
-                                
+                            	
+                            	if (iCol != 0) $("#gridList").setSelection(rowid);
                             },
                             onSortCol: MyHubApp.jqgrid.search
                         });
@@ -168,6 +175,18 @@
                     		MyHubApp.jqgrid.search();
                         });
                     }
+                },
+                
+                popup: {
+                	userLogHistoryListPopup: function(userKey) {
+                		commonObj.popup.open({
+                            url : '<c:url value="/admin/logHistory/userLogHistoryListPopup"/>',
+                            pars : 'userKey='.concat(userKey),
+                            title: 'userLogHistoryListPopup',
+                            width : '1000',
+                            height : '800'
+                        });
+                	}
                 }
             };
         
