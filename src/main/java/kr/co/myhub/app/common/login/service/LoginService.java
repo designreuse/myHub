@@ -131,4 +131,20 @@ public interface LoginService {
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Long findAllLogHistoryCount(LogHistoryDto logHistoryDto) throws Exception;
+    
+    /**
+     * 로그 이력 삭제
+     * @param LogHistoryList
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void deleteListLogHistory(List<LogHistory> LogHistoryList) throws Exception;
+    
+    /**
+     * 사용자의 로그전체 삭제
+     * @param userKey
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void deleteLogHistoryByUserkey(Long userKey) throws Exception;
 }

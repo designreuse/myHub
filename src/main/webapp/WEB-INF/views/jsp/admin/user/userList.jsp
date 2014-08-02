@@ -113,10 +113,7 @@
                             	$('#gridList').setCell(rowid, 'crtDt', commonObj.date.timestampToDate(aData.crtDt));
                             	$('#gridList').setCell(rowid, 'passwordModDt', commonObj.date.timestampToDate(aData.passwordModDt));
                             	$('#gridList').setCell(rowid, 'loginFailDt', commonObj.date.timestampToDate(aData.loginFailDt));
-                            	
-                            	$('#gridList').setCell(rowid, 'btnLogHistory', '<button class="btn btn-primary">인증이력</button>');
-                            	
-                            	$('#gridList').setCell(rowid, 'btnLogHistory', '<input type="button" value="인증이력" onClick="javascript:MyHubApp.popup.userLogHistoryListPopup({userKey});">'.replace(/{userKey}/g, aData.userKey));
+                            	$('#gridList').setCell(rowid, 'btnLogHistory', '<input type="button" value="로그이력" onClick="javascript:MyHubApp.popup.userLogHistoryListPopup({userKey});">'.replace(/{userKey}/g, aData.userKey));
                             },
                             onCellSelect: function(rowid, iCol, cellcontent, e) {
                             	
@@ -136,12 +133,12 @@
                 	},
                 	
                 	// 검색
-                	search: function() {
+                	search: function(type) {
                 		MyHubApp.jqgrid.abort();
                         $('#gridList').setGridParam({
                             url: commonObj.config.contextPath.concat('/admin/userManage/getUserList'),
                             datatype: 'json',
-                            page : 0,
+                            page : type === 'reload' ? $('#gridList').jqGrid('getGridParam','page') : 0,
                             postData: {
                             	gender: $('#gender').val(),
                                 searchType: $('#searchType').val(),
@@ -153,7 +150,42 @@
                 
                 data: {
                     init: function() {
+                    	
+                    },
+                    
+                    userLockInit: function() {
+                    	var selarrrow = $('#gridList').jqGrid('getGridParam','selarrrow');
+                        if (selarrrow.length == 0) {
+                            alert('사용자를 선택하세요.');
+                            return false;
+                        }
                         
+                        if(!confirm('계정 락을 해제 하시겠습니까?')) return false;
+                        
+                        var paramArr = [];
+                        for (var i = 0; i < selarrrow.length; i++) {
+                            var rowData = $('#gridList').jqGrid('getRowData', selarrrow[i]);
+                            
+                            paramArr.push({userKey: rowData.userKey});
+                        }
+                        
+                        var url = commonObj.config.contextPath.concat('/admin/userManage/userLockInit');
+                        var pars = JSON.stringify(paramArr);
+                            
+                        commonObj.data.ajax(url, {pars: pars, async: false, contentType: 'application/json', 
+                            onsucc: function(res) {
+                                if (res.resultCd === commonObj.constants.result.FAIL) {
+                                    commBootObj.alertModalMsg(res.resultMsg);
+                                    return false;   
+                                }
+                                
+                                MyHubApp.jqgrid.search('reload');
+                                commBootObj.alertModalMsg('계정 락이 해제 되었습니다.');
+                            },
+                            onerr: function(res) {
+                                commBootObj.alertModalMsg('<spring:message code="myhub.error.common.fail"/>');
+                            }
+                        });
                     }
                 },
                 
@@ -174,6 +206,16 @@
                     	$('#gender').on('change', function() {
                     		MyHubApp.jqgrid.search();
                         });
+                    	
+                    	// 권한 변경
+                        $('#btnChangeAuth').on('click', function() {
+                            alert('권한 관리 개발 후 변경 처리 계획');
+                        });
+                    	
+                    	// 계정잠금 해제
+                    	$('#btnLockInit').on('click', function() {
+                    		MyHubApp.data.userLockInit();
+                        });
                     }
                 },
                 
@@ -184,7 +226,7 @@
                             pars : 'userKey='.concat(userKey),
                             title: 'userLogHistoryListPopup',
                             width : '1000',
-                            height : '800'
+                            height : '700'
                         });
                 	}
                 }
@@ -238,7 +280,7 @@
                 <!-- action area -->
                 <div align="right">
                     <button class="btn btn-info" id="btnChangeAuth">권한변경</button>
-                    <button class="btn btn-info" id="btnLockChange">계정 잠금 해제</button>
+                    <button class="btn btn-info" id="btnLockInit">계정 잠금 해제</button>
                 </div>
                 <!-- /action area -->
     </body>

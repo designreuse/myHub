@@ -112,4 +112,13 @@ public interface UserService {
      */
     public long updatePasswordByEmail(String password, String lastPassword, String email) throws Exception;
     
+    /**
+     * 유저 계정 락 초기화
+     * @param userList
+     * @return
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void updateUserLockInit(List<User> userList) throws Exception;
+    
 }

@@ -135,6 +135,24 @@ public class UserDao extends QueryDslRepositorySupport {
     }
     
     /**
+     * 유저 계정 락 해제
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public long updateUserLockInit(long userKey) throws Exception {
+        QUser qUser = QUser.user;
+        
+        long result = update(qUser)
+                .where(qUser.userKey.eq(userKey))
+                .set(qUser.loginFailDt, null)
+                .set(qUser.loginFailCount, 0)
+                .execute();  
+        
+        return result;
+    }
+    
+    /**
      * 하이버네이트 세션 가져오기
      * @return
      */

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -294,5 +295,21 @@ public class UserServiceImpl implements UserService  {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public long updatePasswordByEmail(String password, String lastPassword, String email) throws Exception {
         return userDao.updatePasswordByEmail(password, lastPassword, email);
+    }
+    
+    /**
+     * 유저 계정 락 초기화
+     * @param userList
+     * @return
+     * @throws Exception
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void updateUserLockInit(List<User> userList) throws Exception {
+        
+        for (User user : userList) {
+            if (user == null) continue;
+         
+            userDao.updateUserLockInit(user.getUserKey());
+        }
     }
 }

@@ -13,6 +13,7 @@ import kr.co.myhub.app.admin.domain.dto.LogHistoryDto;
 import kr.co.myhub.app.common.login.domain.LogHistory;
 import kr.co.myhub.app.common.login.domain.QLogHistory;
 import kr.co.myhub.app.common.login.repasitory.LoginRepasitory;
+import kr.co.myhub.app.common.login.repasitory.support.LogHistoryDao;
 import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.UserAuth;
@@ -32,6 +33,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mysema.query.types.Predicate;
 
@@ -60,6 +63,9 @@ public class LoginServiceImpl implements LoginService {
     
     @Resource
     UserAuthRepasitory userAuthRepasitory;
+    
+    @Resource
+    LogHistoryDao logHistoryDao;
 
     /**
      * 로그인 이력 등록
@@ -394,6 +400,30 @@ public class LoginServiceImpl implements LoginService {
         }
         
         return loginRepasitory.count(predicate);
+    }
+    
+    /**
+     * 로그 이력 삭제
+     * @param LogHistoryList
+     * @throws Exception
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void deleteListLogHistory(List<LogHistory> LogHistoryList) throws Exception {
+        for (LogHistory logHistory : LogHistoryList) {
+            if (logHistory == null) continue; 
+            
+            loginRepasitory.delete(logHistory);
+        }
+    }
+    
+    /**
+     * 사용자의 로그전체 삭제
+     * @param userKey
+     * @throws Exception
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void deleteLogHistoryByUserkey(Long userKey) throws Exception {
+        logHistoryDao.deleteLogHistoryByUserkey(userKey);
     }
     
 }

@@ -106,9 +106,6 @@
                             onSortCol: MyHubApp.jqgrid.search 
                         });
                         MyHubApp.jqgrid.search();
-                        
-                        //$('#gridList').jqGrid('navGrid', '#gridPager',{edit:false, add:false, del:false});
-                        //$('#gridList').jqGrid('inlineNav','#gridPager');
                     },
                     
                     // abort(xhr)
@@ -141,7 +138,37 @@
                     },
                     
                     logHistoryDelete: function() {
-                    	
+                    	var selarrrow = $('#gridList').jqGrid('getGridParam','selarrrow');
+                        if (selarrrow.length == 0) {
+                            alert('삭제 할 로그를 선택하세요.');
+                            return false;
+                        }
+                        
+                        if(!confirm('로그를 삭제 하시겠습니까?')) return false;
+                        
+                        var paramArr = [];
+                        for (var i = 0; i < selarrrow.length; i++) {
+                            var rowData = $('#gridList').jqGrid('getRowData', selarrrow[i]);
+                            
+                            paramArr.push({logHistoryKey: rowData.logHistoryKey});
+                        }
+                        
+                        var url = commonObj.config.contextPath.concat('/admin/logHistory/logHistoryDelete');
+                        var pars = JSON.stringify(paramArr);
+                            
+                        commonObj.data.ajax(url, {pars: pars, async: false, contentType: 'application/json', 
+                            onsucc: function(res) {
+                                if (res.resultCd === commonObj.constants.result.FAIL) {
+                                    commBootObj.alertModalMsg(res.resultMsg);
+                                    return false;   
+                                }
+                                
+                                MyHubApp.jqgrid.search();
+                            },
+                            onerr: function(res) {
+                                commBootObj.alertModalMsg('<spring:message code="myhub.error.common.fail"/>');
+                            }
+                        });
                     }
                 },
                 
@@ -165,7 +192,7 @@
                         });
                         
                         // 이력삭제
-                        $('#btnDelete').on('change', function() {
+                        $('#btnDelete').on('click', function() {
                             MyHubApp.data.logHistoryDelete();
                         });
                     }

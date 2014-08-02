@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -155,6 +156,37 @@ public class UserManageController {
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
             resultMap.put("resultData", userVoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+        
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 유저 계정 락 해제
+     * @param model
+     * @param userList
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/userLockInit", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> userLockInit(Model model,
+            @RequestBody List<User> userList,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            userService.updateUserLockInit(userList);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
