@@ -66,8 +66,8 @@
                     },
                 
                     fileUpload: function() {
-                    	$('#upFile').fileupload({
-                            url : '/sample/file/uploadProcessJson.action', 
+                    	$('#profileImg').fileupload({
+                            url : commonObj.config.contextPath.concat('/user/profileUpload'),
                             dataType: 'json',
                             //replaceFileInput: false,
                             add: function(e, data){
@@ -134,11 +134,11 @@
                 <div class="form-group">
                     <label for="password" class="col-sm-3 control-label">이미지</label>
                     <div class="col-sm-5">
-                        <input type="file" class="form-control" id="upFile" name="fileData" maxlength="12" value="">
+                        <input type="file" class="form-control" id="profileImg" name="profileImg" maxlength="12" value="">
                     </div>
                 </div>
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
                         <span class="sr-only">60% Complete</span>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 package kr.co.myhub.app.user.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Calendar;
@@ -11,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -91,6 +93,12 @@ public class UserController {
      */
     @Autowired
     protected AuthenticationManager authenticationManager;
+    
+    /**
+     * ServletContext
+     */
+    @Autowired
+    private ServletContext servletContext;
     
     /**
      *  Service DI
@@ -586,6 +594,51 @@ public class UserController {
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", msa.getMessage("myhub.error.befor.password4", locale));
             
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 프로필 업로드
+     * @param model
+     * @param file
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/profileUpload", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> profileUpload(Model model, 
+            @RequestParam(value = "profileImg", required = true) MultipartFile file,
+            Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            log.debug("getOriginalFilename : {}", file.getOriginalFilename());
+            log.debug("getSize : {}", file.getSize());
+            
+            /* 파일 업로드 */
+            String rootPath = servletContext.getRealPath("/");
+            String uploadPath = "images/upload/";
+            String targetPath = rootPath.concat(File.separator).concat(uploadPath);
+            
+            File targetPathDir = new File(targetPath);
+            if (!targetPathDir.exists()) {
+                targetPathDir.mkdir();
+            }
+            
+            file.transferTo(new File(targetPath + file.getOriginalFilename()));
+            
+            /* 유저 정보 업데이트  */
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());

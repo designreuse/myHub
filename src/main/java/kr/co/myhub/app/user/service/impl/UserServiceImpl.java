@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService  {
         
         /* 유저 등록  */
         User retUser = userRepasitory.save(user);
-        //userAuthRepasitory.save(userAuth);
+        userAuthRepasitory.save(userAuth);
         
         return retUser;
     }
