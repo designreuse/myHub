@@ -1,5 +1,6 @@
 package kr.co.myhub.app.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -45,7 +46,7 @@ public class TestMashller extends TestConfig {
     @Test
     public void test() throws JAXBException {
         
-        /*List<User> list = new ArrayList<User>();
+        List<User> list = new ArrayList<User>();
         
         user1 = new User();
         user1.setUserId("kbtapjm");
@@ -54,9 +55,9 @@ public class TestMashller extends TestConfig {
         user2.setUserId("tapjm");
         
         list.add(user1);
-        list.add(user2);*/
+        list.add(user2);
         
-        List<User> list = userRepository.findAll();
+        //List<User> list = userRepository.findAll();
         
         ApiResponse response = new ApiResponse();
         response.setMessage("list");

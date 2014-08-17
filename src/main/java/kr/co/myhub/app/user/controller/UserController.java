@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -124,7 +126,7 @@ public class UserController {
      */
     @Autowired
     UserService userService;
-    
+
     // ===================================================================================
     // Simple URL Mapping
     // ===================================================================================
@@ -693,186 +695,5 @@ public class UserController {
         };
         new Thread(task).start();
     }
-    
-    // ===================================================================================
-    // temp(테스트, 임시)
-    // ===================================================================================
-    
-    /**
-     * 유저정보 상세조회
-     * @param model
-     * @param userKey
-     * @param locale
-     * @return
-     */
-    @RequestMapping(value = "/getUserDetail/{userKey}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getUserDetail(Model model,
-            @PathVariable("userKey") long userKey,
-            Locale locale) {
-        
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        
-        try {
-            User user = userService.findByUserKey(userKey);
-            
-            resultMap.put("resultCd", Result.SUCCESS.getCode());
-            resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", user.getUserName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Exception : {}", e.getMessage());
-            
-            resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
-        }
-        
-        return resultMap;
-    }
-    
-    /**
-     * 
-     * @param model
-     * @param userKey
-     * @param locale
-     * @param headers   클라이언트 헤더정보
-     * @param userAgent  user-agent 
-     * @param jSessionId  쿠키값 추출
-     * @return
-     */
-    @RequestMapping(value = "/getRestDetail", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getRestDetail(Model model,
-            @RequestParam("userKey") long userKey,
-            Locale locale,
-            @RequestHeader HttpHeaders headers,
-            @RequestHeader(value = "user-agent", required = true, defaultValue = "default") String userAgent,
-            @CookieValue(value = "JSESSIONID", required = true) String jSessionId) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        
-        try {
-            
-            /* RestTemplate  테스트 */
-            
-            // 헤더정보
-            HttpEntity<String> requestEntity = new HttpEntity<String>(headers); 
 
-            String url = "http://localhost:8080/user/getUserDetail/{UserKey}";
-            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, String.valueOf(userKey)); 
-            log.debug("getBody : {}", responseEntity.getBody());
-            
-            //String result = restTemplate.getForObject("http://localhost:8080/user/getUserDetail/{UserKey}", String.class, String.valueOf(userKey));
-            //log.debug("result : {}", result);
-            
-            resultMap.put("resultCd", Result.SUCCESS.getCode());
-            resultMap.put("resultMsg", Result.SUCCESS.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Exception : {}", e.getMessage());
-            
-            resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
-        }
-        
-        return resultMap;
-    }
-    
-    /**
-     * 유저목록(ContentNegotiatingViewResolver)
-     * .json, .xml호출하면 json, xml로 데이터 반환
-     * @param modelMap
-     * @return JSON/XML 데이터 반환
-     */
-    @RequestMapping(value = "/getUserListToXmlToJson", method = RequestMethod.GET)
-    public String getUserListToXmlToJson(ModelMap modelMap, @ModelAttribute UserDto UserDto) {
-        ApiResponse response = new ApiResponse();
-        List<User> list = null;
-        
-        try {
-            //list = userService.findAllUser(UserDto);
-            
-            //response.setStatus(StatusEnum.SUCCESS);
-            response.setList(list);
-            
-            modelMap.addAttribute("result", response);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            
-            // Exception result
-            //response.setStatus(StatusEnum.FAIL);
-            response.setMessage(e.getMessage());
-            
-            modelMap.addAttribute("result", response);
-        }
-        
-        return null;
-    }
-    
-    /**
-     * 현재 접속 중인 사용자 세션정보 목록
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/getActiveUserList", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getActiveUserList(Model model) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        HashMap<Object, Date> lastActivityData = new HashMap<Object, Date>();
-        
-        try {
-            // sessionRegistry.getAllPrincipals() : 활성화된 세션을 갖고 있는  Principal 객체(User Detail)
-            for (Object principal : sessionRegistry.getAllPrincipals()) {
-                
-                // 각 Principal이 갖고 있는 세션정보를 담고있는 SessionInformation 객체의 리스트
-                for (SessionInformation  session : sessionRegistry.getAllSessions(principal, false)) {
-                    log.debug("getLastRequest : {}", session.getLastRequest());
-                    log.debug("getSessionId : {}", session.getSessionId());
-                    log.debug("getPrincipal : {}", session.getPrincipal());
-                    
-                    lastActivityData.put(principal, session.getLastRequest());
-                }
-            }
-            
-            resultMap.put("resultCd", Result.SUCCESS.getCode());
-            resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", lastActivityData);  // TODO: Princapal 객체 JSON 데이터로 파싱 처리
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Exception : {}", e.getMessage());
-            
-            resultMap.put("resultCd", Result.FAIL.getCode());
-            resultMap.put("resultMsg", e.getMessage());
-        }
-        
-        return resultMap;
-    }
-    
-    @RequestMapping(value = "/ajaxFileUpload", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public String ajaxFileUpload(MultipartHttpServletRequest request, HttpServletResponse response) { 
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        
-        //0. notice, we have used MultipartHttpServletRequest
-        
-        //1. get the files from the request object
-        Iterator<String> itr =  request.getFileNames();
-    
-        MultipartFile mpf = request.getFile(itr.next());
-        System.out.println(mpf.getOriginalFilename() +" uploaded!");
-    
-        try {
-           //just temporary save file info into ufile
-            
-            log.debug("getBytes length : {}", mpf.getBytes().length); 
-            log.debug("getBytes : {}", mpf.getBytes().length);
-            log.debug("getContentType : {}", mpf.getContentType());
-            log.debug("getOriginalFilename : {}", mpf.getOriginalFilename());   
-    
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-        
-        return "<img src='http://localhost:8080/spring-mvc-file-upload/rest/cont/get/"+Calendar.getInstance().getTimeInMillis()+"' />";
-    }
 }

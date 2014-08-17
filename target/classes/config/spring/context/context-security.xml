@@ -111,6 +111,9 @@
         <!-- 유저  정보(인증  필요)-->
         <security:intercept-url pattern="/user/**" access="isAuthenticated()" />
         
+        <!-- 테스트 -->
+        <security:intercept-url pattern="/test/**" access="permitAll" />
+        
         <security:intercept-url pattern="/main" access="isAuthenticated()" />
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
         

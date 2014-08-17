@@ -19,5 +19,9 @@
         <pattern>/admin/*Popup</pattern>
     </decorator>
     
+    <!-- 테스트 페이지 -->
+    <decorator name="layoutTest" page="layoutUser.jsp">
+        <pattern>/test/*</pattern>
+    </decorator>
    
 </decorators>

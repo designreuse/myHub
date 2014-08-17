@@ -45,7 +45,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
     public User findByUserKey(Long userKey) throws Exception;
     
     /**
