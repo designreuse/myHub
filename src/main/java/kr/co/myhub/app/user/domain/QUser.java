@@ -62,6 +62,8 @@ public class QUser extends EntityPathBase<User> {
     
     public final DateTimePath<java.util.Date> loginFailDt = createDateTime("loginFailDt", java.util.Date.class);
     
+    public final StringPath profile = createString("profile");
+    
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);
     }

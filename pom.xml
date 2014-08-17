@@ -147,12 +147,6 @@
             <artifactId>spring-security-oauth2</artifactId>
             <version>${org.springframework.security.oauth-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.1.2</version>
-            <scope>test</scope>
-        </dependency>
         
         <!-- commons -->
         <dependency>
@@ -399,6 +393,14 @@
             <groupId>net.sourceforge.barbecue</groupId>
             <artifactId>barbecue</artifactId>
             <version>1.5-beta1</version>
+        </dependency>
+        
+        <!-- http client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
   

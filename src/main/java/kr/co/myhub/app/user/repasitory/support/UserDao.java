@@ -153,6 +153,24 @@ public class UserDao extends QueryDslRepositorySupport {
     }
     
     /**
+     * 유저 프로필 수정
+     * @param profile
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public long updateUserProfile(String profile, long userKey) throws Exception {
+        QUser qUser = QUser.user;
+        
+        long result = update(qUser)
+                .where(qUser.userKey.eq(userKey))
+                .set(qUser.profile, profile)
+                .execute();  
+        
+        return result;
+    }
+    
+    /**
      * 하이버네이트 세션 가져오기
      * @return
      */

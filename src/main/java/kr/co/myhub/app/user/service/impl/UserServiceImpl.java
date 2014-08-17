@@ -312,4 +312,15 @@ public class UserServiceImpl implements UserService  {
             userDao.updateUserLockInit(user.getUserKey());
         }
     }
+    
+    /**
+     * 유저 프로필 수정
+     * @param profile
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public long updateUserProfile(String profile, long userKey) throws Exception {
+        return userDao.updateUserProfile(profile, userKey);
+    }
 }

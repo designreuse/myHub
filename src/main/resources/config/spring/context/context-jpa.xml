@@ -90,9 +90,9 @@
         ignore-failures : NONE (기본값), DROPS (실패한 drop은 무시한다), ALL(모든 실패를 무시한다)
      -->
     <!-- ============================================================================================ -->
-    <jdbc:initialize-database data-source="dataSource" enabled="true" ignore-failures="ALL">
-        <!-- <jdbc:script location="classpath:db/ddl.sql" /> -->
+    <!-- <jdbc:initialize-database data-source="dataSource" enabled="true" ignore-failures="ALL">
+        <jdbc:script location="classpath:db/ddl.sql" />
         <jdbc:script location="classpath:db/dml.sql" />
-    </jdbc:initialize-database>
+    </jdbc:initialize-database> -->
      
 </beans:beans>

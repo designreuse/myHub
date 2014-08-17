@@ -34,6 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.session.SessionInformation;
@@ -43,11 +47,15 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -59,6 +67,11 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
  * author : jmpark
  * content: 유저 웹 요청 처리 (URL Mapping, Data Response)
  * ref : http://www.ilhwan.com/spring-security-example/(회원가입후 자동 로그인)
+ * 
+ * http://krams915.blogspot.kr/2011/02/spring-3-rest-web-service-provider-and_28.html
+ * http://blog.outsider.ne.kr/958
+ * http://aircook.tistory.com/105
+ * 
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용
@@ -99,6 +112,12 @@ public class UserController {
      */
     @Autowired
     private ServletContext servletContext;
+    
+    /**
+     * RestTemplate
+     */
+    @Autowired
+    private RestTemplate restTemplate;
     
     /**
      *  Service DI
@@ -633,9 +652,13 @@ public class UserController {
                 targetPathDir.mkdir();
             }
             
-            file.transferTo(new File(targetPath + file.getOriginalFilename()));
+            //file.transferTo(new File(targetPath + file.getOriginalFilename()));
             
             /* 유저 정보 업데이트  */
+            String profile = uploadPath.concat(file.getOriginalFilename());
+            log.debug("profile : {}", profile);
+            
+            //long result = userService.updateUserProfile(profile, userKey)
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
@@ -674,6 +697,85 @@ public class UserController {
     // ===================================================================================
     // temp(테스트, 임시)
     // ===================================================================================
+    
+    /**
+     * 유저정보 상세조회
+     * @param model
+     * @param userKey
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/getUserDetail/{userKey}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getUserDetail(Model model,
+            @PathVariable("userKey") long userKey,
+            Locale locale) {
+        
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            User user = userService.findByUserKey(userKey);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            resultMap.put("resultData", user.getUserName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 
+     * @param model
+     * @param userKey
+     * @param locale
+     * @param headers   클라이언트 헤더정보
+     * @param userAgent  user-agent 
+     * @param jSessionId  쿠키값 추출
+     * @return
+     */
+    @RequestMapping(value = "/getRestDetail", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getRestDetail(Model model,
+            @RequestParam("userKey") long userKey,
+            Locale locale,
+            @RequestHeader HttpHeaders headers,
+            @RequestHeader(value = "user-agent", required = true, defaultValue = "default") String userAgent,
+            @CookieValue(value = "JSESSIONID", required = true) String jSessionId) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        try {
+            
+            /* RestTemplate  테스트 */
+            
+            // 헤더정보
+            HttpEntity<String> requestEntity = new HttpEntity<String>(headers); 
+
+            String url = "http://localhost:8080/user/getUserDetail/{UserKey}";
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, String.valueOf(userKey)); 
+            log.debug("getBody : {}", responseEntity.getBody());
+            
+            //String result = restTemplate.getForObject("http://localhost:8080/user/getUserDetail/{UserKey}", String.class, String.valueOf(userKey));
+            //log.debug("result : {}", result);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+            
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
     
     /**
      * 유저목록(ContentNegotiatingViewResolver)

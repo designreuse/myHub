@@ -24,7 +24,7 @@
                     init: function() {
                         this.getUserInfo();
                     },
-                    
+                                        
                     getUserInfo: function() {
                     	var url = commonObj.config.contextPath.concat('/user/getUserInfo');
                         var pars = '';

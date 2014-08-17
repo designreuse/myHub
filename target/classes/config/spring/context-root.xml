@@ -10,6 +10,9 @@
     <!-- context-common -->
     <import resource="context/context-common.xml" />
     
+    <!-- context-client(RestTemplate, http) -->
+    <import resource="context/context-client.xml" />
+    
     <!-- message -->
     <import resource="context/context-message.xml" />
      

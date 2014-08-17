@@ -71,6 +71,8 @@
                             dataType: 'json',
                             //replaceFileInput: false,
                             add: function(e, data){
+                            	log(data);
+                            	
                                 var uploadFile = data.files[0];
                                 if (!(/png|jpe?g|gif/i).test(uploadFile.name)) {
                                     alert('png, jpg, gif 만 가능합니다');
@@ -121,6 +123,7 @@
                 }
                 
                 // http://dimdim.tistory.com/34
+                // http://noritersand.tistory.com/265
             });
         
         </script>

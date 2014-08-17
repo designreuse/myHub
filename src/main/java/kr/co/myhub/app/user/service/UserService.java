@@ -121,4 +121,13 @@ public interface UserService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void updateUserLockInit(List<User> userList) throws Exception;
     
+    /**
+     * 유저 프로필 수정
+     * @param profile
+     * @param userKey
+     * @return
+     * @throws Exception
+     */
+    public long updateUserProfile(String profile, long userKey) throws Exception;
+    
 }

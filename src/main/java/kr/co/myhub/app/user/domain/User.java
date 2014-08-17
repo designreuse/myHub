@@ -112,6 +112,10 @@ public class User implements Serializable {
     @DateTimeFormat(pattern = "YY-MM-DD hh:mm:ss")
     private Date loginFailDt;
     
+    /* 프로필  (TODO: 이미지 관리하는 테이블로 추후 변경) ==> 게시판 개발시 */ 
+    @Column(name = "profile", nullable = true, length = 100)
+    private String profile;
+    
     /**
      * 로그 이력 조회(테이블 관계가 있는 경우에는 맵핑되는 도메인에 설정을 하는것이 좋다.)
      */
@@ -241,6 +245,14 @@ public class User implements Serializable {
 
     public void setLoginFailDt(Date loginFailDt) {
         this.loginFailDt = loginFailDt;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public Set<LogHistory> getLogHistory() {
