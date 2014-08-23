@@ -174,6 +174,26 @@ var commonObj = {
 				
 				return phone;
 			}
+		},
+		
+		// 폼 엘리먼트 관련
+		form: {
+			
+			/**
+			 * 폼 객체를 오브젝트로 반환
+			 */
+			getConvertObjToForm: function($form) {
+				if (!$form)	return null;
+				
+				var frmSerArr = $form.serializeArray();
+                var retObj = {};
+
+                $.map(frmSerArr, function(n, i) {
+                	retObj[n['name']] = n['value'];
+                });
+
+                return retObj;
+			}
 		}
 	},
 	

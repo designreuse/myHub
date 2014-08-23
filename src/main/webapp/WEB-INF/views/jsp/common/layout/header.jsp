@@ -71,9 +71,11 @@
                                     <a href="<c:url value='/' />"><spring:message code="myhub.label.login"/></a>
                                 </li>
                                 </security:authorize>
+                                <!-- 
                                 <li>
                                     <a href="<c:url value='/test/testList' />">Test</a>
                                 </li>
+                                 -->
                             </ul>
                         </div>
                     </div>

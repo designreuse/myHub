@@ -159,15 +159,13 @@ public class UserDao extends QueryDslRepositorySupport {
      * @return
      * @throws Exception
      */
-    public long updateUserProfile(String profile, long userKey) throws Exception {
+    public void updateUserProfile(String profile, long userKey) throws Exception {
         QUser qUser = QUser.user;
         
-        long result = update(qUser)
-                .where(qUser.userKey.eq(userKey))
-                .set(qUser.profile, profile)
-                .execute();  
-        
-        return result;
+        update(qUser)
+            .where(qUser.userKey.eq(userKey))
+            .set(qUser.profile, profile)
+            .execute();  
     }
     
     /**

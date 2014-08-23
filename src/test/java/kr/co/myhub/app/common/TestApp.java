@@ -1,7 +1,11 @@
 package kr.co.myhub.app.common;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 
 /**
@@ -21,7 +25,7 @@ public class TestApp {
     
     public static void main(String[] args) throws Exception  {
         TestApp testApp = new TestApp();
-        int result = testApp.recursionTest();
+        /*int result = testApp.recursionTest();
         
         String resultCd = "";
         if (result == 0) {
@@ -29,8 +33,30 @@ public class TestApp {
         } else {
             resultCd = "9999";
         }
-        System.out.println("resultCd : " + resultCd);
+        System.out.println("resultCd : " + resultCd);*/
         
+        
+        
+        
+        
+    }
+    
+    /**
+     * 파일쓰기
+     */
+    public void fileWrite() {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("C://dev//temp//out.txt"));
+            String s = "출력 파일에 저장될 이런 저런 문자열입니다.";
+
+            out.write(s); out.newLine();
+            out.write(s); out.newLine();
+
+            out.close();
+          } catch (IOException e) {
+              System.err.println(e); // 에러가 있다면 메시지 출력
+              System.exit(1);
+          }
     }
     
     /**

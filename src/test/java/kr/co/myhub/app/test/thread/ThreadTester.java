@@ -1,4 +1,4 @@
-package kr.co.myhub.app.common;
+package kr.co.myhub.app.test.thread;
 
 public class ThreadTester {
     

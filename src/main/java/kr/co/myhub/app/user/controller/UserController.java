@@ -1,25 +1,17 @@
 package kr.co.myhub.app.user.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.security.Principal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.domain.validator.UserValidator;
 import kr.co.myhub.app.user.service.UserService;
@@ -29,37 +21,27 @@ import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.exception.MyHubException;
 import kr.co.myhub.appframework.util.CommonUtil;
 import kr.co.myhub.appframework.util.EncryptionUtil;
+import kr.co.myhub.appframework.util.FileUtil;
 import kr.co.myhub.appframework.util.MailUtil;
-import kr.co.myhub.appframework.vo.ApiResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
@@ -319,11 +301,14 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
+            /* 세션정보 체크 */
             User sUser = (User) session.getAttribute("sUser");
-            
             if (sUser == null) {
                 throw new Exception(msa.getMessage("myhub.label.list.null", locale));
             }
+            
+            /* 유저정보 조회  */
+            User user = userService.findByUserKey(sUser.getUserKey());
             
             // 유저권한과의 1:1 관계일때 유저정보 조회시 권한정보도 같이 조회처리
             if (log.isDebugEnabled()) {
@@ -339,7 +324,7 @@ public class UserController {
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
-            resultMap.put("resultData", sUser);
+            resultMap.put("resultData", user);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());
@@ -636,31 +621,21 @@ public class UserController {
     @RequestMapping(value = "/profileUpload", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, Object> profileUpload(Model model, 
-            @RequestParam(value = "profileImg", required = true) MultipartFile file,
+            @RequestParam(value = "attachFile", required = true) MultipartFile multipartFile,
+            @RequestParam(value = "userKey", required = true) long userKey,
             Locale locale) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         
         try {
-            log.debug("getOriginalFilename : {}", file.getOriginalFilename());
-            log.debug("getSize : {}", file.getSize());
-            
             /* 파일 업로드 */
-            String rootPath = servletContext.getRealPath("/");
-            String uploadPath = "images/upload/";
-            String targetPath = rootPath.concat(File.separator).concat(uploadPath);
-            
-            File targetPathDir = new File(targetPath);
-            if (!targetPathDir.exists()) {
-                targetPathDir.mkdir();
-            }
-            
-            //file.transferTo(new File(targetPath + file.getOriginalFilename()));
+            String uploadFolder = prop.getProperty("upload.folder");
+            String uploadPath = servletContext.getRealPath(uploadFolder);
+            String fileName = FileUtil.fileUpload(multipartFile, uploadPath);
             
             /* 유저 정보 업데이트  */
-            String profile = uploadPath.concat(file.getOriginalFilename());
-            log.debug("profile : {}", profile);
+            String profile = uploadFolder.concat(fileName);
             
-            //long result = userService.updateUserProfile(profile, userKey)
+            userService.updateUserProfile(profile, userKey);
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());

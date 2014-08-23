@@ -320,7 +320,8 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
-    public long updateUserProfile(String profile, long userKey) throws Exception {
-        return userDao.updateUserProfile(profile, userKey);
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void updateUserProfile(String profile, long userKey) throws Exception {
+        userDao.updateUserProfile(profile, userKey);
     }
 }

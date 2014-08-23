@@ -54,6 +54,13 @@
                     	$('#birthday').text(commonObj.data.util.getBirthDay(data.birthday, '.'));
                     	$('#phoneNo').text(commonObj.data.util.getMoblPhoneNo(data.phoneNo, '-'));
                     	$('#gender').text(data.gender === 'M' ? '<spring:message code="myhub.label.gender.male"/>' : '<spring:message code="myhub.label.gender.female"/>');
+                    	
+                    	// 프로필이 존재 할 경우
+                    	if (data.profile) {
+                    		$('#profileView').show();
+                    		$('#profile').attr('src', null);
+                    		$('#profile').attr('src', data.profile);
+                    	}
                     },
                     
                     deleteUser: function() {
@@ -91,7 +98,7 @@
                         
                         // 프로필 추가
                         $('#btnProfileAdd').on('click', function() {
-                        	MyHubApp.popup.userProfileAdd();
+                        	MyHubApp.popup.userProfileAdd.open();
                         });
                         
                         // 회원탈퇴
@@ -114,15 +121,21 @@
                 },
                 
                 popup: {
-                	userProfileAdd: function() {
-                        commonObj.popup.open({
-                            url : '<c:url value="/user/userProfileAdd"/>',
-                            pars : 'userKey='.concat($('#userKey').val()),
-                            title: 'userProfileAdd',
-                            width : '600',
-                            height : '400'
-                        });
-                    }
+                	userProfileAdd: {
+                		open: function() {
+                			commonObj.popup.open({
+                                url : '<c:url value="/user/userProfileAdd"/>',
+                                pars : 'userKey='.concat($('#userKey').val()),
+                                title: 'userProfileAdd',
+                                width : '600',
+                                height : '400'
+                            });	
+                		},
+                		
+                		callBack: function() {
+                			MyHubApp.data.getUserInfo();
+                		}
+                	}
                 }
             };
         
@@ -161,6 +174,11 @@
                             <p class="form-control-static" id="userName"></p>
                             <!-- 권한정보 -->
                             <security:authentication property="principal.Authorities"/>
+                            
+                            <div id="profileView" style="display:none;">
+                                <br><br>
+                                <img id="profile" src="" class="featurette-image img-responsive" data-src="holder.js/images/">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">

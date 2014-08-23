@@ -128,6 +128,6 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public long updateUserProfile(String profile, long userKey) throws Exception;
+    public void updateUserProfile(String profile, long userKey) throws Exception;
     
 }

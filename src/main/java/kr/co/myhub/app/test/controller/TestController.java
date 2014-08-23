@@ -143,7 +143,7 @@ public class TestController {
        
        try {
            // time 세팅(일정시간마다 호출) true -> 데몬 스레드로 실행
-           final Timer timer = new Timer("timer_task");
+           final Timer timer = new Timer(true);
            
            TimerTask task = new TimerTask() {
                public void run() {
@@ -152,8 +152,11 @@ public class TestController {
                    try {
                        long userKey = 13L;
                        
+                       
                        User user = userService.findByUserKey(userKey);
                        log.debug("user : {}", user);
+                       
+                       timer.cancel();
                        
                    } catch (Exception e) {
                        e.printStackTrace();
@@ -166,7 +169,7 @@ public class TestController {
            // 태스크 지연시간
            long delay = 0;
            // 폴링시간
-           long period = 1000 * 15;    // 10초
+           long period = 1000 * 2;    // 10초
            
            // 스케쥴 설정
            timer.schedule(task, delay, period);
@@ -180,6 +183,8 @@ public class TestController {
            resultMap.put("resultCd", Result.FAIL.getCode());
            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
        }
+       
+       
        
        return resultMap;
    }

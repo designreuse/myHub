@@ -45,6 +45,7 @@
         <script src="<c:url value='/js/jquery/jquery.validate.js'/>"></script>
         <!-- application -->
         <script src="<c:url value='/js/common.js'/>"></script>
+        <script src="<c:url value='/js/ajaxfileupload.js'/>"></script>
         <!--  =========================================================== -->
         
         <script type="text/javascript">
@@ -62,9 +63,10 @@
                 
                 data: {
                     init: function() {
-                        this.fileUpload();
+                        
                     },
                 
+                    /* // 이미지 미리보기용 함수
                     fileUpload: function() {
                     	$('#profileImg').fileupload({
                             url : commonObj.config.contextPath.concat('/user/profileUpload'),
@@ -102,11 +104,48 @@
                                 alert("서버와 통신 중 문제가 발생했습니다");
                             }
                         });
+                    }, */
+                    
+                    profileUpload: function() {
+                    	var attachFile = $.trim($('#attachFile').val());
+                        if (attachFile.length === 0) {
+                            alert('파일을 선택하세요.');
+                            $('#attachFile').focus();
+                            return false;
+                        }
+                        if (!(/png|jpe?g|gif/i).test(attachFile)) {
+                            alert('png, jpg, gif 만 가능합니다');
+                            $('#attachFile').focus();
+                            return false;
+                        }
+                        
+                        var url = commonObj.config.contextPath.concat('/user/profileUpload');
+                        var pars = commonObj.data.form.getConvertObjToForm($('#frmProfileAdd'));
+                        
+                        $.ajaxFileUpload({
+                            url: url,
+                            fileElementId: 'attachFile',
+                            data: pars,
+                            success: function(res) {
+                            	alert('정상처리되었습니다.');
+                            	opener.MyHubApp.popup.userProfileAdd.callBack();
+                            	window.close();
+                            },
+                            error: function(x,e) {
+                                alert('처리 중 오류가 발생하였습니다.');
+                            }
+                        });
+                    	
                     }
                 },
                 
                 event: {
                     init: function() {
+                    	// 업로드 
+                    	$('#btnUpload').on('click', function() {
+                    		MyHubApp.data.profileUpload();
+                        });
+                    	
                     	// 취소
                         $('#btnCancel').on('click', function() {
                             window.close();
@@ -131,6 +170,7 @@
     </head>
     <body>
         <div class="container">
+            <!-- 미리보기용
             <form class="form-horizontal" id="frmAdd" name="frmAdd" onsubmit="return false;">
                 <input type="hidden" name="userKey" id="userKey" value="${userKey}">
                 
@@ -152,6 +192,26 @@
                     </div>
                 </div>
             </form>
+             -->
+            
+            <form class="form-horizontal" id="frmProfileAdd" name="frmProfileAdd" enctype="multipart/form-data" onsubmit="return false;">
+                <input type="hidden" name="userKey" id="userKey" value="${userKey}">
+                
+                <div class="form-group">
+                    <label for="password" class="col-sm-3 control-label">이미지</label>
+                    <div class="col-sm-5">
+                        <input type="file" class="form-control" id="attachFile" name="attachFile">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button class="btn btn-primary" id="btnUpload"><spring:message code="myhub.label.create"/></button>
+                        <button class="btn btn-default" id="btnCancel"><spring:message code="myhub.label.cancel"/></button>
+                    </div>
+                </div>
+            </form>
+            
+            
         </div>
     </body>
 </html>
