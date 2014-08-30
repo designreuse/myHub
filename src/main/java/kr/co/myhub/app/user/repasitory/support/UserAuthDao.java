@@ -39,5 +39,4 @@ public class UserAuthDao extends QueryDslRepositorySupport {
         return result;
     }
 
-
 }

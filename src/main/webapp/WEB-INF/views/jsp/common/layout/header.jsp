@@ -5,7 +5,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %> 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-
+    
+                <!-- 상단 헤더 -->    
                 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
                     <div class="container">
                         <div class="navbar-header">
@@ -49,6 +50,7 @@
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="<c:url value='/admin/userManage/userList'/>"><spring:message code="myhub.label.user.list"/></a></li>
                                         <li><a href="<c:url value='/admin/logHistory/logHistoryList'/>"><spring:message code="myhub.label.loghistory.list"/></a></li>
+                                        <li><a href="javascript:MyHubHeaderApp.popup.activeUserListPopup();"><spring:message code="myhub.label.connection.status"/></a></li>
                                     </ul>
                                 </li>
                                 </security:authorize>
@@ -99,6 +101,7 @@
             	
             },
             
+            // 세션 정보 체크
             setIntervalSessionCheck: function() {
             	var url = commonObj.config.contextPath.concat('/sessionCheck');
                 var pars = '';
@@ -116,15 +119,16 @@
         
         event: {
         	init: function() {
-        		// 세션체크 호출
+        		// 세션정보 1분마다 체크
         		<security:authorize access="fullyAuthenticated">;
-        		//var intervalTime = 1;    // 1분
-                //window.setInterval('MyHubHeaderApp.data.setIntervalSessionCheck();', (intervalTime * 60 * 1000));
+        		var intervalTime = 1;    // 1분
+                window.setInterval('MyHubHeaderApp.data.setIntervalSessionCheck();', (intervalTime * 60 * 1000));
         		</security:authorize>;
         	}
         },
 		
 		popup: {
+			// 비밀번호 수정
             userPasswordEdit: function(email) {
                 commonObj.popup.open({
                     url : '<c:url value="/user/userPasswordEdit"/>',
@@ -132,6 +136,17 @@
                     title: 'userPasswordEdit',
                     width : '420',
                     height : '400'
+                });
+            },
+            
+            // 접속 현황
+            activeUserListPopup: function() {
+            	commonObj.popup.open({
+                    url : '<c:url value="/admin/userManage/activeUserListPopup"/>',
+                    pars : '',
+                    title: 'activeUserList',
+                    width : '750',
+                    height : '450'
                 });
             }
         }

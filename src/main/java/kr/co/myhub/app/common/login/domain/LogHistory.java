@@ -27,7 +27,6 @@ import org.springframework.format.annotation.DateTimeFormat;
  * date   : 2014. 6. 23.
  * author : jmpark
  * content: 로그 엔티티(로그인, 로그아웃)
- * ref: https://groups.google.com/forum/#!topic/ksug/oXVcsoJgOCc
  *
  * 수정내용
  * ----------------------------------------------

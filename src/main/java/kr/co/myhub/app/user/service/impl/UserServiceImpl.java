@@ -100,11 +100,6 @@ public class UserServiceImpl implements UserService  {
      * 유저 목록
      * @return
      * @throws Exception
-     * ref 
-     * http://whiteship.me/?cat=3078
-     * http://i-proving.com/2014/05/06/spring-data-jparepository-and-querydsl/
-     * http://netframework.tistory.com/entry/12-queryDSL-Spring-Data-JPA
-     * 
      */
     public Page<User> findAllUser(UserDto userDto) throws Exception {
         Predicate predicate = null;

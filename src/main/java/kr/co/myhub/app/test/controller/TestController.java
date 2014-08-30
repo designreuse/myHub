@@ -268,45 +268,6 @@ public class TestController {
        return null;
    }
    
-   /**
-    * 현재 접속 중인 사용자 세션정보 목록
-    * @param model
-    * @return
-    */
-   @RequestMapping(value = "/getActiveUserList", method = RequestMethod.POST, produces = "application/json")
-   @ResponseBody
-   public Map<String, Object> getActiveUserList(Model model) {
-       Map<String, Object> resultMap = new HashMap<String, Object>();
-       HashMap<Object, Date> lastActivityData = new HashMap<Object, Date>();
-       
-       try {
-           // sessionRegistry.getAllPrincipals() : 활성화된 세션을 갖고 있는  Principal 객체(User Detail)
-           for (Object principal : sessionRegistry.getAllPrincipals()) {
-               
-               // 각 Principal이 갖고 있는 세션정보를 담고있는 SessionInformation 객체의 리스트
-               for (SessionInformation  session : sessionRegistry.getAllSessions(principal, false)) {
-                   log.debug("getLastRequest : {}", session.getLastRequest());
-                   log.debug("getSessionId : {}", session.getSessionId());
-                   log.debug("getPrincipal : {}", session.getPrincipal());
-                   
-                   lastActivityData.put(principal, session.getLastRequest());
-               }
-           }
-           
-           resultMap.put("resultCd", Result.SUCCESS.getCode());
-           resultMap.put("resultMsg", Result.SUCCESS.getText());
-           resultMap.put("resultData", lastActivityData);  // TODO: Princapal 객체 JSON 데이터로 파싱 처리
-       } catch (Exception e) {
-           e.printStackTrace();
-           log.error("Exception : {}", e.getMessage());
-           
-           resultMap.put("resultCd", Result.FAIL.getCode());
-           resultMap.put("resultMsg", e.getMessage());
-       }
-       
-       return resultMap;
-   }
-   
    @RequestMapping(value = "/ajaxFileUpload", method = RequestMethod.POST, produces = "application/json")
    @ResponseBody
    public String ajaxFileUpload(MultipartHttpServletRequest request, HttpServletResponse response) { 

@@ -39,12 +39,10 @@ public class FileUtil extends HttpServletRequestWrapper {
     public static String fileUpload(MultipartFile multipartFile, String uploadPath) {
         if (multipartFile == null || uploadPath.length() == 0) return ""; 
         
-        log.debug("multipartFile : {}, {}", multipartFile, uploadPath);
-        
-        String fileName = "";
+        String retFileName = "";
         
         try {
-            fileName = multipartFile.getOriginalFilename();
+            String fileName = multipartFile.getOriginalFilename();
             
             /* 파일 폴더 생성 */
             File checkPath = new File(uploadPath);
@@ -67,11 +65,14 @@ public class FileUtil extends HttpServletRequestWrapper {
             }
             
             multipartFile.transferTo(new File(uploadPath.concat(File.separator).concat(fileName)));
+            
+            // 파일이름
+            retFileName = fileName;
         } catch (Exception e) {
             e.printStackTrace();
         } 
         
-        return fileName;
+        return retFileName;
     }
     
     

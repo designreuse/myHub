@@ -32,6 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -424,6 +425,16 @@ public class LoginServiceImpl implements LoginService {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public void deleteLogHistoryByUserkey(Long userKey) throws Exception {
         logHistoryDao.deleteLogHistoryByUserkey(userKey);
+    }
+    
+    /**
+     * 유저 정보 조회
+     * @param email
+     * @return
+     * @throws Exception
+     */
+    public LogHistory selectLogHistoryByEmailAndLogType(String email, String logType) throws Exception {
+        return logHistoryDao.selectLogHistoryByEmailAndLogType(email, logType);
     }
     
 }

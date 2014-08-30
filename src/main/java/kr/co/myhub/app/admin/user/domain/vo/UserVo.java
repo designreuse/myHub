@@ -55,6 +55,18 @@ public class UserVo {
     
     /* 유저권한 정보 */
     private String priv;
+    
+    /* 마지막 요청일자 */
+    private String lastRequest;
+    
+    /* 마지막 요청일자 */
+    private String sessionId;
+    
+    /* 로그인 일자 */
+    private String loginDt;
+    
+    /* 인증 권한 정보 */
+    private String authorities;
 
     public Long getUserKey() {
         return userKey;
@@ -158,5 +170,37 @@ public class UserVo {
 
     public void setPriv(String priv) {
         this.priv = priv;
+    }
+
+    public String getLastRequest() {
+        return lastRequest;
+    }
+
+    public void setLastRequest(String lastRequest) {
+        this.lastRequest = lastRequest;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getLoginDt() {
+        return loginDt;
+    }
+
+    public void setLoginDt(String loginDt) {
+        this.loginDt = loginDt;
+    }
+
+    public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
     }
 }

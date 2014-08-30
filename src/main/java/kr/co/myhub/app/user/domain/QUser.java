@@ -17,8 +17,6 @@ import com.mysema.query.types.path.StringPath;
  * date   : 2014. 5. 18.
  * author : jmpark
  * content: QUser is a Querydsl query type for User
- * https://github.com/sathya2013/EBootstrap/blob/master/src/main/java/com/me/bootstrap/querydsl/QUser.java
- * http://netframework.tistory.com/entry/13-queryDSL-Spring-Data-JPA
  * 
  * 수정내용
  * ----------------------------------------------

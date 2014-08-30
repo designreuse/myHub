@@ -66,5 +66,4 @@ public class QLogHistory extends EntityPathBase<LogHistory> {
         super(type, metadata, inits);
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }
-
 }

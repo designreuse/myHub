@@ -3,6 +3,7 @@ package kr.co.myhub.appframework.util;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * 
@@ -47,5 +48,17 @@ public class DateUtil {
         
         return dateStr;
         
+    }
+    
+    /**
+     * Date 값을  문자열로
+     * @param date
+     * @return
+     */
+    public static String getDateToString(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        String dateStr = formatter.format(date);
+        
+        return dateStr;
     }
 }

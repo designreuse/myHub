@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -50,11 +49,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
  * date   : 2013. 11. 17.
  * author : jmpark
  * content: 유저 웹 요청 처리 (URL Mapping, Data Response)
- * ref : http://www.ilhwan.com/spring-security-example/(회원가입후 자동 로그인)
- * 
- * http://krams915.blogspot.kr/2011/02/spring-3-rest-web-service-provider-and_28.html
- * http://blog.outsider.ne.kr/958
- * http://aircook.tistory.com/105
  * 
  * 수정내용
  * ----------------------------------------------
@@ -78,12 +72,6 @@ public class UserController {
      */
     @Autowired 
     Properties prop;
-    
-    /**
-     * Session Registry(세션 트래킹)
-     */
-    @Autowired
-    SessionRegistry sessionRegistry;
     
     /**
      * AuthenticationManager
@@ -632,9 +620,12 @@ public class UserController {
             String uploadPath = servletContext.getRealPath(uploadFolder);
             String fileName = FileUtil.fileUpload(multipartFile, uploadPath);
             
-            /* 유저 정보 업데이트  */
-            String profile = uploadFolder.concat(fileName);
+            String profile = "";
+            if (fileName.length() != 0) {
+                profile = uploadFolder.concat(fileName);    
+            }
             
+            /* 유저 정보 업데이트  */
             userService.updateUserProfile(profile, userKey);
             
             resultMap.put("resultCd", Result.SUCCESS.getCode());

@@ -2,10 +2,7 @@ package kr.co.myhub.app.user.domain;
 
 import static com.mysema.query.types.PathMetadataFactory.forVariable;
 
-import javax.annotation.Generated;
 import javax.annotation.Nullable;
-
-import kr.co.myhub.app.user.domain.UserAuth;
 
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.path.DateTimePath;
@@ -27,7 +24,6 @@ import com.mysema.query.types.path.StringPath;
  * ----------------------------------------------
  * 2014. 6. 16.   kbtapjm     최초생성
  */
-@Generated("com.mysema.query.codegen.EntitySerializer")
 public class QUserAuth extends EntityPathBase<UserAuth> {
 
     private static final long serialVersionUID = -1918773051785988167L;

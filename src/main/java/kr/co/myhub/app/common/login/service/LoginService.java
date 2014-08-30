@@ -147,4 +147,14 @@ public interface LoginService {
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void deleteLogHistoryByUserkey(Long userKey) throws Exception;
+    
+    /**
+     * 유저 정보 조회
+     * @param email
+     * @return
+     * @throws Exception
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public LogHistory selectLogHistoryByEmailAndLogType(String email, String logType) throws Exception;
+
 }

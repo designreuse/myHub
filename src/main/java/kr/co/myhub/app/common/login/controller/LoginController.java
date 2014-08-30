@@ -44,9 +44,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * author : jmpark
  * content: 로그인 관련 컨트롤러(스프링 시큐리티 핸들러 처리) 
  * 
- * http://www.java-school.net/spring/spring-security.php
- * http://blog.naver.com/alucard99?Redirect=Log&logNo=192570650
- * 
  * 수정내용
  * ----------------------------------------------
  * 수정일                   수정자                  수정내용

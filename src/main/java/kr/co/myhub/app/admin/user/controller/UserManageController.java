@@ -9,17 +9,25 @@ import java.util.Map;
 import kr.co.myhub.app.admin.user.domain.dto.UserDto;
 import kr.co.myhub.app.admin.user.domain.vo.UserVo;
 import kr.co.myhub.app.admin.user.domain.vo.UserVoList;
+import kr.co.myhub.app.common.login.domain.LogHistory;
+import kr.co.myhub.app.common.login.service.LoginService;
 import kr.co.myhub.app.user.domain.User;
 import kr.co.myhub.app.user.service.UserService;
+import kr.co.myhub.appframework.constant.LogTypeEnum;
 import kr.co.myhub.appframework.constant.Result;
 import kr.co.myhub.appframework.constant.UserPrivEnum;
 import kr.co.myhub.appframework.exception.MyHubException;
+import kr.co.myhub.appframework.util.DateUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,10 +63,22 @@ public class UserManageController {
     MessageSourceAccessor msa;
     
     /**
-     *  Service DI
+     * Session Registry(세션 트래킹)
      */
     @Autowired
-    UserService userService;
+    SessionRegistry sessionRegistry;
+    
+    /**
+     *  유저 서비스 DI
+     */
+    @Autowired
+    private UserService userService;
+    
+    /**
+     * 로그인 서비스 DI
+     */
+    @Autowired
+    private LoginService loginService;
     
     // ===================================================================================
     // Simple URL Mapping
@@ -73,6 +93,17 @@ public class UserManageController {
     @RequestMapping(value = "/userList", method = RequestMethod.GET)
     public String userList(Model model) throws Exception {
         return "/admin/user/userList";         
+    }
+    
+    /**
+     * 접속현황
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/activeUserListPopup", method = RequestMethod.GET)
+    public String activeUserListPopup(Model model) throws Exception {
+        return "/admin/user/activeUserListPopup";         
     }
     
     // ===================================================================================
@@ -187,6 +218,84 @@ public class UserManageController {
             resultMap.put("resultCd", Result.SUCCESS.getCode());
             resultMap.put("resultMsg", Result.SUCCESS.getText());
             
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage());
+        
+            resultMap.put("resultCd", Result.FAIL.getCode());
+            resultMap.put("resultMsg", MyHubException.getExceptionMsg(e, msa, locale));
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * 현재 접속중인 세션 유저 정보 가져오기
+     * @param model
+     * @param locale
+     * @return
+     */
+    @RequestMapping(value = "/getActiveUserList", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getActiveUserList(Model model, Locale locale) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        
+        List<UserVo> resultList = new ArrayList<UserVo>();
+        UserVo userVo = null;
+        
+        try {
+            /* 활성화된 세션을 갖고 있는  Principal (User Detail) */
+            List<Object> principals = sessionRegistry.getAllPrincipals();
+            
+            for (Object principal : principals) {
+                
+                // 각 Principal이 갖고 있는 세션정보를 담고있는 SessionInformation 객체의 리스트
+                for (SessionInformation  session : sessionRegistry.getAllSessions(principal, false)) {
+                    if (session == null) continue;
+                    
+                    userVo = new UserVo();
+                    
+                    log.debug("getLastRequest : {}", session.getLastRequest()); // 마지막 서버 요청일자
+                    log.debug("getSessionId : {}", session.getSessionId());     // 세션 아이디
+                    log.debug("getPrincipal : {}", session.getPrincipal());     // 인증 정보
+                    
+                    UserDetails userdetails = (UserDetails) session.getPrincipal();
+                    
+                    log.debug("getPrincipal getPassword: {}", userdetails.getPassword());   // 비밀번호
+                    log.debug("getPrincipal getUsername: {}", userdetails.getUsername());   // 유저이름
+                    log.debug("getPrincipal getAuthorities: {}", userdetails.getAuthorities()); // 권한 정보
+                    
+                    userVo.setLastRequest(DateUtil.getDateToString(session.getLastRequest()));  
+                    userVo.setSessionId(session.getSessionId());
+                    userVo.setUserName(userdetails.getUsername());
+                    
+                    /* 적용된 권한 */
+                    for (GrantedAuthority grantedAuthority: userdetails.getAuthorities()) {
+                        log.debug("getPrincipal grantedAuthority: {}", grantedAuthority.getAuthority());
+                        
+                        userVo.setAuthorities(grantedAuthority.getAuthority());
+                    }
+                    
+                    /* 로그정보 조회 */
+                    LogHistory logHistory = loginService.selectLogHistoryByEmailAndLogType(userdetails.getUsername(), LogTypeEnum.logIn.getText());
+                    
+                    // 로그인 일자 설정
+                    userVo.setLoginDt(DateUtil.getDateToString(logHistory.getLogDate()));
+                    
+                    resultList.add(userVo);
+                }
+            }
+            
+            /* 결과 처리 */
+            UserVoList userVoList = new UserVoList();
+            userVoList.setPage(1);
+            userVoList.setRecords(resultList.size());
+            userVoList.setTotal(1);
+            userVoList.setList(resultList);
+            
+            resultMap.put("resultCd", Result.SUCCESS.getCode());
+            resultMap.put("resultMsg", Result.SUCCESS.getText());
+            resultMap.put("resultData", userVoList);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage());

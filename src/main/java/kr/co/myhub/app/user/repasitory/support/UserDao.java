@@ -18,9 +18,6 @@ import com.mysema.query.jpa.impl.JPAQuery;
  * date   : 2014. 6. 15.
  * author : jmpark
  * content: UserDao(queryDsl의 다양한 쿼리 지원)
- * http://netframework.tistory.com/entry/13-queryDSL-Spring-Data-JPA
- * http://www.querydsl.com/static/querydsl/2.1.0/reference/html/ch02s02.html#d0e306
- * http://whiteship.me/?p=13231
  * 
  * 수정내용
  * ----------------------------------------------

@@ -5,7 +5,7 @@ import java.util.Timer;
 public class ThreadTest {
 
     public static void main(String[] args) {
-ThreadGroup main = Thread.currentThread().getThreadGroup();
+        ThreadGroup main = Thread.currentThread().getThreadGroup();
         
         ThreadGroup tg1 = new ThreadGroup("smt");
         
@@ -26,6 +26,11 @@ ThreadGroup main = Thread.currentThread().getThreadGroup();
         
         System.out.println("activeCount : " + tg1.activeCount());
         System.out.println("activeGroupCount : " + tg1.activeGroupCount());
+        
+        System.out.println("Thread.activeCount() : " + Thread.activeCount());
+        System.out.println("Thread.currentThread().getName() : " + Thread.currentThread().getName());
+        
+        
         
         TimerTest timerTest = new TimerTest(5);
         

@@ -50,5 +50,4 @@ public class UserDto extends CommonDto {
     public void setSearchWord(String searchWord) {
         this.searchWord = searchWord;
     }
-
 }
