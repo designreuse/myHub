@@ -23,7 +23,8 @@
                             <!-- 서비스 메뉴는 로그인 한 사용자에게만 활성화 -->
                             <security:authorize access="fullyAuthenticated">
                             <ul class="nav navbar-nav">
-                                <li class="active"><a href="#">Friend</a></li>
+                                <li><a href="#">Friend</a></li>
+                                <li><a href="#">Photo</a></li>
                             </ul>
                             <form class="navbar-form navbar-left" role="search" onsubmit="return false;">
                                 <div class="form-group">
@@ -122,7 +123,7 @@
         		// 세션정보 1분마다 체크
         		<security:authorize access="fullyAuthenticated">;
         		var intervalTime = 1;    // 1분
-                window.setInterval('MyHubHeaderApp.data.setIntervalSessionCheck();', (intervalTime * 60 * 1000));
+                //window.setInterval('MyHubHeaderApp.data.setIntervalSessionCheck();', (intervalTime * 60 * 1000));
         		</security:authorize>;
         	}
         },
