@@ -6,6 +6,7 @@ import java.util.Map;
 import kr.co.myhub.app.admin.domain.dto.LogHistoryDto;
 import kr.co.myhub.app.common.login.domain.LogHistory;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;

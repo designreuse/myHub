@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ehcache xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+    xsi:noNamespaceSchemaLocation='http://ehcache.org/ehcache.xsd'>
+
+    <diskStore path="java.io.tmpdir" />
+    
+    <!-- default config -->
+    <!-- 
+    timeToIdleSeconds : 몇초간 유휴 상태가 지나면 갱신(0이면 사용하지 않음)
+    timeToLiveSeconds : 설정한 초까지 캐쉬를 살린다. 0이면 무한
+     -->
+      <!--Default Cache configuration. These will applied to caches programmatically created through
+        the CacheManager.
+
+        The following attributes are required for defaultCache:
+
+        maxInMemory       - Sets the maximum number of objects that will be created in memory
+        eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element
+                            is never expired.
+        timeToIdleSeconds - Sets the time to idle for an element before it expires.
+                            i.e. The maximum amount of time between accesses before an element expires
+                            Is only used if the element is not eternal.
+                            Optional attribute. A value of 0 means that an Element can idle for infinity
+        timeToLiveSeconds - Sets the time to live for an element before it expires.
+                            i.e. The maximum time between creation time and when an element expires.
+                            Is only used if the element is not eternal.
+        overflowToDisk    - Sets whether elements can overflow to disk when the in-memory cache
+                            has reached the maxInMemory limit.
+
+        -->
+    <defaultCache
+        maxElementsInMemory="50000"
+        eternal="false"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="600"
+        overflowToDisk="false"  
+        diskPersistent="false"
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU">
+    </defaultCache>
+    
+    <!-- 유저정보 조회 -->
+    <cache name="selectUser"
+        maxElementsInMemory="10000"
+        eternal="false"
+        timeToIdleSeconds="0"
+        timeToLiveSeconds="600"
+        overflowToDisk="false"
+        diskPersistent="false"
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    
+    <!-- select -->
+    <cache name="listCache"
+        maxElementsInMemory="10000"
+        eternal="false"
+        timeToIdleSeconds="0"
+        timeToLiveSeconds="600"
+        overflowToDisk="false"
+        diskPersistent="false"
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    
+    <!-- select Count -->
+    <cache name="listCountCache"
+        maxElementsInMemory="10000"
+        eternal="false"
+        timeToIdleSeconds="0"
+        timeToLiveSeconds="600"
+        overflowToDisk="false"
+        diskPersistent="false"
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    
+    
+</ehcache>

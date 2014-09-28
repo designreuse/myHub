@@ -21,5 +21,8 @@
     
     <!-- Spring Security  -->
     <import resource="context/context-security.xml" />
+    
+    <!-- cache  -->
+    <import resource="context/context-cache.xml" />
      
 </beans>

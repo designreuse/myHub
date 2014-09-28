@@ -17,11 +17,12 @@ import kr.co.myhub.appframework.constant.UserPrivEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +83,7 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
+    @Cacheable(value = "selectUser", key = "#email")
     public User findByEmail(String email) throws Exception {
         return userRepasitory.findByEmail(email);
     }
@@ -92,6 +94,7 @@ public class UserServiceImpl implements UserService  {
      * @return
      * @throws Exception
      */
+    @Cacheable(value = "selectUser", key = "#userKey")
     public User findByUserKey(Long userKey) throws Exception {
         return userRepasitory.findByUserKey(userKey);
     }
@@ -229,6 +232,7 @@ public class UserServiceImpl implements UserService  {
      * @throws Exception
      */
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    @CacheEvict(value = "selectUser", key = "#user.userKey", allEntries = true)
     public long updateUser(User user) throws Exception {
         return userDao.updateUserByUserKey(user);
     }
@@ -243,6 +247,7 @@ public class UserServiceImpl implements UserService  {
      * @throws Exception
      */
     @Transactional
+    @CacheEvict(value = "selectUser", key = "#user.userKey", allEntries = true)
     public void deleteUser(User user) throws Exception {
         /* 삭제 할 유저 정보 조회  */
         User deleteUser = userRepasitory.findByUserKey(user.getUserKey());
@@ -300,7 +305,6 @@ public class UserServiceImpl implements UserService  {
      */
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public void updateUserLockInit(List<User> userList) throws Exception {
-        
         for (User user : userList) {
             if (user == null) continue;
          

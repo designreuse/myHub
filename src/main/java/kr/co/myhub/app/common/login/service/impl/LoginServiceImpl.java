@@ -28,11 +28,12 @@ import kr.co.myhub.appframework.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +85,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
+    @Cacheable(value = "listCache", key = "#email")
     public List<LogHistory> findByEmail(String email) throws Exception {
         return loginRepasitory.findByEmailOrderByLogDateDesc(email);
     }
@@ -94,6 +96,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
+    @Cacheable(value = "listCache", key = "#loginLogKey")
     public LogHistory findByLoginLogKey(Long loginLogKey) throws Exception {
         return loginRepasitory.findOne(loginLogKey);
     }
@@ -322,6 +325,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
+    @Cacheable(value = "listCache", key = "#logHistoryDto")
     public Page<LogHistory> findAllLogHistory(LogHistoryDto logHistoryDto) throws Exception {
         Predicate predicate = null;
         QLogHistory qLogHistory = QLogHistory.logHistory;
@@ -370,6 +374,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      * @throws Exception
      */
+    //@Cacheable(value = "listCountCache", key = "#logHistoryDto.logType.concat('-').concat(#logHistoryDto.searchType).concat('-').concat(#logHistoryDto.searchWord)")
     public Long findAllLogHistoryCount(LogHistoryDto logHistoryDto) throws Exception {
         Predicate predicate = null;
         QLogHistory qLogHistory = QLogHistory.logHistory;
