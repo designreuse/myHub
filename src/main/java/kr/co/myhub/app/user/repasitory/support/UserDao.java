@@ -86,7 +86,7 @@ public class UserDao extends QueryDslRepositorySupport {
         if (isLoginSuccess) {
             result = update(qUser)
                     .where(qUser.email.eq(email))
-                    .set(qUser.loginFailDt, null)
+                    .setNull(qUser.loginFailDt)
                     .set(qUser.loginFailCount, loginFailCount)
                     .execute();    
         } else {
@@ -142,7 +142,7 @@ public class UserDao extends QueryDslRepositorySupport {
         
         long result = update(qUser)
                 .where(qUser.userKey.eq(userKey))
-                .set(qUser.loginFailDt, null)
+                .setNull(qUser.loginFailDt)
                 .set(qUser.loginFailCount, 0)
                 .execute();  
         

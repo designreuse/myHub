@@ -9,7 +9,7 @@
         </layout>
     </appender>
     <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="${catalina.base}/logs/social/social_log.log"/>
+        <param name="file" value="${catalina.base}/logs/myhub/myhub.log"/>
         <param name="datePattern" value="'.'yyyy-MM-dd"/>
         <param name="append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout"> 
@@ -41,14 +41,14 @@
     <category name="kr.co.myhub" additivity="false">
         <level value="debug" />
         <appender-ref ref="console" />
-        <!-- <appender-ref ref="file" /> -->
+        <appender-ref ref="file" />
     </category>
         
     <!-- Root Logger -->
     <root>
         <priority value="info" />
         <appender-ref ref="console" />
-        <!-- <appender-ref ref="file" /> -->
+        <appender-ref ref="file" />
     </root>
 
 </log4j:configuration>
