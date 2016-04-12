@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+    
+    <cache:annotation-driven cache-manager="cacheManager" key-generator="entityKeyGenerator"/>
+    
+    <beans:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <beans:property name="cacheManager">
+            <beans:bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+                <beans:property name="configLocation" value="classpath:/config/spring/context/support/ehcache.xml"  />
+                <beans:property name="shared" value="true" />
+            </beans:bean>
+        </beans:property>
+    </beans:bean>
+    
+    <beans:bean id="entityKeyGenerator" class="kr.co.myhub.appframework.cache.EntityKeyGenerator" />
+    
+</beans:beans>

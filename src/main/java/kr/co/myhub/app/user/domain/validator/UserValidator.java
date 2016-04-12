@@ -91,7 +91,7 @@ public class UserValidator extends MyHubValidator implements Validator {
         
         // 비밀번호 검증
         if (StringUtils.isNotEmpty(user.getPassword())) {
-            this.validatePassword();
+            //this.validatePassword();
         }
     }
     

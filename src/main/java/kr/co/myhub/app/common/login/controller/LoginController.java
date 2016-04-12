@@ -203,6 +203,8 @@ public class LoginController {
                 
                 /* 세션에 로그인 정보 저장  */
                 User sUser = userService.findByEmail(email);
+                log.debug("sUser : {}" + sUser);
+                log.debug("sUser getEmail : {}" + sUser.getEmail());
                 
                 session.setAttribute("sUser", sUser);
                 session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
